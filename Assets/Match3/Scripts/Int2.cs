@@ -44,6 +44,13 @@ namespace Match3
             return string.Format("({0}, {1})", x, y);
         }
 
+        public readonly static Int2 zero = new Int2(0, 0);
+        public readonly static Int2 one = new Int2(1, 0);
+        public readonly static Int2 right = new Int2(1, 0);
+        public readonly static Int2 left = new Int2(-1, 0);
+        public readonly static Int2 up = new Int2(0, 1);
+        public readonly static Int2 down = new Int2(0, -1);
+
         public static Int2 operator -(Int2 v) => new Int2(-v.x, -v.y);
         public static Int2 operator +(Int2 a, Int2 b) => new Int2(a.x + b.x, a.y + b.y);
         public static Int2 operator -(Int2 a, Int2 b) => new Int2(a.x - b.x, a.y - b.y);

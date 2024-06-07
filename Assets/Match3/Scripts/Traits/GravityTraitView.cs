@@ -6,7 +6,7 @@ namespace Match3
         public override Trait CreateTrait() => new GravityTrait();
     }
 
-    public class GravityTrait : Trait
+    public class GravityTrait : Trait<GravityTraitView>
     {
 
     }

@@ -15,7 +15,7 @@ public class ConfirmationPopup : Popup<ConfirmationPopupData>
     private string defConfirm;
     private string defCancel;
 
-    public override void OnCreated()
+    protected override void OnCreated()
     {
         base.OnCreated();
         defConfirm = confirm.text;

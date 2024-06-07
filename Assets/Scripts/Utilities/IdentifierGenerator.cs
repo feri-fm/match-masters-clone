@@ -17,8 +17,8 @@ public struct Id
 
     public override bool Equals(object obj)
     {
-        if (obj is Id)
-            return ((Id)obj).value == value;
+        if (obj is Id id)
+            return id.value == value;
         return false;
     }
     public override int GetHashCode()
@@ -29,6 +29,7 @@ public struct Id
     public static bool operator ==(Id left, Id right) => left.Equals(right);
     public static bool operator !=(Id left, Id right) => !left.Equals(right);
 }
+
 public class IdentifierGenerator
 {
     public int lastId;

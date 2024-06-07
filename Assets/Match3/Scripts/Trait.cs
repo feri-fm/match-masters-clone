@@ -1,29 +1,34 @@
+using System;
 using UnityEngine;
 
 namespace Match3
 {
-    public abstract class TraitView : PoolObject
-    {
-        public string key;
-
-        public abstract Trait CreateTrait();
-    }
-    public abstract class TraitView<T> : TraitView where T : Trait
-    {
-
-    }
-
-    public abstract class Trait
+    public abstract class Trait : LifecycleObject
     {
         public Tile tile { get; private set; }
-        public TileView prefab { get; private set; }
+        public TraitView prefab { get; private set; }
 
         public string key => prefab.key;
 
-        public virtual void OnCreated() { }
-        public virtual void OnRemoved() { }
+        public void _Setup(Tile tile, TraitView prefab)
+        {
+            this.tile = tile;
+            this.prefab = prefab;
+            __Setup();
+        }
+        public void _Remove()
+        {
+            __Remove();
+        }
 
-        public void _Setup(Tile tile, TileView prefab) { }
-        public void _Remove() { }
+        public void Changed()
+        {
+            __Changed();
+        }
+    }
+
+    public class Trait<T> : Trait where T : TraitView
+    {
+        public new T prefab => base.prefab as T;
     }
 }

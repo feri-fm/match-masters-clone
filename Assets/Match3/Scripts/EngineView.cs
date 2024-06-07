@@ -9,8 +9,20 @@ namespace Match3
         public Engine engine { get; private set; }
         public List<TileView> tiles { get; } = new();
 
-        public void Setup(Engine engine) { }
+        public void Setup(Engine engine)
+        {
+            Clear();
+            this.engine = engine;
+        }
 
-        public void Clear() { }
+        public void Clear()
+        {
+            foreach (var tile in tiles)
+            {
+                tile._Remove();
+                tile.Pool();
+            }
+            tiles.Clear();
+        }
     }
 }

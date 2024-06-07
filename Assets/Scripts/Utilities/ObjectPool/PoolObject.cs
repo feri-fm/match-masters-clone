@@ -12,8 +12,8 @@ public class PoolObject : MonoBehaviour
 
     private bool created = false;
 
-    public virtual void Awake() { }
-    public virtual void Start()
+    protected virtual void Awake() { }
+    protected virtual void Start()
     {
         if (!created)
         {
@@ -23,14 +23,14 @@ public class PoolObject : MonoBehaviour
         }
     }
 
-    public virtual void Update() { }
-    public virtual void FixedUpdate() { }
-    public virtual void LateUpdate() { }
+    protected virtual void Update() { }
+    protected virtual void FixedUpdate() { }
+    protected virtual void LateUpdate() { }
 
-    public virtual void OnCreated() { }
-    public virtual void OnSpawned() { }
-    public virtual void OnPooled() { }
-    public virtual void OnDestroyed() { }
+    protected virtual void OnCreated() { }
+    protected virtual void OnSpawned() { }
+    protected virtual void OnPooled() { }
+    protected virtual void OnDestroyed() { }
 
     public void _OnCreated(object poolKey, ObjectPool pool, PoolObject prefab)
     {

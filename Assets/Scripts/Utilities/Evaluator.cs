@@ -5,7 +5,6 @@ public class Evaluator
 {
     public List<short> orders { get; } = new List<short>();
 
-
     public void Evaluate(IEnumerable<IEvaluable> targets)
     {
         for (int i = 0; i < orders.Count; i++)
@@ -16,6 +15,11 @@ public class Evaluator
                 item.evaluable.Evaluate(order);
             }
         }
+    }
+
+    public void Clear()
+    {
+        orders.Clear();
     }
 }
 
@@ -40,6 +44,11 @@ public class Evaluable
         {
             eventHandler.Invoke();
         }
+    }
+
+    public void Clear()
+    {
+        callbacks.Clear();
     }
 
     public void RegisterCallback(short order, Action callback)

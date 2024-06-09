@@ -5,14 +5,14 @@ namespace Match3
 {
     public abstract class Trait : LifecycleObject
     {
-        public Tile tile { get; private set; }
+        public Entity entity { get; private set; }
         public TraitView prefab { get; private set; }
 
         public string key => prefab.key;
 
-        public void _Setup(Tile tile, TraitView prefab)
+        public void _Setup(Entity entity, TraitView prefab)
         {
-            this.tile = tile;
+            this.entity = entity;
             this.prefab = prefab;
             __Setup();
         }

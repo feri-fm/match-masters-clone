@@ -10,9 +10,19 @@ public class EngineViewLoader : MonoBehaviour
 
     private Engine engine;
 
+    public GameEntity game;
+
     private void Start()
     {
-        engine = new Engine(engineConfig);
+        engine = new Engine(engineConfig, new EngineOptions());
         engineView.Setup(engine);
+
+        game = engine.CreateEntity("game") as GameEntity;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            engine.Evaluate();
     }
 }

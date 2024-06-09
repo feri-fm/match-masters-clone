@@ -5,74 +5,104 @@ namespace Match3
 {
     public class Engine
     {
-        public readonly List<Tile> tiles = new();
-        public readonly Dictionary<Id, Tile> tileById = new();
+        public readonly List<Entity> entities = new();
+        public readonly Dictionary<Id, Entity> entityById = new();
 
         public EngineConfig config { get; private set; }
+        public EngineOptions options { get; private set; }
 
         public readonly IdentifierGenerator identifierGenerator = new();
         public readonly Evaluator evaluator = new();
 
-        public Engine(EngineConfig config)
+        public readonly Random random;
+
+        public event Action<Entity> onEntityCreated = delegate { };
+        public event Action<Entity> onEntityRemoved = delegate { };
+
+        public Engine(EngineConfig config, EngineOptions options)
         {
             this.config = config;
+            this.options = options;
+
+            random = new Random(options.seed);
         }
 
         public void Clear()
         {
-            foreach (var tile in tiles)
+            foreach (var entity in entities)
             {
-                tile._Remove();
+                entity._Remove();
+                onEntityRemoved.Invoke(entity);
             }
-            tiles.Clear();
+            entities.Clear();
+            entityById.Clear();
             identifierGenerator.Clear();
             evaluator.Clear();
         }
 
-        public Tile CreateTile<TView>() where TView : TileView => CreateTile(config.GetTile<TView>());
-        public Tile CreateTile(TileView tile) => CreateTile(tile.key);
-        public Tile CreateTile(string key)
+        public Entity CreateEntity<TView>() where TView : EntityView => CreateEntity(config.GetEntity<TView>());
+        public Entity CreateEntity(string key)
+        {
+            var prefab = config.GetEntity(key);
+            return CreateEntity(prefab);
+        }
+        public Entity CreateEntity(EntityView prefab)
         {
             var id = identifierGenerator.Generate();
-            return CreateTile(key, id);
+            return CreateEntity(prefab, id);
         }
-        public Tile CreateTile(string key, Id id)
+        public Entity CreateEntity(EntityView prefab, Id id)
         {
-            var prefab = config.GetTile(key);
-            var tile = prefab.CreateTile();
-            tiles.Add(tile);
-            tileById.Add(id, tile);
-            tile._Setup(this, prefab, id);
-            return tile;
+            var entity = prefab.CreateEntity();
+            entities.Add(entity);
+            entityById.Add(id, entity);
+            entity._Setup(this, prefab, id);
+            onEntityCreated.Invoke(entity);
+            return entity;
         }
-        public void RemoveTile(Tile tile)
+        public void RemoveEntity(Entity entity)
         {
-            tile._Remove();
-            tiles.Remove(tile);
-            tileById.Remove(tile.id);
+            entity._Remove();
+            entities.Remove(entity);
+            entityById.Remove(entity.id);
+            onEntityRemoved.Invoke(entity);
         }
 
         public void Evaluate()
         {
-            evaluator.Evaluate(tiles);
+            evaluator.Evaluate(entities.ToArray());
         }
 
-        public List<Tile> GetTilesWithTrait<T>() where T : Trait
+        public List<Entity> GetEntitiesWithTrait<T>() where T : Trait
         {
-            var res = new List<Tile>();
-            foreach (var tile in tiles)
-                if (tile.HasTrait<T>())
-                    res.Add(tile);
+            var res = new List<Entity>();
+            foreach (var entity in entities)
+                if (entity.HasTrait<T>())
+                    res.Add(entity);
             return res;
         }
-
-        public void ForTileWithTrait<T>(Action<Tile> action) where T : Trait
+        public void ForEntityWithTrait<T>(Action<Entity> action) where T : Trait
         {
-            foreach (var tile in tiles)
+            foreach (var entity in entities)
             {
-                if (tile.HasTrait<T>())
-                    action.Invoke(tile);
+                if (entity.HasTrait<T>())
+                    action.Invoke(entity);
             }
+        }
+    }
+
+    public class EngineOptions
+    {
+        public int seed;
+
+        public EngineOptions()
+        {
+            seed = UnityEngine.Random.Range(0, 1000000000);
+        }
+
+        public EngineOptions(int seed)
+        {
+            this.seed = seed;
         }
     }
 }

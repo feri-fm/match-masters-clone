@@ -59,5 +59,7 @@ namespace Match3
         public static Int2 operator /(Int2 a, int b) => new Int2(a.x / b, a.y / b);
         public static bool operator ==(Int2 lhs, Int2 rhs) => lhs.x == rhs.x && lhs.y == rhs.y;
         public static bool operator !=(Int2 lhs, Int2 rhs) => !(lhs == rhs);
+
+        public static implicit operator Vector2Int(Int2 v) => new Vector2Int(v.x, v.y);
     }
 }

@@ -6,20 +6,23 @@ using UnityEngine;
 
 namespace Match3
 {
-    public abstract class Tile : LifecycleObject, IEvaluable
+    public abstract class Entity : LifecycleObject, IEvaluable
     {
         public List<Trait> traits = new();
 
         public Id id { get; private set; }
         public Engine engine { get; private set; }
-        public TileView prefab { get; private set; }
+        public EntityView prefab { get; private set; }
         public Evaluable evaluable { get; private set; }
+
+        public event Action<Trait> onTraitCreated = delegate { };
+        public event Action<Trait> onTraitRemoved = delegate { };
 
         public EngineConfig config => engine.config;
 
         public string key => prefab.key;
 
-        public void _Setup(Engine engine, TileView prefab, Id id)
+        public void _Setup(Engine engine, EntityView prefab, Id id)
         {
             this.engine = engine;
             this.prefab = prefab;
@@ -30,7 +33,10 @@ namespace Match3
         public void _Remove()
         {
             foreach (var trait in traits)
+            {
                 trait._Remove();
+                onTraitRemoved.Invoke(trait);
+            }
             traits.Clear();
             evaluable.Clear();
             __Remove();
@@ -55,12 +61,14 @@ namespace Match3
             var trait = prefab.CreateTrait();
             traits.Add(trait);
             trait._Setup(this, prefab);
+            onTraitCreated.Invoke(trait);
             return trait;
         }
         public void RemoveTrait(Trait trait)
         {
             trait._Remove();
             traits.Remove(trait);
+            onTraitRemoved.Invoke(trait);
         }
 
         public Trait GetTrait(string key)
@@ -116,7 +124,7 @@ namespace Match3
         }
     }
 
-    public class Tile<T> : Tile where T : TileView
+    public class Entity<T> : Entity where T : EntityView
     {
         public new T prefab => base.prefab as T;
     }

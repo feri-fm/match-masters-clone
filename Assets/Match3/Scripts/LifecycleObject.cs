@@ -28,6 +28,7 @@ namespace Match3
 
         protected void __Setup(LifecycleObject lifecycle)
         {
+            MarkDirty();
             lifecycle.onChanged += MarkDirty;
             OnSetup();
         }
@@ -53,18 +54,18 @@ namespace Match3
 
         protected void __Setup()
         {
-            onSetup.Invoke();
             OnSetup();
+            onSetup.Invoke();
         }
         protected void __Remove()
         {
-            onRemoved.Invoke();
             OnRemoved();
+            onRemoved.Invoke();
         }
         protected void __Changed()
         {
-            onChanged.Invoke();
             OnChanged();
+            onChanged.Invoke();
         }
     }
 }

@@ -6,16 +6,16 @@ namespace Match3
     [CreateAssetMenu(fileName = "EngineConfig", menuName = "EngineConfig")]
     public class EngineConfig : ScriptableObject
     {
-        public List<TileView> tiles;
+        public List<EntityView> entities;
         public List<TraitView> traits;
 
-        public TileView GetTile(string key)
+        public EntityView GetEntity(string key)
         {
-            return tiles.Find(e => e.key == key);
+            return entities.Find(e => e.key == key);
         }
-        public T GetTile<T>() where T : TileView
+        public T GetEntity<T>() where T : EntityView
         {
-            return tiles.Find(e => e is T) as T;
+            return entities.Find(e => e is T) as T;
         }
         public TraitView GetTrait(string key)
         {

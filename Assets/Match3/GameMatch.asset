@@ -1,0 +1,348 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b90595f9241764bb0abf60dfcca456, type: 3}
+  m_Name: GameMatch
+  m_EditorClassIdentifier: 
+  search:
+  - reward: 0
+    width: 3
+    height: 1
+    rewardPoints: []
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+  - reward: 0
+    width: 1
+    height: 3
+    rewardPoints: []
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+  patterns:
+  - reward: 3
+    width: 3
+    height: 5
+    rewardPoints:
+    - x: 2
+      y: 2
+    points:
+    - x: 0
+      y: 2
+    - x: 1
+      y: 2
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+    - x: 2
+      y: 3
+    - x: 2
+      y: 4
+  - reward: 3
+    width: 3
+    height: 5
+    rewardPoints:
+    - x: 0
+      y: 2
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 0
+      y: 3
+    - x: 0
+      y: 4
+    - x: 1
+      y: 2
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 5
+    height: 3
+    rewardPoints:
+    - x: 2
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+    - x: 3
+      y: 0
+    - x: 4
+      y: 0
+  - reward: 3
+    width: 5
+    height: 3
+    rewardPoints:
+    - x: 2
+      y: 2
+    points:
+    - x: 0
+      y: 2
+    - x: 1
+      y: 2
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+    - x: 3
+      y: 2
+    - x: 4
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 1
+      y: 2
+    points:
+    - x: 0
+      y: 2
+    - x: 1
+      y: 0
+    - x: 1
+      y: 1
+    - x: 1
+      y: 2
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 0
+      y: 1
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 1
+      y: 1
+    - x: 2
+      y: 1
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 1
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 1
+      y: 1
+    - x: 1
+      y: 2
+    - x: 2
+      y: 0
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 2
+      y: 1
+    points:
+    - x: 0
+      y: 1
+    - x: 1
+      y: 1
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 2
+      y: 2
+    points:
+    - x: 0
+      y: 2
+    - x: 1
+      y: 2
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 2
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+    - x: 2
+      y: 1
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 0
+      y: 2
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 1
+      y: 2
+    - x: 2
+      y: 2
+  - reward: 3
+    width: 3
+    height: 3
+    rewardPoints:
+    - x: 0
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+  - reward: 4
+    width: 1
+    height: 5
+    rewardPoints:
+    - x: 0
+      y: 2
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 0
+      y: 3
+    - x: 0
+      y: 4
+  - reward: 4
+    width: 5
+    height: 1
+    rewardPoints:
+    - x: 2
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+    - x: 3
+      y: 0
+    - x: 4
+      y: 0
+  - reward: 2
+    width: 1
+    height: 4
+    rewardPoints:
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2
+    - x: 0
+      y: 3
+  - reward: 1
+    width: 4
+    height: 1
+    rewardPoints:
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+    - x: 3
+      y: 0
+  - reward: 0
+    width: 3
+    height: 1
+    rewardPoints: []
+    points:
+    - x: 0
+      y: 0
+    - x: 1
+      y: 0
+    - x: 2
+      y: 0
+  - reward: 0
+    width: 1
+    height: 3
+    rewardPoints: []
+    points:
+    - x: 0
+      y: 0
+    - x: 0
+      y: 1
+    - x: 0
+      y: 2

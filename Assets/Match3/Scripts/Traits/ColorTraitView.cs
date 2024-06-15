@@ -1,3 +1,4 @@
+using Core;
 
 namespace Match3
 {
@@ -8,6 +9,6 @@ namespace Match3
 
     public class ColorTrait : Trait<ColorTraitView>
     {
-        public int color;
+        public TileColor color;
     }
 }

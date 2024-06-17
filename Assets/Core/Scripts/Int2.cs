@@ -47,7 +47,7 @@ namespace Core
         }
 
         public readonly static Int2 zero = new(0, 0);
-        public readonly static Int2 one = new(1, 0);
+        public readonly static Int2 one = new(1, 1);
         public readonly static Int2 right = new(1, 0);
         public readonly static Int2 left = new(-1, 0);
         public readonly static Int2 up = new(0, 1);
@@ -63,5 +63,6 @@ namespace Core
         public static bool operator !=(Int2 lhs, Int2 rhs) => !(lhs == rhs);
 
         public static implicit operator Vector2Int(Int2 v) => new Vector2Int(v.x, v.y);
+        public static implicit operator Int2(Vector2Int v) => new Int2(v.x, v.y);
     }
 }

@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,8 +122,9 @@ namespace Core
         }
     }
 
-    public class Entity<T> : Entity where T : EntityView
+    public class Entity<TView> : Entity
+        where TView : EntityView
     {
-        public new T prefab => base.prefab as T;
+        public new TView prefab => base.prefab as TView;
     }
 }

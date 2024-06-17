@@ -3,6 +3,8 @@ using Core;
 
 namespace Match3
 {
+    using System;
+    using System.Linq;
     using UnityEngine;
 
     [CreateAssetMenu(fileName = "GameConfig", menuName = "GameConfig")]
@@ -10,8 +12,18 @@ namespace Match3
     {
         public int width = 7;
         public int height = 7;
+        public MatchConfig match;
         public CellView cell;
         public BeadTileView[] beads;
-        public MatchConfig match;
+        public ColoredTileView[] rewardTiles;
+
+        public T GetRewardTile<T>(TileColor color) where T : ColoredTileView
+        {
+            return rewardTiles.First(e => e is T && e.color == color) as T;
+        }
+        public T GetRewardTile<T>(TileColor color, Func<T, bool> check) where T : ColoredTileView
+        {
+            return rewardTiles.First(e => e is T && e.color == color && check.Invoke(e as T)) as T;
+        }
     }
 }

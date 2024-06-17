@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Core
 {
@@ -15,6 +16,8 @@ namespace Core
 
         public event Action<Entity> onEntityCreated = delegate { };
         public event Action<Entity> onEntityRemoved = delegate { };
+
+        public Func<float, Task> waiter;
 
         public Engine(EngineConfig config)
         {
@@ -67,11 +70,9 @@ namespace Core
             evaluator.Evaluate(entities.ToArray());
         }
 
-        public EngineSchedulerTask ScheduleTask(Action<EngineView> action) => ScheduleTask(0, action);
-        public EngineSchedulerTask ScheduleTask(float timeOffset, Action<EngineView> action)
+        public T GetEntity<T>() where T : Entity
         {
-            return null;
-            //TODO: i was here, creating State for Entity or Tile
+            return entities.Find(e => e is T) as T;
         }
 
         public List<Entity> GetEntitiesWithTrait<T>() where T : Trait
@@ -89,6 +90,12 @@ namespace Core
                 if (entity.HasTrait<T>())
                     action.Invoke(entity);
             }
+        }
+
+        public async Task Wait(float time)
+        {
+            if (waiter != null)
+                await waiter.Invoke(time);
         }
     }
 }

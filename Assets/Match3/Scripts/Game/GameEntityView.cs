@@ -20,15 +20,21 @@ namespace Match3
             evaluable.RegisterCallback(0, Evaluate);
         }
 
+        protected override void OnRemoved()
+        {
+            base.OnRemoved();
+            game.Clear();
+        }
+
         public void Setup(GameConfig config, GameOptions options)
         {
             game = new Game();
             game.Setup(engine, config, options);
         }
 
-        public void Evaluate()
+        public async void Evaluate()
         {
-            game.Evaluate();
+            await game.Evaluate();
         }
     }
 }

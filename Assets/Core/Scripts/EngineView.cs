@@ -7,7 +7,6 @@ namespace Core
     [RequireComponent(typeof(ObjectPool))]
     public class EngineView : MonoBehaviour
     {
-        public EngineScheduler scheduler;
         public Transform container;
         public float scale = 1;
         public int preview = 3;
@@ -29,8 +28,8 @@ namespace Core
             Clear();
 
             this.engine = engine;
-            // engine.onEntityCreated += OnCreateEntity;
-            // engine.onEntityRemoved += OnRemoveEntity;
+            engine.onEntityCreated += OnCreateEntity;
+            engine.onEntityRemoved += OnRemoveEntity;
 
             foreach (var entity in engine.entities)
             {
@@ -42,8 +41,8 @@ namespace Core
         {
             if (engine != null)
             {
-                // engine.onEntityCreated -= OnCreateEntity;
-                // engine.onEntityRemoved -= OnRemoveEntity;
+                engine.onEntityCreated -= OnCreateEntity;
+                engine.onEntityRemoved -= OnRemoveEntity;
             }
 
             foreach (var view in views)
@@ -58,8 +57,8 @@ namespace Core
             engine = null;
         }
 
-        // private void OnCreateEntity(Entity entity) => CreateView(entity);
-        // private void OnRemoveEntity(Entity entity) => RemoveView(GetViewById(entity.id));
+        private void OnCreateEntity(Entity entity) => CreateView(entity);
+        private void OnRemoveEntity(Entity entity) => RemoveView(GetViewById(entity.id));
         public EntityView CreateView(Entity entity)
         {
             var prefab = entity.prefab;

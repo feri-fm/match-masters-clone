@@ -9,6 +9,10 @@ namespace Match3
     {
         public override void OnGUI(Rect p, SerializedProperty property, GUIContent label)
         {
+            EditorGUI.BeginProperty(p, label, property);
+
+            p = EditorGUI.PrefixLabel(p, GUIUtility.GetControlID(FocusType.Passive), label);
+
             var value = property.FindPropertyRelative("value");
 
             TileColorSamples sampleColor = Enum.IsDefined(typeof(TileColorSamples), value.intValue) ? (TileColorSamples)value.intValue : TileColorSamples.None;

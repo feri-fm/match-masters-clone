@@ -8,6 +8,8 @@ namespace Core
         public Entity entity { get; private set; }
         public TraitView prefab { get; private set; }
 
+        public Engine engine => entity.engine;
+
         public string key => prefab.key;
 
         public void _Setup(Entity entity, TraitView prefab)

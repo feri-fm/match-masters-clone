@@ -1,23 +1,21 @@
 using UnityEngine;
 using Core;
+using System.Threading.Tasks;
 
 namespace Match3
 {
-    public class BeadTileView : TileView<BeadTile>
+    public class BeadTileView : ColoredTileView<BeadTile>
     {
-        public TileColor color;
-
         public override Entity CreateEntity() => new BeadTile();
     }
 
-    public class BeadTile : Tile<BeadTileView>
+    public class BeadTile : ColoredTile<BeadTileView>
     {
         protected override void OnSetup()
         {
             base.OnSetup();
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
-            AddTrait<ColorTraitView, ColorTrait>(c => c.color = prefab.color);
 
             evaluable.RegisterCallback(0, Evaluate);
         }
@@ -32,14 +30,10 @@ namespace Match3
             }
         }
 
-        public override void Hit(float time)
+        protected override async Task OnHit()
         {
-            base.Hit(time);
+            await base.OnHit();
             engine.RemoveEntity(this);
-            engine.ScheduleTask(time, (v) =>
-            {
-                v.RemoveView(v.GetView(this));
-            });
         }
     }
 }

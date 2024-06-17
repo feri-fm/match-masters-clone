@@ -7,6 +7,8 @@ namespace Core
         public EntityView entity { get; private set; }
         public Trait trait { get; private set; }
 
+        public EngineView engine => entity.engine;
+
         public abstract Trait CreateTrait();
 
         public void _Setup(EntityView entity, Trait trait)

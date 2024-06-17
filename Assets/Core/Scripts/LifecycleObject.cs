@@ -9,6 +9,7 @@ namespace Core
 
         protected virtual void OnSetup() { }
         protected virtual void OnRemoved() { }
+        protected virtual void OnChanged() { }
         protected virtual void OnRender() { }
 
         protected override void LateUpdate()
@@ -30,11 +31,13 @@ namespace Core
         {
             MarkDirty();
             lifecycle.onChanged += MarkDirty;
+            lifecycle.onChanged += OnChanged;
             OnSetup();
         }
         protected void __Remove(LifecycleObject lifecycle)
         {
             lifecycle.onChanged -= MarkDirty;
+            lifecycle.onChanged -= OnChanged;
             OnRemoved();
         }
         private void __Render()

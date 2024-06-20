@@ -1,13 +1,29 @@
 using System.Threading.Tasks;
 using Core;
+using UnityEngine;
 
 namespace Match3
 {
     public class BombTileView : ColoredTileView<BombTile>
     {
+        public SpriteRenderer target;
+        public GameObject clearEffect;
+
         public MatchPattern area;
 
         public override Entity CreateEntity() => new BombTile();
+
+        protected override void OnSetup()
+        {
+            base.OnSetup();
+            var r = clearEffect.GetComponent<SpriteRenderer>();
+            r.color = new Color(target.color.r, target.color.g, target.color.b, r.color.a);
+            clearEffect.SetActive(false);
+            tile.onHit += () =>
+            {
+                clearEffect.SetActive(true);
+            };
+        }
     }
 
     public class BombTile : ColoredTile<BombTileView>
@@ -17,6 +33,7 @@ namespace Match3
             base.OnSetup();
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
+            AddTrait<AnimatorTraitView>();
         }
 
         protected override async Task OnHit()
@@ -32,11 +49,11 @@ namespace Match3
                     var tile = game.GetTileAt(p);
                     if (tile != null)
                     {
-                        await tile.Hit();
+                        tile.Hit();
                     }
                 }
             }
-            await engine.Wait(0.2f);
+            await engine.Wait(0.3f);
             engine.RemoveEntity(this);
         }
     }

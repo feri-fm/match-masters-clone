@@ -1,13 +1,28 @@
+using System;
 using System.Threading.Tasks;
 using Core;
+using UnityEngine;
 
 namespace Match3
 {
     public class ClearLineTileView : ColoredTileView<ClearLineTile>
     {
+        public SpriteRenderer target;
+        public GameObject clearEffect;
         public ClearLineDirection direction;
 
         public override Entity CreateEntity() => new ClearLineTile();
+
+        protected override void OnSetup()
+        {
+            base.OnSetup();
+            var r = clearEffect.GetComponent<SpriteRenderer>();
+            r.color = new Color(target.color.r, target.color.g, target.color.b, r.color.a); clearEffect.SetActive(false);
+            tile.onHit += () =>
+            {
+                clearEffect.SetActive(true);
+            };
+        }
     }
 
     public class ClearLineTile : ColoredTile<ClearLineTileView>
@@ -17,12 +32,13 @@ namespace Match3
             base.OnSetup();
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
+            AddTrait<AnimatorTraitView>();
         }
 
         protected override async Task OnHit()
         {
             await base.OnHit();
-            await engine.Wait(0.1f);
+            await engine.Wait(0.2f);
             if (prefab.direction == ClearLineDirection.Horizontal)
             {
                 for (int i = 0; i <= game.width * 2; i++)
@@ -33,8 +49,8 @@ namespace Match3
                     var tile = game.GetTileAt(point);
                     if (tile != null)
                     {
-                        await tile.Hit();
-                        if (i % 2 == 0) await engine.Wait(0.1f);
+                        tile.Hit();
+                        // if (i % 2 == 0) await engine.Wait(0.1f);
                     }
                 }
             }
@@ -48,12 +64,12 @@ namespace Match3
                     var tile = game.GetTileAt(point);
                     if (tile != null)
                     {
-                        await tile.Hit();
-                        if (i % 2 == 0) await engine.Wait(0.1f);
+                        tile.Hit();
+                        // if (i % 2 == 0) await engine.Wait(0.1f);
                     }
                 }
             }
-            await engine.Wait(0.2f);
+            await engine.Wait(0.3f);
             engine.RemoveEntity(this);
         }
     }

@@ -15,6 +15,7 @@ namespace Match3
         public MatchConfig match;
         public CellView cell;
         public BeadTileView[] beads;
+        public LifetimeEffect[] effects;
         public ColoredTileView[] rewardTiles;
 
         public T GetRewardTile<T>(TileColor color) where T : ColoredTileView
@@ -24,6 +25,10 @@ namespace Match3
         public T GetRewardTile<T>(TileColor color, Func<T, bool> check) where T : ColoredTileView
         {
             return rewardTiles.First(e => e is T && e.color == color && check.Invoke(e as T)) as T;
+        }
+        public LifetimeEffect GetEffect(TileColor color)
+        {
+            return effects.First(e => e.color == color);
         }
     }
 }

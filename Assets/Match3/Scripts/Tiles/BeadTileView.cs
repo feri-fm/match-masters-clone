@@ -16,18 +16,7 @@ namespace Match3
             base.OnSetup();
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
-
-            evaluable.RegisterCallback(0, Evaluate);
-        }
-
-        public void Evaluate()
-        {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                position.x += Random.Range(-1, 2);
-                position.y += Random.Range(-1, 2);
-                Changed();
-            }
+            AddTrait<AnimatorTraitView>();
         }
 
         protected override async Task OnHit()

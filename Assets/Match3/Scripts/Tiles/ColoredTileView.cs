@@ -4,6 +4,17 @@ namespace Match3
     {
         public TileColor color = TileColor.none;
 
+
+        protected override void OnSetup()
+        {
+            base.OnSetup();
+            tile.onHit += () =>
+            {
+                var effect = game.config.GetEffect(color);
+                var ins = engine.pool.Spawn(effect, engine.container);
+                ins.transform.position = engine.GetPosition(tile.position);
+            };
+        }
     }
     public abstract class ColoredTile : Tile<ColoredTileView>
     {

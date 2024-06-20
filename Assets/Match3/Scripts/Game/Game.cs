@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Match3
 {
@@ -19,6 +22,11 @@ namespace Match3
         public bool isEvaluating { get; private set; }
 
         public System.Random random { get; private set; }
+
+        public Int2 swappedA;
+        public Int2 swappedB;
+
+        public int hittings;
 
         public void Setup(Engine engine, GameConfig config, GameOptions options)
         {
@@ -65,12 +73,21 @@ namespace Match3
             do
             {
                 loop = false;
+                hittings = 0;
+                foreach (var tile in tiles)
+                {
+                    if (tile != null)
+                        tile.canHit = true;
+                }
                 while (TryGetMatch(out var match))
                 {
                     await ApplyMatch(match);
                     loop = true;
                 }
-                if (loop) await engine.Wait(0.3f);
+                while (hittings > 0)
+                    await engine.Wait(0);
+
+                if (loop) await engine.Wait(0.4f);
                 while (CanApplyGravity())
                 {
                     ApplyGravity();
@@ -78,6 +95,7 @@ namespace Match3
                     await engine.Wait(0.1f);
                     loop = true;
                 }
+                ApplyGravity();
                 if (loop) changed = true;
                 if (loop) await engine.Wait(0.2f);
             } while (loop);
@@ -89,8 +107,10 @@ namespace Match3
         public async void TrySwap(Int2 a, Int2 b)
         {
             isEvaluating = true;
+            swappedA = a;
+            swappedB = b;
             Swap(a, b);
-            await engine.Wait(0.2f);
+            await engine.Wait(0.4f);
             if (!await Evaluate())
             {
                 Swap(a, b);
@@ -144,7 +164,7 @@ namespace Match3
             {
                 var point = offset + pattern.points[i];
                 var tile = GetTileAt(point);
-                if (tile != null && tile is ColoredTile coloredTile)
+                if (tile != null && tile.canHit && tile is ColoredTile coloredTile)
                 {
                     match.SetTileAt(i, coloredTile);
                     if (i == 0) color = coloredTile.color;
@@ -161,33 +181,39 @@ namespace Match3
 
         private async Task ApplyMatch(Match match)
         {
-            foreach (var tile in match.tiles)
-            {
+            foreach (var tile in match.tiles.Where(e => e is BeadTile))
                 await tile.Hit();
-            }
+            foreach (var tile in match.tiles.Where(e => e is not BeadTile))
+                await tile.Hit();
+
             if (match.pattern.hasReward)
             {
-                var point = match.offset + match.pattern.rewardPoints.Random();
+                var hadReward = false;
+                Int2 rewardPoint = Int2.zero;
+                foreach (var item in match.pattern.rewardPoints)
+                {
+                    if (item + match.offset == swappedA || item + match.offset == swappedB)
+                    {
+                        rewardPoint = item;
+                        hadReward = true;
+                        break;
+                    }
+                }
+                if (!hadReward)
+                    rewardPoint = match.pattern.rewardPoints.Random();
+
+                var point = match.offset + rewardPoint;
                 TileView prefab = null;
                 switch (match.pattern.reward)
                 {
-                    case MatchPattern.Reward.Horizontal:
-                        prefab = config.GetRewardTile<ClearLineTileView>(match.color, e => e.direction == ClearLineDirection.Horizontal);
-                        SetTileAt(point, CreateTileFromView(prefab));
-                        break;
-                    case MatchPattern.Reward.Vertical:
-                        prefab = config.GetRewardTile<ClearLineTileView>(match.color, e => e.direction == ClearLineDirection.Vertical);
-                        SetTileAt(point, CreateTileFromView(prefab));
-                        break;
-                    case MatchPattern.Reward.Lightning:
-                        prefab = config.GetRewardTile<LightningTileView>(match.color);
-                        SetTileAt(point, CreateTileFromView(prefab));
-                        break;
-                    case MatchPattern.Reward.Bomb:
-                        prefab = config.GetRewardTile<BombTileView>(match.color);
-                        SetTileAt(point, CreateTileFromView(prefab));
-                        break;
+                    case MatchPattern.Reward.Horizontal: prefab = config.GetRewardTile<ClearLineTileView>(match.color, e => e.direction == ClearLineDirection.Horizontal); break;
+                    case MatchPattern.Reward.Vertical: prefab = config.GetRewardTile<ClearLineTileView>(match.color, e => e.direction == ClearLineDirection.Vertical); break;
+                    case MatchPattern.Reward.Lightning: prefab = config.GetRewardTile<LightningTileView>(match.color); break;
+                    case MatchPattern.Reward.Bomb: prefab = config.GetRewardTile<BombTileView>(match.color); break;
                 }
+                var tile = CreateTileFromView(prefab);
+                SetTileAt(point, tile);
+                tile.WithTrait<AnimatorTrait>(t => t.Spawn());
             }
         }
 
@@ -206,15 +232,39 @@ namespace Match3
         private void ApplyGravity()
         {
             for (int i = 0; i < width; i++)
-                for (int j = 0; j < height - 1; j++)
+            {
+                // var isHole = false;
+                var last = false;
+                for (int j = 0; j < height; j++)
                 {
-                    var cell = new Int2(i, j);
-                    var upCell = new Int2(i, j + 1);
-                    if (IsEmptyAt(cell) && IsNotEmptyAt(upCell))
+                    if (last)
                     {
-                        Swap(upCell, cell);
+                        last = false;
+                        continue;
+                    }
+                    var cell = new Int2(i, j);
+                    var downCell = new Int2(i, j - 1);
+                    var tile = GetTileAt(cell);
+                    var moved = false;
+                    if (j > 0 && IsNotEmptyAt(cell) && IsEmptyAt(downCell))
+                    {
+                        last = true;
+                        moved = true;
+                        Swap(cell, downCell);
+                    }
+                    if (tile != null)
+                    {
+                        if (moved)
+                        {
+                            tile.WithTrait<AnimatorTrait>(t => t.Stretch());
+                        }
+                        else
+                        {
+                            tile.WithTrait<AnimatorTrait>(t => t.Squash());
+                        }
                     }
                 }
+            }
         }
         private void FillTopRow()
         {
@@ -225,6 +275,7 @@ namespace Match3
                 {
                     var bead = CreateColoredTile(config.beads.Random());
                     SetTileAt(cell, bead);
+                    bead.WithTrait<AnimatorTrait>(t => t.SpawnAtTop());
                 }
             }
         }

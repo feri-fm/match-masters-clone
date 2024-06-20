@@ -25,5 +25,6 @@ namespace Core
     }
     public abstract class TraitView<T> : TraitView where T : Trait
     {
+        public new T trait => base.trait as T;
     }
 }

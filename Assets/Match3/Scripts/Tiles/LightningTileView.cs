@@ -18,6 +18,7 @@ namespace Match3
             base.OnSetup();
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
+            AddTrait<AnimatorTraitView>();
         }
 
         protected override async Task OnHit()
@@ -32,7 +33,7 @@ namespace Match3
                 var tile = game.GetTileAt(point);
                 if (tile != null)
                 {
-                    await tile.Hit();
+                    tile.Hit();
                 }
             }
             await engine.Wait(0.2f);

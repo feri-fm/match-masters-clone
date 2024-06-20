@@ -51,11 +51,11 @@ public class EngineViewLoader : MonoBehaviour
             tcs.SetResult(0);
         }));
         return tcs.Task;
-    }
 
-    private IEnumerator IWait(float time, Action callback)
-    {
-        yield return new WaitForSeconds(time);
-        callback.Invoke();
+        IEnumerator IWait(float time, Action callback)
+        {
+            yield return new WaitForSeconds(time);
+            callback.Invoke();
+        }
     }
 }

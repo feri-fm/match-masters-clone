@@ -7,6 +7,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.38268343
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312864735882011736, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 5000498774783606208, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: cc7d5919467e4cc47a4c65d4003fbd9f, type: 3}
     - target: {fileID: 5000498774783606208, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: m_Color.b
       value: 0.25157225
@@ -72,6 +108,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6984676002069928110, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
+      propertyPath: m_Name
+      value: Bead2Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 8642592554068576048, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: m_Name
       value: Bead2Green
       objectReference: {fileID: 0}

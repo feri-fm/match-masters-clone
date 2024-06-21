@@ -211,7 +211,7 @@ public class GameObjectMember : Member
     }
 }
 
-public class TextMember : Member<TextHelper>
+public class TextMember : Member<TextAdaptor>
 {
     private string _text;
 

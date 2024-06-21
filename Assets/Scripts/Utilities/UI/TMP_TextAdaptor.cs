@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TextHelper : MonoBehaviour
+public class TMP_TextAdaptor : TextAdaptor
 {
     public bool ignoreCustomText;
 
@@ -17,9 +17,7 @@ public class TextHelper : MonoBehaviour
 
     private string _displayText;
 
-    public string text { get => _text ?? tmpText.text; set => SetText(value); }
-
-    public UnityAction onChanged = () => { };
+    public override string text { get => _text ?? tmpText.text; set => SetText(value); }
 
     public TMP_Text Load()
     {
@@ -31,7 +29,7 @@ public class TextHelper : MonoBehaviour
         return _tmpText;
     }
 
-    public void SetText(string text)
+    public override void SetText(string text)
     {
         Load();
         _text = text;
@@ -40,7 +38,7 @@ public class TextHelper : MonoBehaviour
         UpdateText();
     }
 
-    public void SetTextWithoutNotify(string text)
+    public override void SetTextWithoutNotify(string text)
     {
         Load();
         _text = text;

@@ -34,6 +34,7 @@ namespace Match3
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
             AddTrait<AnimatorTraitView>();
+            AddTrait<PowerUpTraitView>();
         }
 
         protected override async Task OnHit()

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class ConfirmationPopup : Popup<ConfirmationPopupData>
 {
-    public TextHelper text;
-    public TextHelper confirm;
-    public TextHelper cancel;
+    public TextAdaptor text;
+    public TextAdaptor confirm;
+    public TextAdaptor cancel;
     public ButtonHelper btnConfirm;
     public ButtonHelper btnCancel;
 

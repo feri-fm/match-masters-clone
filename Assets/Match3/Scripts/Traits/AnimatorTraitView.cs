@@ -12,7 +12,7 @@ namespace Match3
         public Transform body;
         public Transform anchor;
         public Animator animator;
-        public TextHelper text;
+        public TextAdaptor text;
 
         private TileView tile;
         private Transform root;

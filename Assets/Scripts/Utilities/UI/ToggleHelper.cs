@@ -1,18 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ToggleHelper : MonoBehaviour
+public class ToggleHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Toggle toggle;
 
     public bool _isOn;
 
+    public UnityEvent<bool> onValueChanged;
+    public UnityEvent onStartEdit;
+    public UnityEvent onEndEdit;
+
     public bool isOn
     {
         get => toggle.isOn;
         set => SetValue(value);
+    }
+
+    private void Awake()
+    {
+        toggle.onValueChanged.AddListener((v) =>
+        {
+            _isOn = v;
+            onValueChanged.Invoke(v);
+        });
     }
 
     public void SetValue(bool isOn)
@@ -25,5 +40,15 @@ public class ToggleHelper : MonoBehaviour
     {
         _isOn = isOn;
         toggle.SetIsOnWithoutNotify(isOn);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        onStartEdit.Invoke();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        onEndEdit.Invoke();
     }
 }

@@ -68,6 +68,7 @@ namespace Match3
     public abstract class TileView<T> : TileView where T : Tile
     {
         public new T entity => base.entity as T;
+        public new T tile => base.tile as T;
     }
     public abstract class Tile<T> : Tile where T : TileView
     {

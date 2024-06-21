@@ -12,10 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa65d885ee00fef48855dbb2f9976731, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  width: 7
-  height: 7
-  minCount: 6
-  maxCount: 10
   match: {fileID: 11400000, guid: 37e911ffbb8f3704eac5f700a3d9c90f, type: 2}
   cell: {fileID: 1034135808035711609, guid: 23014f62068d9b949b2412eefb06500a, type: 3}
   beads:
@@ -34,13 +30,6 @@ MonoBehaviour:
   - {fileID: 1882168251753507063, guid: 37ffb203116ddde4391f49f5e1a88a64, type: 3}
   - {fileID: 1882168251753507063, guid: 0fd6fe9b2f0361742874780012b9ee9f, type: 3}
   rewardTiles:
-  - {fileID: 6984676002069928109, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
-  - {fileID: 1039072662306952806, guid: 9548172b35d1053409a858a8e8f910e7, type: 3}
-  - {fileID: 1039072662306952806, guid: 6d3ad6ccd8607b0449d82bc86d75972e, type: 3}
-  - {fileID: 1039072662306952806, guid: 5fa079fe072edcd4fbb4b9c881668437, type: 3}
-  - {fileID: 1039072662306952806, guid: 8907faae0a1dc24448f39754e1068995, type: 3}
-  - {fileID: 1039072662306952806, guid: a0759c923af562f45a36890bb16e716f, type: 3}
-  - {fileID: 1039072662306952806, guid: c9851385d61311e4ba794f06bd0f63d4, type: 3}
   - {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
   - {fileID: 2885599379440636363, guid: 98b048b9e90c1d14eb584e30e1fe7c09, type: 3}
   - {fileID: 2885599379440636363, guid: 66fe8d1d596598f498f5d0d62647055b, type: 3}

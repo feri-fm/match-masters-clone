@@ -6,7 +6,7 @@ using Core;
 using Match3;
 using UnityEngine;
 
-public class EngineViewLoader : MonoBehaviour
+public class SampleEngineViewLoader : MonoBehaviour
 {
     public EngineView engineView;
     public EngineConfig engineConfig;
@@ -73,18 +73,42 @@ public class EngineViewLoader : MonoBehaviour
     public async void Shuffle()
     {
         if (!game.isEvaluating)
-        {
             await game.game.Shuffle();
-        }
     }
 
     [Member]
     public async void TwoColors()
     {
         if (!game.isEvaluating)
-        {
             await game.game.TwoColors();
-        }
+    }
+
+    [Member]
+    public async void Rocket()
+    {
+        if (!game.isEvaluating)
+            await game.game.Rocket();
+    }
+
+    [Member]
+    public async void Bucket()
+    {
+        if (!game.isEvaluating)
+            await game.game.Bucket();
+    }
+
+    [Member]
+    public async void Duck()
+    {
+        if (!game.isEvaluating)
+            await game.game.Duck();
+    }
+
+    [Member]
+    public async void Hat()
+    {
+        if (!game.isEvaluating)
+            await game.game.Hat();
     }
 
     [Member]

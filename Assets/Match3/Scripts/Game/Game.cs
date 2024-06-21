@@ -125,9 +125,25 @@ namespace Match3
             if (!await Evaluate())
             {
                 isEvaluating = true;
-                Swap(a, b);
-                await engine.Wait(0.3f);
-                isEvaluating = false;
+
+                var tileA = GetTileAt(a);
+                var tileB = GetTileAt(b);
+
+                if (tileA.HasTrait<PowerUpTrait>() && tileB.HasTrait<PowerUpTrait>())
+                {
+                    hittings = 0;
+                    _ = tileA.Hit();
+                    _ = tileB.Hit();
+                    while (hittings > 0)
+                        await engine.Wait(0);
+                    await Evaluate();
+                }
+                else
+                {
+                    Swap(a, b);
+                    await engine.Wait(0.3f);
+                    isEvaluating = false;
+                }
             }
         }
 
@@ -148,6 +164,10 @@ namespace Match3
         public int RandInt(int max)
         {
             return random.Next().value % max;
+        }
+        public Int2 RandPoint()
+        {
+            return new Int2(RandInt(width), RandInt(height));
         }
         public T RandElement<T>(List<T> items) => RandElement(items.ToArray());
         public T RandElement<T>(T[] items)
@@ -240,6 +260,8 @@ namespace Match3
                         {
                             rewardPoint = item;
                             hadReward = true;
+                            swappedA = -Int2.one;
+                            swappedB = -Int2.one;
                             break;
                         }
                     }
@@ -399,77 +421,133 @@ namespace Match3
             return tile;
         }
 
-        public async Task Shuffle()
+        public async Task RunProgram(Func<Game, Task> action)
         {
             isEvaluating = true;
-            var swappedTiles = new List<Tile>();
-            var swappedPoints = new List<Int2>();
-            for (int i = 0; i < 20; i++)
-            {
-                var a = new Int2(RandInt(width), RandInt(height));
-                var b = new Int2(RandInt(width), RandInt(height));
-                if (IsNotEmptyAt(a) && IsNotEmptyAt(b))
-                {
-                    Swap(a, b);
-                    if (AnyMatch())
-                    {
-                        Swap(a, b);
-                    }
-                    else
-                    {
-                        var tileA = GetTileAt(b);
-                        var tileB = GetTileAt(a);
-                        swappedTiles.Add(tileA);
-                        swappedTiles.Add(tileB);
-                        swappedPoints.Add(a);
-                        swappedPoints.Add(b);
-
-                        // var delta = (Vector2)(a - tileA.position);
-                        // var force = delta.normalized * 10;
-                        // tileA.WithTrait<AnimatorTrait>(t => t.AddForce(force));
-
-                        // delta = (Vector2)(b - tileB.position);
-                        // force = delta.normalized * 10;
-                        // tileB.WithTrait<AnimatorTrait>(t => t.AddForce(force));
-
-                        // await engine.Wait(0.04f);
-                    }
-                }
-            }
-            // for (int i = 0; i < swappedTiles.Count; i++)
-            // {
-            //     var delta = (Vector2)(swappedPoints[i] - swappedTiles[i].position);
-            //     var force = delta.normalized * 18;
-            //     swappedTiles[i].WithTrait<AnimatorTrait>(t => t.AddForce(force));
-            // }
-            await engine.Wait(0.6f);
+            await action.Invoke(this);
+            while (hittings > 0)
+                await engine.Wait(0);
             await Evaluate();
         }
 
+        public async Task Shuffle()
+        {
+            await RunProgram(async (g) =>
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    var a = RandPoint();
+                    var b = RandPoint();
+                    if (g.IsNotEmptyAt(a) && g.IsNotEmptyAt(b))
+                    {
+                        g.Swap(a, b);
+                        if (g.AnyMatch())
+                            g.Swap(a, b);
+                    }
+                }
+                await g.engine.Wait(0.6f);
+            });
+        }
         public async Task TwoColors()
         {
-            isEvaluating = true;
-            foreach (var tile in tiles)
+            await RunProgram(async (g) =>
             {
-                SetTileAt(tile.position, null);
-                engine.RemoveEntity(tile);
-            }
-            var s1 = RandInt(options.beads);
-            var s2 = (s1 + 1 + RandInt(options.beads - 2)) % options.beads;
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
+                foreach (var tile in tiles)
                 {
-                    var black = (i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0);
-                    var bead = black ? config.beads[s1] : config.beads[s2];
-                    var tile = CreateColoredTile(bead);
-                    var point = new Int2(i, j);
-                    SetTileAt(point, tile);
-                    tile.WithTrait<AnimatorTrait>(t => t.Jump());
+                    engine.RemoveEntity(tile);
                 }
-            }
-            await engine.Wait(0.1f);
-            await Evaluate();
+                var s1 = RandInt(options.beads);
+                var s2 = (s1 + 1 + RandInt(options.beads - 2)) % options.beads;
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < height; j++)
+                    {
+                        var black = (i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0);
+                        var bead = black ? config.beads[s1] : config.beads[s2];
+                        var tile = CreateColoredTile(bead);
+                        var point = new Int2(i, j);
+                        SetTileAt(point, tile);
+                        tile.WithTrait<AnimatorTrait>(t => t.Jump());
+                    }
+                }
+                await engine.Wait(0.1f);
+            });
+        }
+        public async Task Duck()
+        {
+            await RunProgram(async (g) =>
+            {
+                for (int i = 0; i < g.width; i++)
+                {
+                    var tile = GetTileAt(new Int2(i, 3));
+                    if (tile != null)
+                    {
+                        _ = tile.Hit();
+                        await g.engine.Wait(0.05f);
+                    }
+                }
+                await engine.Wait(0.2f);
+            });
+        }
+        public async Task Rocket()
+        {
+            await RunProgram(async (g) =>
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    var tile = GetTileAt(g.RandPoint());
+                    if (tile != null)
+                    {
+                        _ = tile.Hit();
+                        await g.engine.Wait(0.2f);
+                    }
+                }
+                await engine.Wait(0.3f);
+            });
+        }
+        public async Task Bucket()
+        {
+            await RunProgram(async (g) =>
+            {
+                var color = config.beads[2 + g.RandInt(options.beads - 2)].color;
+                var prefab = g.config.GetBeadTile(color);
+                for (int i = 0; i < 6; i++)
+                {
+                    var point = g.RandPoint();
+                    var tile = GetTileAt(point);
+                    if (tile != null && tile is BeadTile beadTile && beadTile.color != color)
+                    {
+                        g.engine.RemoveEntity(beadTile);
+                        var newTile = g.CreateColoredTile(prefab);
+                        SetTileAt(point, newTile);
+                        newTile.WithTrait<AnimatorTrait>(t => t.Spawn());
+                        await g.engine.Wait(0.1f);
+                    }
+                }
+                await engine.Wait(0.4f);
+            });
+        }
+        public async Task Hat()
+        {
+            await RunProgram(async (g) =>
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    var point = g.RandPoint();
+                    var tile = GetTileAt(point);
+                    if (tile != null && tile is BeadTile beadTile)
+                    {
+                        var color = beadTile.color;
+                        var prefab = g.RandElement(g.config.rewardTiles.Where(e => e.color == color).ToArray());
+                        g.engine.RemoveEntity(beadTile);
+                        var newTile = g.CreateTile(prefab);
+                        SetTileAt(point, newTile);
+                        newTile.WithTrait<AnimatorTrait>(t => t.Spawn());
+                        await g.engine.Wait(0.1f);
+                    }
+                }
+                await engine.Wait(0.4f);
+            });
         }
 
         public GameData Save()

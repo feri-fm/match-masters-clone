@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AlertPopup : Popup<AlertPopupData>
 {
-    public TextHelper text;
+    public TextAdaptor text;
 
     public override void Setup()
     {

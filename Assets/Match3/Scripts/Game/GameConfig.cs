@@ -16,6 +16,10 @@ namespace Match3
         public LifetimeEffect[] effects;
         public ColoredTileView[] rewardTiles;
 
+        public BeadTileView GetBeadTile(TileColor color)
+        {
+            return beads.First(e => e.color == color);
+        }
         public T GetRewardTile<T>(TileColor color) where T : ColoredTileView
         {
             return rewardTiles.First(e => e is T && e.color == color) as T;

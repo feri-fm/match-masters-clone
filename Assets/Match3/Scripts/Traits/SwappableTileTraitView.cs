@@ -5,6 +5,7 @@ namespace Match3
 {
     public class SwappableTileTraitView : TraitView<SwappableTileTrait>
     {
+        public float minDelta = 20;
         public override Trait CreateTrait() => new SwappableTileTrait();
 
         private Vector3 startPos;
@@ -23,7 +24,7 @@ namespace Match3
             var delta = Input.mousePosition - startPos;
             if (delta.magnitude > 0)
             {
-                if (Mathf.Abs(Mathf.Abs(delta.x) - Mathf.Abs(delta.y)) > engine.scale * 0.1f)
+                if (Mathf.Abs(Mathf.Abs(delta.x) - Mathf.Abs(delta.y)) > minDelta)
                 {
                     var dir = Vector2Int.zero;
                     if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))

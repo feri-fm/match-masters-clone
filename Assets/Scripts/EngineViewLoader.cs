@@ -10,37 +10,35 @@ public class EngineViewLoader : MonoBehaviour
 {
     public EngineView engineView;
     public EngineConfig engineConfig;
-    public GameConfig gameConfig;
+    public GameOptions gameOptions;
+
+    public TextMember status;
 
     private Engine engine;
 
     public GameEntity game;
 
+    public EngineData engineData;
+
     private void Start()
     {
         engine = new Engine(engineConfig);
         engine.waiter = Wait;
-
         engineView.Setup(engine);
 
         game = engine.CreateEntity("game") as GameEntity;
-        game.Setup(gameConfig, new GameOptions());
-
+        game.Setup(gameOptions);
         engine.Evaluate();
     }
 
-    private async void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             engine.Evaluate();
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            await game.game.Shuffle();
-            engine.Evaluate();
-        }
+        status.text = $"evaluating {game.isEvaluating}";
     }
 
     public Task Wait(float time)
@@ -56,6 +54,55 @@ public class EngineViewLoader : MonoBehaviour
         {
             yield return new WaitForSeconds(time);
             callback.Invoke();
+        }
+    }
+
+    [Member]
+    public void Reload()
+    {
+        if (!game.isEvaluating)
+        {
+            engine.Clear();
+            game = engine.CreateEntity("game") as GameEntity;
+            game.Setup(gameOptions);
+            engine.Evaluate();
+        }
+    }
+
+    [Member]
+    public async void Shuffle()
+    {
+        if (!game.isEvaluating)
+        {
+            await game.game.Shuffle();
+        }
+    }
+
+    [Member]
+    public async void TwoColors()
+    {
+        if (!game.isEvaluating)
+        {
+            await game.game.TwoColors();
+        }
+    }
+
+    [Member]
+    public void Save()
+    {
+        if (!game.isEvaluating)
+        {
+            engineData = engine.Save();
+        }
+    }
+
+    [Member]
+    public void Load()
+    {
+        if (!game.isEvaluating && engineData != null)
+        {
+            engine.Load(engineData);
+            game = engine.GetEntity<GameEntity>();
         }
     }
 }

@@ -22,6 +22,7 @@ public class JsonData
     {
         json[key] = JToken.FromObject(data);
     }
+    public T R<T>(string key) => R<T>(key, default);
     public T R<T>(string key, T defaultValue)
     {
         if (json.ContainsKey(key))

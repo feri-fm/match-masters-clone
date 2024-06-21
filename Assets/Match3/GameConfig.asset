@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa65d885ee00fef48855dbb2f9976731, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  width: 8
-  height: 8
+  width: 7
+  height: 7
+  minCount: 6
+  maxCount: 10
   match: {fileID: 11400000, guid: 37e911ffbb8f3704eac5f700a3d9c90f, type: 2}
   cell: {fileID: 1034135808035711609, guid: 23014f62068d9b949b2412eefb06500a, type: 3}
   beads:
@@ -21,6 +23,8 @@ MonoBehaviour:
   - {fileID: 1039072662306952806, guid: 6d3ad6ccd8607b0449d82bc86d75972e, type: 3}
   - {fileID: 1039072662306952806, guid: 5fa079fe072edcd4fbb4b9c881668437, type: 3}
   - {fileID: 1039072662306952806, guid: 8907faae0a1dc24448f39754e1068995, type: 3}
+  - {fileID: 1039072662306952806, guid: a0759c923af562f45a36890bb16e716f, type: 3}
+  - {fileID: 1039072662306952806, guid: c9851385d61311e4ba794f06bd0f63d4, type: 3}
   effects:
   - {fileID: 7900499928666280131, guid: fba90931cfecf544b9f866c4de92e056, type: 3}
   - {fileID: 1882168251753507063, guid: 9ad71f52126387f4dbf5c0e50cbddca8, type: 3}

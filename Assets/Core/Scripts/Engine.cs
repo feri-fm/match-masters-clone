@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core
@@ -97,5 +98,41 @@ namespace Core
             if (waiter != null)
                 await waiter.Invoke(time);
         }
+
+        public EngineData Save()
+        {
+            return new EngineData()
+            {
+                identifier = identifierGenerator.Save(),
+                entities = entities.Select(e => e.Save()).ToArray(),
+            };
+        }
+        public void Load(EngineData data)
+        {
+            Clear();
+            identifierGenerator.Load(data.identifier);
+            var _entities = new Entity[data.entities.Length];
+            for (int i = 0; i < data.entities.Length; i++)
+            {
+                var entityData = data.entities[i];
+                var prefab = config.GetEntity(entityData.key);
+                var entity = CreateEntity(prefab, entityData.id);
+                _entities[i] = entity;
+            }
+            for (int i = 0; i < _entities.Length; i++)
+            {
+                _entities[i].Load(data.entities[i]);
+            }
+            for (int i = 0; i < _entities.Length; i++)
+            {
+                _entities[i].PostLoad(data.entities[i]);
+            }
+        }
+    }
+
+    public class EngineData
+    {
+        public IdentifierGeneratorData identifier;
+        public EntityData[] entities;
     }
 }

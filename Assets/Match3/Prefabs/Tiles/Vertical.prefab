@@ -114,6 +114,7 @@ Transform:
   m_Children:
   - {fileID: 297146948}
   - {fileID: 1282228899953662846}
+  - {fileID: 7155309053565467429}
   m_Father: {fileID: 3394255802242096434}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -142,7 +143,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8437252131947735605}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.39}
+  m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 0.7, y: 30, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -201,6 +202,80 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &4435447025103560045
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7144473042329438781}
+    m_Modifications:
+    - target: {fileID: 3398556473132434586, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_Name
+      value: TileSpriteColor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: tile
+      value: 
+      objectReference: {fileID: 1562667632}
+    - target: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: color.value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: spriteRenderer
+      value: 
+      objectReference: {fileID: 297146949}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+--- !u!4 &7155309053565467429 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+  m_PrefabInstance: {fileID: 4435447025103560045}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5300279727659076395
 PrefabInstance:
   m_ObjectHideFlags: 0

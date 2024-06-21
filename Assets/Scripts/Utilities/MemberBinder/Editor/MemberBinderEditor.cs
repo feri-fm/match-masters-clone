@@ -128,7 +128,7 @@ public class MemberBinderEditor : ScriptlessEditor
             res.Add(data);
         }
 
-        foreach (var obj in MemberBinder.GetAllChildren(binder.target.transform))
+        foreach (var obj in MemberBinder.GetAllChildren(binder.transform))
         {
             foreach (var mem in res)
             {

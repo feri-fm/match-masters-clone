@@ -1,7 +1,10 @@
 
+using Newtonsoft.Json;
+
 [System.Serializable]
 public struct Id
 {
+    [JsonProperty("v")]
     public int value;
 
     public readonly static Id empty = new Id(-1);

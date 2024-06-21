@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 297146949, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.21684727
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: m_Color.g
@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: m_Color.r
-      value: 0.08187771
+      value: 0.19496846
       objectReference: {fileID: 0}
     - target: {fileID: 3394255802242096432, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: m_Name
@@ -66,6 +66,10 @@ PrefabInstance:
     - target: {fileID: 3394255802242096434, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7899317163164672914, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
+      propertyPath: key
+      value: lightning_green
       objectReference: {fileID: 0}
     - target: {fileID: 7899317163164672914, guid: 9d90d525b9b520749b1a3b1cf5c29030, type: 3}
       propertyPath: color.value

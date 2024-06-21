@@ -1,6 +1,4 @@
-
 using System;
-using System.Numerics;
 using UnityEngine;
 
 namespace Core
@@ -63,6 +61,7 @@ namespace Core
         public static bool operator !=(Int2 lhs, Int2 rhs) => !(lhs == rhs);
 
         public static implicit operator Vector2Int(Int2 v) => new Vector2Int(v.x, v.y);
+        public static implicit operator Vector2(Int2 v) => new Vector2(v.x, v.y);
         public static implicit operator Int2(Vector2Int v) => new Int2(v.x, v.y);
     }
 }

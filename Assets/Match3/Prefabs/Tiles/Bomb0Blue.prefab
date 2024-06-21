@@ -13,7 +13,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_Color.g
-      value: 0.06435752
+      value: 0.33933163
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_Color.r
@@ -66,6 +66,10 @@ PrefabInstance:
     - target: {fileID: 3394255802242096434, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
+      propertyPath: key
+      value: bomb_blue
       objectReference: {fileID: 0}
     - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: color.value

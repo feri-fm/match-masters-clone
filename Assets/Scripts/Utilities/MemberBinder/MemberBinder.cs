@@ -43,7 +43,7 @@ public class MemberBinder : MonoBehaviour
             {
                 names.Add(method.Name.Substring(METHOD_MEMBER_PREFIX.Length));
             }
-            foreach (var obj in GetAllChildren(target.transform))
+            foreach (var obj in GetAllChildren(transform))
             {
                 foreach (var btnName in names)
                 {
@@ -85,7 +85,7 @@ public class MemberBinder : MonoBehaviour
                 members[i].names.Add(MemberAttribute.GetLabelName(memberFields[i].Name));
         }
 
-        foreach (var obj in GetAllChildren(target.transform))
+        foreach (var obj in GetAllChildren(transform))
         {
             foreach (var member in members)
             {

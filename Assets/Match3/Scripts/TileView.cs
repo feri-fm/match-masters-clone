@@ -52,6 +52,17 @@ namespace Match3
         {
             return Task.CompletedTask;
         }
+
+        public override void Save(JsonData data)
+        {
+            base.Save(data);
+            data.W("p", position);
+        }
+        public override void Load(JsonData data)
+        {
+            base.Load(data);
+            position = data.R<Int2>("p");
+        }
     }
 
     public abstract class TileView<T> : TileView where T : Tile

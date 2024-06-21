@@ -4,7 +4,6 @@ namespace Match3
     {
         public TileColor color = TileColor.none;
 
-
         protected override void OnSetup()
         {
             base.OnSetup();

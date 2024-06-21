@@ -45,12 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: game
-  width: 7
-  height: 7
-  cell: {fileID: 1034135808035711609, guid: 23014f62068d9b949b2412eefb06500a, type: 3}
-  beads:
-  - {fileID: 1039072662306952806, guid: 9548172b35d1053409a858a8e8f910e7, type: 3}
-  - {fileID: 1039072662306952806, guid: 6d3ad6ccd8607b0449d82bc86d75972e, type: 3}
-  - {fileID: 1039072662306952806, guid: 5fa079fe072edcd4fbb4b9c881668437, type: 3}
-  - {fileID: 1039072662306952806, guid: 8907faae0a1dc24448f39754e1068995, type: 3}
-  - {fileID: 1039072662306952806, guid: a0759c923af562f45a36890bb16e716f, type: 3}
+  config: {fileID: 11400000, guid: e8d72753036c0e049b8498143668f58a, type: 2}

@@ -47,12 +47,22 @@ namespace Match3
                     body.position = tile.engine.GetPosition(tile.tile.position + Int2.up);
                 if (key == "Spawn")
                     body.position = tile.engine.GetPosition(tile.tile.position);
+                if (key == "Jump")
+                {
+                    body.position = tile.engine.GetPosition(tile.tile.position);
+                    velocity = Vector2.zero;
+                }
 
                 animator.ResetTrigger("Stretch");
                 animator.ResetTrigger("Squash");
                 animator.SetTrigger(key);
 
                 text.text = key;
+            };
+
+            trait.onAddForce += (f) =>
+            {
+                velocity += f;
             };
         }
 
@@ -82,11 +92,13 @@ namespace Match3
     public class AnimatorTrait : Trait<AnimatorTraitView>
     {
         public event Action<string> onPlayAnimation = delegate { };
+        public event Action<Vector2> onAddForce = delegate { };
 
         public void SpawnAtTop() => onPlayAnimation.Invoke("SpawnAtTop");
         public void Spawn() => onPlayAnimation.Invoke("Spawn");
         public void Stretch() => onPlayAnimation.Invoke("Stretch");
         public void Squash() => onPlayAnimation.Invoke("Squash");
-        public void Explode() => onPlayAnimation.Invoke("Explode");
+        public void Jump() => onPlayAnimation.Invoke("Jump");
+        public void AddForce(Vector2 force) => onAddForce.Invoke(force);
     }
 }

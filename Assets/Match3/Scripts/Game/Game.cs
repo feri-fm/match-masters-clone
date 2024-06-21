@@ -12,40 +12,44 @@ namespace Match3
     {
         public Tile[,] tiles;
 
-        public int width => config.width;
-        public int height => config.height;
+        public int width => options.width;
+        public int height => options.height;
 
         public GameOptions options { get; private set; }
-        public GameConfig config { get; private set; }
-        public Engine engine { get; private set; }
+        public GameConfig config => entity.prefab.config;
+        public GameEntity entity { get; private set; }
+        public Engine engine => entity.engine;
 
         public bool isEvaluating { get; private set; }
 
-        public System.Random random { get; private set; }
+        public RandomTable random { get; private set; }
+
+        public Dictionary<TileColor, int> colorsCount = new();
 
         public Int2 swappedA;
         public Int2 swappedB;
 
         public int hittings;
 
-        public void Setup(Engine engine, GameConfig config, GameOptions options)
+        public void Setup(GameEntity entity, GameOptions options)
         {
-            this.engine = engine;
-            this.config = config;
+            this.entity = entity;
             this.options = options;
-            random = new(options.seed);
+            random = new();
+            random.SetSeed(options.seed);
+            random.SetMax(100);
             engine.onEntityRemoved += OnEntityRemoved;
-            BuildGrid();
+            tiles = new Tile[width, height];
+            ResetColors();
         }
 
-        public void Clear()
+        public void Remove()
         {
             engine.onEntityRemoved -= OnEntityRemoved;
         }
 
         public void BuildGrid()
         {
-            tiles = new Tile[width, height];
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
@@ -69,7 +73,7 @@ namespace Match3
         {
             isEvaluating = true;
             var changed = false;
-            var loop = false;
+            bool loop;
             do
             {
                 loop = false;
@@ -79,15 +83,22 @@ namespace Match3
                     if (tile != null)
                         tile.canHit = true;
                 }
-                while (TryGetMatch(out var match))
+                if (AnyMatch())
                 {
-                    await ApplyMatch(match);
-                    loop = true;
+                    while (TryGetMatch(out var match))
+                    {
+                        await ApplyMatch(match);
+                        loop = true;
+                    }
                 }
+
                 while (hittings > 0)
+                {
                     await engine.Wait(0);
+                }
 
                 if (loop) await engine.Wait(0.4f);
+
                 while (CanApplyGravity())
                 {
                     ApplyGravity();
@@ -97,7 +108,7 @@ namespace Match3
                 }
                 ApplyGravity();
                 if (loop) changed = true;
-                if (loop) await engine.Wait(0.2f);
+                if (loop) await engine.Wait(0.3f);
             } while (loop);
             isEvaluating = false;
             return changed;
@@ -113,7 +124,10 @@ namespace Match3
             await engine.Wait(0.4f);
             if (!await Evaluate())
             {
+                isEvaluating = true;
                 Swap(a, b);
+                await engine.Wait(0.3f);
+                isEvaluating = false;
             }
         }
 
@@ -131,6 +145,17 @@ namespace Match3
             }
         }
 
+        public int RandInt(int max)
+        {
+            return random.Next().value % max;
+        }
+        public T RandElement<T>(List<T> items) => RandElement(items.ToArray());
+        public T RandElement<T>(T[] items)
+        {
+            var index = RandInt(items.Length);
+            return items[index];
+        }
+
         public void Swap(Int2 a, Int2 b)
         {
             var temp = GetTileAt(a);
@@ -138,6 +163,23 @@ namespace Match3
             SetTileAt(b, temp);
         }
 
+        private bool AnyMatch()
+        {
+            for (int p = 0; p < config.match.search.Length; p++)
+            {
+                var pattern = config.match.search[p];
+                for (int i = 0; i <= width - pattern.width; i++)
+                {
+                    for (int j = 0; j <= height - pattern.height; j++)
+                    {
+                        var point = new Int2(i, j);
+                        if (CheckMatch(point, pattern, out _))
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
         private bool TryGetMatch(out Match match)
         {
             match = null;
@@ -189,18 +231,23 @@ namespace Match3
             if (match.pattern.hasReward)
             {
                 var hadReward = false;
-                Int2 rewardPoint = Int2.zero;
-                foreach (var item in match.pattern.rewardPoints)
+                var rewardPoint = match.pattern.rewardPoints[0];
+                if (match.pattern.rewardPoints.Length > 1)
                 {
-                    if (item + match.offset == swappedA || item + match.offset == swappedB)
+                    foreach (var item in match.pattern.rewardPoints)
                     {
-                        rewardPoint = item;
-                        hadReward = true;
-                        break;
+                        if (item + match.offset == swappedA || item + match.offset == swappedB)
+                        {
+                            rewardPoint = item;
+                            hadReward = true;
+                            break;
+                        }
+                    }
+                    if (!hadReward)
+                    {
+                        rewardPoint = RandElement(match.pattern.rewardPoints);
                     }
                 }
-                if (!hadReward)
-                    rewardPoint = match.pattern.rewardPoints.Random();
 
                 var point = match.offset + rewardPoint;
                 TileView prefab = null;
@@ -233,7 +280,6 @@ namespace Match3
         {
             for (int i = 0; i < width; i++)
             {
-                // var isHole = false;
                 var last = false;
                 for (int j = 0; j < height; j++)
                 {
@@ -268,16 +314,80 @@ namespace Match3
         }
         private void FillTopRow()
         {
+            CountColors();
             for (int i = 0; i < width; i++)
             {
-                var cell = new Int2(i, height - 1);
-                if (IsEmptyAt(cell))
+                var point = new Int2(i, height - 1);
+                if (IsEmptyAt(point))
                 {
-                    var bead = CreateColoredTile(config.beads.Random());
-                    SetTileAt(cell, bead);
+                    var bead = CreateColoredTile(GenerateBead(point));
+                    SetTileAt(point, bead);
                     bead.WithTrait<AnimatorTrait>(t => t.SpawnAtTop());
+
+                    colorsCount[bead.color] += 1;
                 }
             }
+        }
+        private void ResetColors()
+        {
+            colorsCount[TileColor.blue] = 0;
+            colorsCount[TileColor.red] = 0;
+            colorsCount[TileColor.green] = 0;
+            colorsCount[TileColor.yellow] = 0;
+            colorsCount[TileColor.orange] = 0;
+            colorsCount[TileColor.purple] = 0;
+        }
+        private void CountColors()
+        {
+            ResetColors();
+            foreach (var tile in tiles)
+            {
+                if (tile != null && tile is ColoredTile coloredTile)
+                {
+                    colorsCount[coloredTile.color] += 1;
+                }
+            }
+        }
+        private BeadTileView GenerateBead(Int2 point)
+        {
+            var all = new List<BeadTileView>();
+            var should = new List<BeadTileView>();
+            var could = new List<BeadTileView>();
+            var safeShould = new List<BeadTileView>();
+            var safeCould = new List<BeadTileView>();
+
+            var badColors = new List<TileColor>();
+            var down = ValidatePoint(point + Int2.down) ? GetTileAt(point + Int2.down) as BeadTile : null;
+            var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as BeadTile : null;
+            var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as BeadTile : null;
+            if (down != null) badColors.Add(down.prefab.color);
+            if (left != null) badColors.Add(left.prefab.color);
+            if (right != null) badColors.Add(right.prefab.color);
+
+            for (int i = 0; i < options.beads; i++)
+            {
+                var bead = config.beads[i];
+                all.Add(bead);
+                var count = colorsCount[bead.color];
+                if (count < options.minCount)
+                {
+                    should.Add(bead);
+                    if (!badColors.Contains(bead.color))
+                        safeShould.Add(bead);
+                }
+                else if (count < options.maxCount)
+                {
+                    could.Add(bead);
+                    if (!badColors.Contains(bead.color))
+                        safeCould.Add(bead);
+                }
+            }
+
+            if (safeShould.Count > 0) return RandElement(safeShould);
+            if (safeCould.Count > 0) return RandElement(safeCould);
+            if (should.Count > 0) return RandElement(should);
+            if (could.Count > 0) return RandElement(could);
+            return RandElement(all);
         }
 
         public T CreateColoredTile<T>(ColoredTileView<T> view) where T : ColoredTile => CreateTileFromView(view) as T;
@@ -291,13 +401,111 @@ namespace Match3
 
         public async Task Shuffle()
         {
+            isEvaluating = true;
+            var swappedTiles = new List<Tile>();
+            var swappedPoints = new List<Int2>();
             for (int i = 0; i < 20; i++)
             {
-                var a = new Int2(UnityEngine.Random.Range(0, width), UnityEngine.Random.Range(0, height));
-                var b = new Int2(UnityEngine.Random.Range(0, width), UnityEngine.Random.Range(0, height));
-                Swap(a, b);
+                var a = new Int2(RandInt(width), RandInt(height));
+                var b = new Int2(RandInt(width), RandInt(height));
+                if (IsNotEmptyAt(a) && IsNotEmptyAt(b))
+                {
+                    Swap(a, b);
+                    if (AnyMatch())
+                    {
+                        Swap(a, b);
+                    }
+                    else
+                    {
+                        var tileA = GetTileAt(b);
+                        var tileB = GetTileAt(a);
+                        swappedTiles.Add(tileA);
+                        swappedTiles.Add(tileB);
+                        swappedPoints.Add(a);
+                        swappedPoints.Add(b);
+
+                        // var delta = (Vector2)(a - tileA.position);
+                        // var force = delta.normalized * 10;
+                        // tileA.WithTrait<AnimatorTrait>(t => t.AddForce(force));
+
+                        // delta = (Vector2)(b - tileB.position);
+                        // force = delta.normalized * 10;
+                        // tileB.WithTrait<AnimatorTrait>(t => t.AddForce(force));
+
+                        // await engine.Wait(0.04f);
+                    }
+                }
             }
+            // for (int i = 0; i < swappedTiles.Count; i++)
+            // {
+            //     var delta = (Vector2)(swappedPoints[i] - swappedTiles[i].position);
+            //     var force = delta.normalized * 18;
+            //     swappedTiles[i].WithTrait<AnimatorTrait>(t => t.AddForce(force));
+            // }
             await engine.Wait(0.6f);
+            await Evaluate();
+        }
+
+        public async Task TwoColors()
+        {
+            isEvaluating = true;
+            foreach (var tile in tiles)
+            {
+                SetTileAt(tile.position, null);
+                engine.RemoveEntity(tile);
+            }
+            var s1 = RandInt(options.beads);
+            var s2 = (s1 + 1 + RandInt(options.beads - 2)) % options.beads;
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    var black = (i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0);
+                    var bead = black ? config.beads[s1] : config.beads[s2];
+                    var tile = CreateColoredTile(bead);
+                    var point = new Int2(i, j);
+                    SetTileAt(point, tile);
+                    tile.WithTrait<AnimatorTrait>(t => t.Jump());
+                }
+            }
+            await engine.Wait(0.1f);
+            await Evaluate();
+        }
+
+        public GameData Save()
+        {
+            var ids = new Id[width, height];
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    ids[i, j] = tiles[i, j]?.id ?? Id.empty;
+                }
+            }
+            return new GameData()
+            {
+                options = options,
+                random = random.Save(),
+                tiles = ids,
+            };
+        }
+        public void Load(GameData data)
+        {
+            options = data.options;
+            random.Load(data.random);
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    tiles[i, j] = engine.entities.Find(e => e is Tile tile && tile.position == new Int2(i, j)) as Tile;
+                    if (tiles[i, j] != null)
+                    {
+                        tiles[i, j].WithTrait<AnimatorTrait>(t => t.Jump());
+                        tiles[i, j].SetupGame(this);
+                    }
+                }
+            }
+            _ = Evaluate();
         }
     }
 
@@ -325,18 +533,21 @@ namespace Match3
         }
     }
 
+    [Serializable]
     public class GameOptions
     {
-        public int seed;
+        public int seed = 12345;
+        public int width = 7;
+        public int height = 7;
+        public int minCount = 6;
+        public int maxCount = 10;
+        public int beads = 6;
+    }
 
-        public GameOptions()
-        {
-            seed = UnityEngine.Random.Range(0, 1000000000);
-        }
-
-        public GameOptions(int seed)
-        {
-            this.seed = seed;
-        }
+    public class GameData
+    {
+        public GameOptions options;
+        public RandomTableData random;
+        public Id[,] tiles;
     }
 }

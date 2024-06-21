@@ -13,11 +13,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0.8862746
       objectReference: {fileID: 0}
     - target: {fileID: 297146949, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_Color.r
-      value: 0.9706241
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3394255802242096432, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_Name
@@ -66,6 +66,10 @@ PrefabInstance:
     - target: {fileID: 3394255802242096434, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
+      propertyPath: key
+      value: bomb_yellow
       objectReference: {fileID: 0}
     - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: color.value

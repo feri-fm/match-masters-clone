@@ -49,7 +49,7 @@ namespace Match3
                     var tile = game.GetTileAt(point);
                     if (tile != null)
                     {
-                        tile.Hit();
+                        _ = tile.Hit();
                         // if (i % 2 == 0) await engine.Wait(0.1f);
                     }
                 }
@@ -64,7 +64,7 @@ namespace Match3
                     var tile = game.GetTileAt(point);
                     if (tile != null)
                     {
-                        tile.Hit();
+                        _ = tile.Hit();
                         // if (i % 2 == 0) await engine.Wait(0.1f);
                     }
                 }

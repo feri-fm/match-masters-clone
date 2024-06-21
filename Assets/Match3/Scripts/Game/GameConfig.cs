@@ -10,8 +10,6 @@ namespace Match3
     [CreateAssetMenu(fileName = "GameConfig", menuName = "GameConfig")]
     public class GameConfig : ScriptableObject
     {
-        public int width = 7;
-        public int height = 7;
         public MatchConfig match;
         public CellView cell;
         public BeadTileView[] beads;

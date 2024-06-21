@@ -39,6 +39,20 @@ namespace Match3
 
         public static bool operator ==(TileColor lhs, TileColor rhs) => lhs.value == rhs.value;
         public static bool operator !=(TileColor lhs, TileColor rhs) => lhs.value != rhs.value;
+
+        public override string ToString()
+        {
+            switch (value)
+            {
+                case (int)TileColorSamples.Blue: return "Blue";
+                case (int)TileColorSamples.Red: return "Red";
+                case (int)TileColorSamples.Green: return "Green";
+                case (int)TileColorSamples.Yellow: return "Yellow";
+                case (int)TileColorSamples.Orange: return "Orange";
+                case (int)TileColorSamples.Purple: return "Purple";
+            }
+            return "Color: " + value;
+        }
     }
 
     public enum TileColorSamples

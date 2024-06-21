@@ -33,11 +33,11 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 146d5f0411e43654c929ea4f292af025, type: 3}
     - target: {fileID: 5000498774783606208, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: m_Color.b
-      value: 0.11764705
+      value: 0.10062885
       objectReference: {fileID: 0}
     - target: {fileID: 5000498774783606208, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: m_Color.g
-      value: 0.5922889
+      value: 0.5647607
       objectReference: {fileID: 0}
     - target: {fileID: 5000498774783606208, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: m_Color.r
@@ -89,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6984676002069928109, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: key
-      value: bead_purple
+      value: bead_orange
       objectReference: {fileID: 0}
     - target: {fileID: 6984676002069928109, guid: 7d2e78f38c6a17944b46ba55c694a8a4, type: 3}
       propertyPath: color.value

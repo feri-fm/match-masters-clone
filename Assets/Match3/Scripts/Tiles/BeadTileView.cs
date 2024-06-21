@@ -24,5 +24,10 @@ namespace Match3
             await base.OnHit();
             engine.RemoveEntity(this);
         }
+
+        public override string ToString()
+        {
+            return "Bead " + color.ToString();
+        }
     }
 }

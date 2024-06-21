@@ -49,7 +49,7 @@ namespace Match3
                     var tile = game.GetTileAt(p);
                     if (tile != null)
                     {
-                        tile.Hit();
+                        _ = tile.Hit();
                     }
                 }
             }

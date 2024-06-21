@@ -120,11 +120,42 @@ namespace Core
                 return action.Invoke(trait);
             return def;
         }
+
+        public virtual void Save(JsonData data) { }
+        public virtual void Load(JsonData data) { }
+        public virtual void PostLoad(JsonData data) { }
+
+        public EntityData Save()
+        {
+            var json = new JsonData();
+            Save(json);
+            return new EntityData()
+            {
+                id = id,
+                key = key,
+                data = json,
+            };
+        }
+        public void Load(EntityData data)
+        {
+            Load(data.data);
+        }
+        public void PostLoad(EntityData data)
+        {
+            PostLoad(data.data);
+        }
     }
 
     public class Entity<TView> : Entity
         where TView : EntityView
     {
         public new TView prefab => base.prefab as TView;
+    }
+
+    public class EntityData
+    {
+        public Id id;
+        public string key;
+        public JsonData data;
     }
 }

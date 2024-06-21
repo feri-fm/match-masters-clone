@@ -27,13 +27,13 @@ namespace Match3
             await engine.Wait(0.2f);
             for (int i = 0; i < prefab.count; i++)
             {
-                var x = Random.Range(0, game.width);
-                var y = Random.Range(0, game.height);
+                var x = game.RandInt(game.width);
+                var y = game.RandInt(game.height);
                 var point = new Int2(x, y);
                 var tile = game.GetTileAt(point);
                 if (tile != null)
                 {
-                    tile.Hit();
+                    _ = tile.Hit();
                 }
             }
             await engine.Wait(0.2f);

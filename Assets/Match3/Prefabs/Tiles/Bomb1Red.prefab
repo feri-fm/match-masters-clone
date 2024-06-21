@@ -68,6 +68,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
+      propertyPath: key
+      value: bomb_red
+      objectReference: {fileID: 0}
+    - target: {fileID: 8017662267302993192, guid: 240d47a3ee462cc4e87282c5c5870846, type: 3}
       propertyPath: color.value
       value: 1
       objectReference: {fileID: 0}

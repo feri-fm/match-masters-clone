@@ -15,6 +15,8 @@ public class SliderHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public UnityEvent onStartEdit;
     public UnityEvent onEndEdit;
 
+    private bool editStarted;
+
     public float value
     {
         get => _value;
@@ -44,11 +46,19 @@ public class SliderHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        onStartEdit.Invoke();
+        if (slider.interactable)
+        {
+            editStarted = true;
+            onStartEdit.Invoke();
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        onEndEdit.Invoke();
+        if (editStarted)
+        {
+            onEndEdit.Invoke();
+        }
+        editStarted = false;
     }
 }

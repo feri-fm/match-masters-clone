@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace ImUI
 {
@@ -22,6 +23,8 @@ namespace ImUI
         public ObjectPool pool { get; private set; }
 
         private bool changed;
+
+        public List<LayoutView> layouts = new();
 
         public View editingView { get; private set; }
         public bool isEditing { get; private set; }
@@ -90,7 +93,23 @@ namespace ImUI
             }
         }
 
-        public T BuildView<T>(string type, T state) where T : ViewState
+        public void EndLayout()
+        {
+            if (layouts.Count > 0)
+            {
+                var layout = layouts[layouts.Count - 1];
+                layouts.Remove(layout);
+            }
+        }
+        public T BuildLayoutView<T>(string type, T state, ViewParam[] viewParams) where T : LayoutViewState
+        {
+            var newState = BuildView(type, state, viewParams);
+            var view = newState.view as LayoutView;
+            if (!layouts.Contains(view))
+                layouts.Add(view);
+            return newState;
+        }
+        public T BuildView<T>(string type, T state, ViewParam[] viewParams) where T : ViewState
         {
             var view = oldViews.Find(e => e.type == type);
             if (view == null)
@@ -100,10 +119,15 @@ namespace ImUI
                 view._Setup(this, state);
                 currentViews.Add(view);
             }
+            if (layouts.Count > 0)
+            {
+                var layout = layouts[layouts.Count - 1];
+                layout._LoadView(view);
+            }
             view.transform.SetAsLastSibling();
             oldViews.Remove(view);
 
-            state.indent = builder.indent;
+            state.Update(view, builder);
 
             if (view.changed)
             {
@@ -114,6 +138,9 @@ namespace ImUI
             {
                 view.LoadState(state);
             }
+
+            view.UseViewParams(viewParams);
+
             return state;
         }
 
@@ -147,67 +174,6 @@ namespace ImUI
             editingView = null;
             Build();
             onEditEnd.Invoke();
-        }
-    }
-
-    public class ImUIBuilder
-    {
-        public float indent = 0;
-
-        public ImUIManager manager { get; }
-
-        public ImUIBuilder(ImUIManager manager)
-        {
-            this.manager = manager;
-        }
-
-        public void Title(string label)
-        {
-            manager.BuildView("title", new TitleViewState(label));
-        }
-        public void Label(string label)
-        {
-            manager.BuildView("label", new LabelViewState(label));
-        }
-        public int Number(string label, int value)
-        {
-            return manager.BuildView("number", new NumberViewState(label, value)).intNumber;
-        }
-        public float Number(string label, float value)
-        {
-            return manager.BuildView("number", new NumberViewState(label, value)).floatNumber;
-        }
-        public string Text(string label, string text)
-        {
-            return manager.BuildView("text", new TextViewState(label, text)).text;
-        }
-        public bool Button(string label)
-        {
-            return manager.BuildView("button", new ButtonViewState(label, false)).pressed;
-        }
-        public void Image(Sprite sprite)
-        {
-            manager.BuildView("image", new ImageViewState(sprite));
-        }
-        public void Image(Texture texture)
-        {
-            manager.BuildView("image", new ImageViewState(texture));
-        }
-        public void Space(float height)
-        {
-            manager.BuildView("space", new SpaceViewState(height));
-        }
-        public int Slider(string label, int value, int min, int max)
-        {
-            return (int)manager.BuildView("slider", new SliderViewState(label, value, min, max, true)).value;
-        }
-        public float Slider(string label, float value, float min, float max)
-        {
-            return manager.BuildView("slider", new SliderViewState(label, value, min, max, false)).value;
-        }
-        public bool Toggle(string label, bool isOn)
-        {
-            return manager.BuildView("toggle", new ToggleViewState(label, isOn)).isOn;
         }
     }
 }

@@ -14,10 +14,26 @@ namespace ImUI
 
         public bool canEdit => !manager.isEditing || manager.editingView == this;
 
+        public ViewParam[] viewParams = new ViewParam[] { };
+
         public void _Setup(ImUIManager manager, ViewState state)
         {
             this.manager = manager;
             this.state = state;
+        }
+
+        public void UseViewParams(ViewParam[] newViewParams)
+        {
+            foreach (var viewParam in viewParams)
+            {
+                viewParam.Clear();
+            }
+            viewParams = newViewParams;
+            foreach (var viewParam in viewParams)
+            {
+                viewParam.Setup(this);
+                viewParam.Apply();
+            }
         }
 
         public virtual void LoadState(ViewState state)
@@ -60,7 +76,7 @@ namespace ImUI
     {
         public new T state => base.state as T;
 
-        public override void LoadState(ViewState state)
+        public sealed override void LoadState(ViewState state)
         {
             base.LoadState(state);
             LoadState(state as T);
@@ -71,6 +87,15 @@ namespace ImUI
 
     public class ViewState
     {
+        public View view;
+
         public float indent;
+
+        public void Update(View view, ImUIBuilder builder)
+        {
+            this.view = view;
+
+            indent = builder.indent;
+        }
     }
 }

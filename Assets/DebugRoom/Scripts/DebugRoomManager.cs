@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Core;
 using ImUI;
+using Match3;
 using UnityEngine;
 
 namespace DebugRoom
@@ -9,13 +11,10 @@ namespace DebugRoom
     public class DebugRoomManager : MonoBehaviour
     {
         public ImUIManager imUIManager;
-        public float scale = 1;
-        public bool toggle;
-        public int width = 7;
-        public int height = 7;
-        public int beads = 6;
-        public int minBeads = 6;
-        public int maxBeads = 10;
+
+        public EngineView engineView;
+        public EngineConfig engineConfig;
+        public GameOptions gameOptions;
 
         private List<string> tabs = new();
 
@@ -24,19 +23,24 @@ namespace DebugRoom
             imUIManager.SetViewBuilder(b =>
             {
                 b.Title("Debug Room");
-                b.Label("This is debug room");
+
                 Tab("Game", () =>
                 {
-                    b.Number("Seed", 0);
-                    scale = b.Slider("Scale", scale, 0, 1);
-                    toggle = b.Toggle("Toggle", toggle);
-                    width = b.Slider("Width", width, 2, 16);
-                    height = b.Slider("Height", height, 2, 16);
-                    beads = b.Slider("Beads", beads, 2, 6);
-                    minBeads = b.Slider("Min Bead", minBeads, 0, 20);
-                    maxBeads = b.Slider("Max Bead", maxBeads, 0, 30);
-                    toggle = b.Toggle("Toggle", toggle);
-                    scale = b.Slider("Scale", scale, 0, 1);
+                    b.BeginHorizontal(50);
+                    var ind = b.indent;
+                    b.indent = 0;
+                    gameOptions.seed = b.Number("Seed", gameOptions.seed, new VPLayoutFlexibleWidth(100));
+                    if (b.Button("Rnd", new VPLayoutMinWidth(70)))
+                    {
+                        gameOptions.seed = UnityEngine.Random.Range(10000, 99999);
+                    }
+                    b.indent = ind;
+                    b.EndLayout();
+                    gameOptions.width = b.Slider("Width", gameOptions.width, 2, 16);
+                    gameOptions.height = b.Slider("Height", gameOptions.height, 2, 16);
+                    gameOptions.beads = b.Slider("Beads", gameOptions.beads, 2, 6);
+                    gameOptions.minBeads = b.Slider("Min Bead", gameOptions.minBeads, 0, 20);
+                    gameOptions.maxBeads = b.Slider("Max Bead", gameOptions.maxBeads, 0, 30);
                     b.Button("Reload");
                 });
                 Tab("Network", () =>

@@ -391,13 +391,13 @@ namespace Match3
                 var bead = config.beads[i];
                 all.Add(bead);
                 var count = colorsCount[bead.color];
-                if (count < options.minCount)
+                if (count < options.minBeads)
                 {
                     should.Add(bead);
                     if (!badColors.Contains(bead.color))
                         safeShould.Add(bead);
                 }
-                else if (count < options.maxCount)
+                else if (count < options.maxBeads)
                 {
                     could.Add(bead);
                     if (!badColors.Contains(bead.color))
@@ -617,8 +617,8 @@ namespace Match3
         public int seed = 12345;
         public int width = 7;
         public int height = 7;
-        public int minCount = 6;
-        public int maxCount = 10;
+        public int minBeads = 6;
+        public int maxBeads = 10;
         public int beads = 6;
     }
 

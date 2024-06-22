@@ -15,6 +15,8 @@ public class ToggleHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public UnityEvent onStartEdit;
     public UnityEvent onEndEdit;
 
+    private bool editStarted;
+
     public bool isOn
     {
         get => toggle.isOn;
@@ -44,11 +46,19 @@ public class ToggleHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        onStartEdit.Invoke();
+        if (toggle.interactable)
+        {
+            editStarted = true;
+            onStartEdit.Invoke();
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        onEndEdit.Invoke();
+        if (editStarted)
+        {
+            onEndEdit.Invoke();
+        }
+        editStarted = false;
     }
 }

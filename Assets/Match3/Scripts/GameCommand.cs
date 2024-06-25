@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Core;
+using MMC.Core;
 
-namespace Match3
+namespace MMC.Match3
 {
     public abstract class GameCommand
     {

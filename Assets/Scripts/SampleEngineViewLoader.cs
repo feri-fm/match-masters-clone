@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core;
-using Match3;
+using MMC.Core;
+using MMC.Match3;
 using UnityEngine;
 
 public class SampleEngineViewLoader : MonoBehaviour

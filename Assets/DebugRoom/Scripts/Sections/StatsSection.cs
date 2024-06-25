@@ -1,16 +1,15 @@
 using System.Collections.Generic;
-using Match3;
+using MMC.Match3;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class StatsSection : DebugSection
     {
-        public TextAdaptor scoreText;
+        public TextMember scoreText;
 
         private Dictionary<TileColor, int> colorsCount = new();
         private int score;
-        private bool overlay;
 
         private GameSection gameSection;
 
@@ -42,10 +41,26 @@ namespace DebugRoom
         {
             if (ui.Button("Reset"))
             {
+                var undoRedoSection = manager.GetSection<UndoRedoSection>();
+                var saveSection = manager.GetSection<SaveSection>();
+                var undoData = saveSection.Save();
+                var redoData = gameSection.gameOptions.JsonCopy();
+                undoRedoSection.undoRedoManager.AddAction(
+                "Reset Stats", () =>
+                {
+                    var gameOptions = gameSection.gameOptions.JsonCopy();
+                    saveSection.Load(undoData);
+                    gameSection.gameOptions = gameOptions;
+                },
+                "Reset Stats", () =>
+                {
+                    ResetData();
+                });
+
                 ResetData();
             }
 
-            overlay = ui.Toggle("Overlay", overlay);
+            UIOverlayToggle();
 
             ui.disabled = true;
             ui.Text("Score", score.ToString());
@@ -58,7 +73,6 @@ namespace DebugRoom
 
         private void LateUpdate()
         {
-            scoreText.gameObject.SetActive(overlay);
             scoreText.text = $"Score: {score}";
         }
 

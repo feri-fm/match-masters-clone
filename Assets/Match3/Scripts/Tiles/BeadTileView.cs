@@ -1,8 +1,8 @@
 using UnityEngine;
-using Core;
+using MMC.Core;
 using System.Threading.Tasks;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class BeadTileView : ColoredTileView<BeadTile>
     {

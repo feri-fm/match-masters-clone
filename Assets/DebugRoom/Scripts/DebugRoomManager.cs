@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core;
+using MMC.Core;
 using ImUI;
-using Match3;
+using MMC.Match3;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     [RequireComponent(typeof(ObjectPool))]
     public class DebugRoomManager : MonoBehaviour
@@ -40,7 +40,7 @@ namespace DebugRoom
         private void Start()
         {
             var page = AddPage();
-            page.title = "Main";
+            page.title = "main";
         }
 
         private void LateUpdate()

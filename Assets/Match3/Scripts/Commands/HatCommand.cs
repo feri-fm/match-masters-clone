@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class HatCommand : GameCommand
     {
-        public int searchCount = 10;
-        public int targetCount = 6;
-        public float timeDelay = 0.1f;
+        [JsonDataInt] public int searchCount = 10;
+        [JsonDataInt] public int targetCount = 6;
+        [JsonDataFloat] public float timeDelay = 0.1f;
 
         protected override async Task Run()
         {

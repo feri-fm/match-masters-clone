@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace Core
+namespace MMC.Core
 {
     public abstract class Entity : LifecycleObject, IEvaluable
     {

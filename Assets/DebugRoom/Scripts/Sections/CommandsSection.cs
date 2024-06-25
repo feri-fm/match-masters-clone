@@ -1,32 +1,67 @@
 using System;
 using System.Collections.Generic;
 using ImUI;
-using Match3;
+using MMC.Match3;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class CommandsSection : DebugSection
     {
         public Dictionary<string, CommandInfo> commands = new();
 
+        private GameSection gameSection;
+        private UndoRedoSection undoRedoSection;
+        private SaveSection saveSection;
+
+        protected override void Setup()
+        {
+            base.Setup();
+            gameSection = manager.GetSection<GameSection>();
+            undoRedoSection = manager.GetSection<UndoRedoSection>();
+            saveSection = manager.GetSection<SaveSection>();
+        }
+
         protected override void OnUI()
         {
-            var game = manager.GetSection<GameSection>().game;
             foreach (var pair in commands)
             {
                 ui.Tab(pair.Key, () =>
                 {
                     pair.Value.view.Invoke(pair.Value.command, ui);
-                    ui.disabled = game.isEvaluating;
-                    if (ui.Button("Run"))
+                    ui.Row(() =>
                     {
-                        _ = game.RunCommand(pair.Value.command);
-                    }
-                    ui.disabled = false;
-                    if (ui.Button("Reset"))
-                    {
-                        pair.Value.Reset();
-                    }
+                        if (ui.Button("Reset"))
+                        {
+                            pair.Value.Reset();
+                        }
+                        ui.disabled = gameSection.game.isEvaluating;
+                        if (ui.Button("Run"))
+                        {
+
+                            var undoData = saveSection.Save();
+
+                            var commandData = new JsonData();
+                            JsonData.Save(pair.Value.command, commandData);
+
+                            var commandCopy = pair.Value.CreateCommand();
+                            JsonData.Load(commandCopy, commandData);
+
+                            undoRedoSection.undoRedoManager.AddAction(
+                            pair.Key, () =>
+                            {
+                                var gameOptions = gameSection.gameOptions.JsonCopy();
+                                saveSection.Load(undoData);
+                                gameSection.gameOptions = gameOptions;
+                            },
+                            pair.Key, () =>
+                            {
+                                _ = gameSection.game.RunCommand(commandCopy);
+                            });
+
+                            _ = gameSection.game.RunCommand(pair.Value.command);
+                        }
+                        ui.disabled = false;
+                    });
                 });
             }
         }
@@ -41,7 +76,6 @@ namespace DebugRoom
             }));
             commands.Add("Rocket", new CommandInfo<RocketCommand>((cmd, ui) =>
             {
-                cmd.searchCount = ui.Slider("Search", cmd.searchCount, 5, 30);
                 cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 20);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);
             }));
@@ -55,6 +89,25 @@ namespace DebugRoom
                 cmd.searchCount = ui.Slider("Search", cmd.searchCount, 10, 40);
                 cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 30);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);
+                ui.Row(() =>
+                {
+                    var color = cmd.colorValue;
+                    ui.disabled = color <= 0;
+                    if (ui.Button("<", new VPLayoutMinWidth(80)))
+                    {
+                        color--;
+                    }
+                    ui.disabled = false;
+                    ui.Label(new TileColor(cmd.colorValue).ToString(), new VPLayoutFlexibleWidth(100));
+                    ui.disabled = color >= 5;
+                    if (ui.Button(">", new VPLayoutMinWidth(80)))
+                    {
+                        color++;
+                    }
+                    ui.disabled = false;
+
+                    cmd.colorValue = color;
+                });
             }));
             commands.Add("Hat", new CommandInfo<HatCommand>((cmd, ui) =>
             {
@@ -78,6 +131,11 @@ namespace DebugRoom
                 this.view = view;
             }
 
+            public virtual GameCommand CreateCommand()
+            {
+                return null;
+            }
+
             public virtual void Reset()
             {
 
@@ -88,6 +146,13 @@ namespace DebugRoom
         {
             public CommandInfo(Action<TCommand, ImUIBuilder> view) : base(new TCommand(), (cmd, ui) => view(cmd as TCommand, ui))
             {
+            }
+
+            public override GameCommand CreateCommand()
+            {
+                base.CreateCommand();
+                var command = new TCommand();
+                return command;
             }
 
             public override void Reset()

@@ -1,9 +1,9 @@
 
 using System;
 using UnityEngine;
-using Core;
+using MMC.Core;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class GameEntityView : EntityView<GameEntity>
     {

@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using Core;
+using MMC.Core;
 using TMPro;
 using UnityEditor.Rendering;
 
-namespace Match3
+namespace MMC.Match3
 {
     [CustomPropertyDrawer(typeof(MatchPattern))]
     public class GameConfigMatchItemDrawer : PropertyDrawer

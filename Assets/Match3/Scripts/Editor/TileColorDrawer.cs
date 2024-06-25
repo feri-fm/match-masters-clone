@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Match3
+namespace MMC.Match3
 {
     [CustomPropertyDrawer(typeof(TileColor))]
     public class TileColorDrawer : PropertyDrawer

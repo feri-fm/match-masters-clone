@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Core
+namespace MMC.Core
 {
     [CustomEditor(typeof(EngineConfig))]
     public class EngineConfigEditor : Editor

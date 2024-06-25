@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Match3;
+using MMC.Match3;
 using UnityEngine;
 
 public class LifetimeEffect : PoolObject

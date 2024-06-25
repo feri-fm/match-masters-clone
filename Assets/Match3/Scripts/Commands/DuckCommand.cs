@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using Core;
+using MMC.Core;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class DuckCommand : GameCommand
     {
-        public int height = 3;
-        public float timeDelay = 0.05f;
+        [JsonDataInt] public int height = 3;
+        [JsonDataFloat] public float timeDelay = 0.05f;
 
         protected override async Task Run()
         {

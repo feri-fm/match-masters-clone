@@ -1,17 +1,19 @@
 using System.Threading.Tasks;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class BucketCommand : GameCommand
     {
-        public int searchCount = 10;
-        public int targetCount = 6;
-        public float timeDelay = 0.1f;
+        [JsonDataInt] public int searchCount = 10;
+        [JsonDataInt] public int targetCount = 6;
+        [JsonDataFloat] public float timeDelay = 0.1f;
+        [JsonDataInt] public int colorValue;
 
         protected override async Task Run()
         {
             var swapped = 0;
-            var color = game.config.beads[2 + game.RandInt(game.options.beads - 2)].color;
+            // var color = game.config.beads[2 + game.RandInt(game.options.beads - 2)].color;
+            var color = new TileColor(colorValue);
             var prefab = game.config.GetBeadTile(color);
             for (int i = 0; i < searchCount && swapped < targetCount; i++)
             {

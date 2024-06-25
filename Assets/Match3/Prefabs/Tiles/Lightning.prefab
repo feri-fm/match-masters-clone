@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721316720bfe74f428bebc54bccf0b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: lightning
+  key: 
   root: {fileID: 1419158310852878233}
   color:
     value: -1

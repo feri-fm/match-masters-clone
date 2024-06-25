@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
+using MMC.Core;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class Game
     {
@@ -27,6 +27,7 @@ namespace Match3
         public Dictionary<TileColor, int> colorsCount = new();
 
         public event Action<Tile> onTileHit = delegate { };
+        public event Action<Tile, Tile> onTrySwap = delegate { };
 
         public Int2 swappedA;
         public Int2 swappedB;
@@ -124,13 +125,17 @@ namespace Match3
         }
 
         public void TrySwap(Tile a, Tile b) => TrySwap(a.position, b.position);
-        public async void TrySwap(Int2 a, Int2 b)
+        public async void TrySwap(Int2 a, Int2 b, bool withoutNotify = false)
         {
+            if (IsEmptyAt(a) || IsEmptyAt(b)) return;
             isEvaluating = true;
             swappedA = a;
             swappedB = b;
             var tileA = GetTileAt(a);
             var tileB = GetTileAt(b);
+
+            if (!withoutNotify)
+                onTrySwap.Invoke(tileA, tileB);
 
             if (tileA.HasTrait<PowerUpTrait>() && tileB.HasTrait<PowerUpTrait>())
             {
@@ -149,6 +154,7 @@ namespace Match3
 
                 SetTileAt(a, null);
                 SetTileAt(b, tileA);
+
                 tileA.WithTrait<AnimatorTrait>(t => t.MoveTo());
                 await Wait(0.3f);
                 _ = tileA.Hit();

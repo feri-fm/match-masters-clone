@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Core
+namespace MMC.Core
 {
     [CreateAssetMenu(fileName = "EngineConfig", menuName = "EngineConfig")]
     public class EngineConfig : ScriptableObject

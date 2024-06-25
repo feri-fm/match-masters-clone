@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class ShuffleCommand : GameCommand
     {
-        public int searchCount = 30;
-        public int targetCount = 20;
+        [JsonDataInt] public int searchCount = 30;
+        [JsonDataInt] public int targetCount = 20;
 
         protected override async Task Run()
         {

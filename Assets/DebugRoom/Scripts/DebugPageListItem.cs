@@ -1,4 +1,4 @@
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class DebugPageListItem : ListItem<DebugPage>
     {

@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1b521d326dc41468aacd877ca26de2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: bomb
+  key: 
   root: {fileID: 730408149682671712}
   color:
     value: -1

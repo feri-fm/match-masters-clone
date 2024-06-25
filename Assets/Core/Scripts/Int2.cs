@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Core
+namespace MMC.Core
 {
     [Serializable]
     public struct Int2

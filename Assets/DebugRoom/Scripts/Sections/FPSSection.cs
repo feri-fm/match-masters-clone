@@ -1,21 +1,20 @@
 using ImUI;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class FPSSection : DebugSection
     {
-        public TextAdaptor fpsText;
+        public TextMember fpsText;
 
         private LabelView fpsLabel;
-        private bool overlay;
         private int targetFPS;
 
         protected override void OnUI()
         {
             ui.Label("FPS", new VPGetView((v) => fpsLabel = v as LabelView));
 
-            overlay = ui.Toggle("Overlay", overlay);
+            UIOverlayToggle();
 
             targetFPS = ui.Slider("Target FPS", targetFPS, 10, 120);
 
@@ -45,7 +44,6 @@ namespace DebugRoom
 
             Application.targetFrameRate = targetFPS;
 
-            fpsText.gameObject.SetActive(overlay);
             fpsText.text = fpsString;
         }
     }

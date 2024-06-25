@@ -3,11 +3,14 @@ using System.Collections;
 using System.Threading.Tasks;
 using ImUI;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class WaiterSection : DebugSection
     {
+        public Member<Selectable> stepForward;
+
         private WaiterMode mode;
 
         private bool waiting;
@@ -15,6 +18,8 @@ namespace DebugRoom
 
         protected override void OnUI()
         {
+            UIOverlayToggle();
+
             if (ui.Button($"Mode: {mode}"))
             {
                 var modeInt = (int)mode;
@@ -46,6 +51,11 @@ namespace DebugRoom
                     if (ui.Button("2")) timeScale = 2;
                 });
             }
+        }
+
+        private void Update()
+        {
+            stepForward.value.interactable = waiting;
         }
 
         private int instantSteps = 0;
@@ -89,6 +99,7 @@ namespace DebugRoom
             }
         }
 
+        [Member]
         public void StepForward()
         {
             if (waiting)

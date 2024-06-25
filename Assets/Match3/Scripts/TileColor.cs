@@ -1,4 +1,4 @@
-namespace Match3
+namespace MMC.Match3
 {
     [System.Serializable]
     public struct TileColor

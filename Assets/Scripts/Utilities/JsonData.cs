@@ -48,7 +48,9 @@ public class JsonData
         {
             var value = field.GetValue(target);
             var attr = field.GetCustomAttributes<JsonDataAttribute>().First();
-            data.W(attr.key, value);
+            var key = attr.key;
+            if (key == "") key = field.Name;
+            data.W(key, value);
         }
     }
 
@@ -59,7 +61,9 @@ public class JsonData
         foreach (var field in fields)
         {
             var attr = field.GetCustomAttributes<JsonDataAttribute>().First();
-            if (data.json.TryGetValue(attr.key, out var raw))
+            var key = attr.key;
+            if (key == "") key = field.Name;
+            if (data.json.TryGetValue(key, out var raw))
                 field.SetValue(target, attr.loader.Invoke(raw));
             else
                 field.SetValue(target, attr.defaultValue);
@@ -84,11 +88,16 @@ public abstract class JsonDataAttribute : Attribute
 
 public class JsonDataIntAttribute : JsonDataAttribute
 {
-    public JsonDataIntAttribute(string key, int defaultValue = 0)
+    public JsonDataIntAttribute(string key = "", int defaultValue = 0)
         : base(key, defaultValue, (s) => int.Parse(s.ToString())) { }
+}
+public class JsonDataFloatAttribute : JsonDataAttribute
+{
+    public JsonDataFloatAttribute(string key = "", float defaultValue = 0)
+        : base(key, defaultValue, (s) => float.Parse(s.ToString())) { }
 }
 public class JsonDataStringAttribute : JsonDataAttribute
 {
-    public JsonDataStringAttribute(string key, string defaultValue = "")
+    public JsonDataStringAttribute(string key = "", string defaultValue = "")
         : base(key, defaultValue, (s) => s.ToString()) { }
 }

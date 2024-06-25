@@ -1,4 +1,4 @@
-namespace Core
+namespace MMC.Core
 {
     public abstract class TraitView : LifecycleObjectView
     {

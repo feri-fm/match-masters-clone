@@ -1,20 +1,28 @@
 using ImUI;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public abstract class DebugSection : MonoBehaviour
     {
         public string title;
+        public GameObject overlayObject;
 
         public DebugRoomManager manager { get; private set; }
         public ImUIManager imUI => manager.currentPage.imUI;
+
+        protected bool overlay;
 
         protected ImUIBuilder ui { get; private set; }
 
         public void Setup(DebugRoomManager manager)
         {
             this.manager = manager;
+            if (overlayObject != null)
+            {
+                overlayObject.SetActive(overlay);
+                MemberBinder.Bind(overlayObject);
+            }
             Setup();
         }
 
@@ -25,6 +33,12 @@ namespace DebugRoom
             {
                 OnUI();
             });
+            if (overlayObject != null) overlayObject.SetActive(overlay);
+        }
+
+        protected void UIOverlayToggle()
+        {
+            overlay = ui.Toggle("Overlay", overlay);
         }
 
         protected virtual void Setup() { }

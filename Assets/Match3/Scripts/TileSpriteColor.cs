@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class TileSpriteColor : MonoBehaviour
     {

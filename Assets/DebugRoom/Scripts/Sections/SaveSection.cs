@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Core;
+using MMC.Core;
 using ImUI;
-using Match3;
+using MMC.Match3;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class SaveSection : DebugSection
     {
@@ -72,14 +72,24 @@ namespace DebugRoom
             saves = PlayerPrefs.GetString("saves", "[]").FromJson<List<string>>();
         }
 
-        public string GetKey(string key) => "save_" + key;
-        public void SaveGame(string key)
+        public SaveSectionData Save()
         {
-            var data = new DebugSaveData()
+            return new SaveSectionData()
             {
                 engine = manager.GetSection<GameSection>().Save(),
                 stats = manager.GetSection<StatsSection>().Save(),
             };
+        }
+        public void Load(SaveSectionData data)
+        {
+            manager.GetSection<GameSection>().Load(data.engine);
+            manager.GetSection<StatsSection>().Load(data.stats);
+        }
+
+        public string GetKey(string key) => "save_" + key;
+        public void SaveGame(string key)
+        {
+            var data = Save();
             PlayerPrefs.SetString(GetKey(key), data.ToJson());
             if (!saves.Contains(key))
             {
@@ -89,11 +99,10 @@ namespace DebugRoom
         }
         public void LoadGame(string key)
         {
-            var data = PlayerPrefs.GetString(GetKey(key)).FromJson<DebugSaveData>();
+            var data = PlayerPrefs.GetString(GetKey(key)).FromJson<SaveSectionData>();
             if (data != null)
             {
-                manager.GetSection<GameSection>().Load(data.engine);
-                manager.GetSection<StatsSection>().Load(data.stats);
+                Load(data);
                 saveKey = key;
             }
         }
@@ -111,7 +120,7 @@ namespace DebugRoom
         }
     }
 
-    public class DebugSaveData
+    public class SaveSectionData
     {
         public EngineData engine;
         public StatsData stats;

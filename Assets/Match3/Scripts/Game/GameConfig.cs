@@ -1,7 +1,7 @@
 using UnityEngine;
-using Core;
+using MMC.Core;
 
-namespace Match3
+namespace MMC.Match3
 {
     using System;
     using System.Linq;

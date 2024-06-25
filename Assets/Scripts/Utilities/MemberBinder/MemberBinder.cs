@@ -141,7 +141,11 @@ public class MemberBinder : MonoBehaviour
 
     public static void Bind(MonoBehaviour target)
     {
-        target.GetComponent<MemberBinder>().Bind();
+        target.GetComponent<MemberBinder>()?.Bind();
+    }
+    public static void Bind(GameObject target)
+    {
+        target.GetComponent<MemberBinder>()?.Bind();
     }
 }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class BottomDragHandle : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {

@@ -1,18 +1,18 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
-using Core;
+using MMC.Core;
 using ImUI;
-using Match3;
+using MMC.Match3;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class GameSection : DebugSection
     {
         public Camera cam;
         public Transform cameraAnchor;
-        public TextAdaptor gameText;
+        public TextMember statusText;
 
         public EngineView engineView;
         public EngineConfig engineConfig;
@@ -20,18 +20,16 @@ namespace DebugRoom
 
         public Engine engine;
         public GameEntity gameEntity;
-        public Game game => gameEntity.game;
+        public Match3.Game game => gameEntity.game;
 
         public event Action<Engine> onEngineCreated = delegate { };
 
         private bool isEvaluating;
 
-        private bool overlay;
-
         protected override void OnUI()
         {
             ui.Label(game.isEvaluating ? "Evaluating..." : "Stable");
-            overlay = ui.Toggle("Overlay", overlay);
+            UIOverlayToggle();
 
             ui.BeginHorizontal(50);
             ui.StashIndent(0);
@@ -49,6 +47,21 @@ namespace DebugRoom
             gameOptions.maxBeads = ui.Slider("Max Bead", gameOptions.maxBeads, 0, 30);
             if (ui.Button("Reload"))
             {
+                var undoRedoSection = manager.GetSection<UndoRedoSection>();
+                var saveSection = manager.GetSection<SaveSection>();
+                var undoData = saveSection.Save();
+                var redoData = gameOptions.JsonCopy();
+                undoRedoSection.undoRedoManager.AddAction(
+                "Reload", () =>
+                {
+                    saveSection.Load(undoData);
+                },
+                "Reload", () =>
+                {
+                    gameOptions = redoData.JsonCopy();
+                    ReloadGame();
+                });
+
                 ReloadGame();
             }
         }
@@ -81,8 +94,7 @@ namespace DebugRoom
                 imUI.Changed();
             }
 
-            gameText.gameObject.SetActive(overlay);
-            gameText.text = game.isEvaluating ? "Evaluating..." : "Stable";
+            statusText.text = game.isEvaluating ? "Evaluating..." : "Stable";
         }
 
         public void ReloadGame()

@@ -16,7 +16,9 @@ public class UndoRedoManager : MonoBehaviour
     public bool canUndo => status >= 0;
     public bool canRedo => actions.Count > status + 1;
 
-    public UndoRedoAction lastAction => actions[actions.Count - 1];
+    public UndoRedoAction lastAction => actions.Count > 0 ? actions[actions.Count - 1] : null;
+    public UndoRedoAction undoAction => actions.Count > 0 && status >= 0 ? actions[status] : null;
+    public UndoRedoAction redoAction => actions.Count > 0 && status + 1 >= 0 && status + 1 < actions.Count ? actions[status + 1] : null;
 
     void Start()
     {
@@ -96,6 +98,9 @@ public class UndoRedoAction
     public float time;
     public List<EditorAction> undo = new List<EditorAction>();
     public List<EditorAction> redo = new List<EditorAction>();
+
+    public string undoTitle => undo[0].title;
+    public string redoTitle => redo[0].title;
 
     public UndoRedoAction()
     {

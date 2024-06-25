@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b50775437ed91844c89baf9cda0aaa97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: vertical
+  key: 
   root: {fileID: 7144473042329438781}
   color:
     value: -1

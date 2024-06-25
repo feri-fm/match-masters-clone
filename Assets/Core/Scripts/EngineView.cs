@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Core
+namespace MMC.Core
 {
     [RequireComponent(typeof(ObjectPool))]
     public class EngineView : MonoBehaviour

@@ -1,7 +1,7 @@
 using ImUI;
 using UnityEngine;
 
-namespace DebugRoom
+namespace MMC.DebugRoom
 {
     public class DebugPage : PoolObject
     {

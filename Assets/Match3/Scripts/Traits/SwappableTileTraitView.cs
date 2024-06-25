@@ -1,7 +1,7 @@
-using Core;
+using MMC.Core;
 using UnityEngine;
 
-namespace Match3
+namespace MMC.Match3
 {
     public class SwappableTileTraitView : TraitView<SwappableTileTrait>
     {

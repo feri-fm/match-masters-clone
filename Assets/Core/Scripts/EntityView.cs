@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Core
+namespace MMC.Core
 {
     public abstract class EntityView : LifecycleObjectView
     {

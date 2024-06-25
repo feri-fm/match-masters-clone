@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Core
+namespace MMC.Core
 {
     public abstract class Trait : LifecycleObject
     {

@@ -26,7 +26,7 @@ namespace ImUI
             if (state.wholeNumbers)
                 value.text = ((int)state.value).ToString();
             else
-                value.text = state.value.ToString("0.0");
+                value.text = state.value.ToString(".00");
         }
         public override ViewState GetState()
         {

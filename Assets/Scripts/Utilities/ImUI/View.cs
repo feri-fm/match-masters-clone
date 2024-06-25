@@ -12,7 +12,7 @@ namespace ImUI
 
         public bool changed { get; private set; }
 
-        public bool canEdit => !manager.isEditing || manager.editingView == this;
+        public bool canEdit => !state.disabled && (!manager.isEditing || manager.editingView == this);
 
         public ViewParam[] viewParams = new ViewParam[] { };
 
@@ -90,12 +90,14 @@ namespace ImUI
         public View view;
 
         public float indent;
+        public bool disabled;
 
         public void Update(View view, ImUIBuilder builder)
         {
             this.view = view;
 
             indent = builder.indent;
+            disabled = builder.disabled;
         }
     }
 }

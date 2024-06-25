@@ -91,11 +91,13 @@ namespace Core
             return null;
         }
 
-        public Vector3 GetPosition(Int2 point)
+        public Vector3 GetPosition(Vector2 point)
         {
             var p = new Vector2(point.x, point.y);
             return container.position + container.TransformDirection(p * scale);
         }
+        public Vector3 GetPosition(Int2 point) => GetPosition((Vector2)point);
+
         public Int2 GetPoint(Vector3 position)
         {
             var rel = container.InverseTransformDirection(position - container.position);

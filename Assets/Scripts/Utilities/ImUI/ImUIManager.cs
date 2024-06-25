@@ -15,7 +15,7 @@ namespace ImUI
         public List<View> oldViews { get; } = new List<View>();
         public List<View> currentViews { get; } = new List<View>();
 
-        public ViewBuilder viewBuilder;
+        public ViewBuilder viewBuilder = delegate { };
 
         public UnityAction onEditStart = () => { };
         public UnityAction onEditEnd = () => { };
@@ -55,6 +55,7 @@ namespace ImUI
         public void Build()
         {
             Begin();
+            builder.Reset();
             viewBuilder.Invoke(builder);
             End();
         }
@@ -123,6 +124,10 @@ namespace ImUI
             {
                 var layout = layouts[layouts.Count - 1];
                 layout._LoadView(view);
+            }
+            else
+            {
+                view.transform.SetParent(container);
             }
             view.transform.SetAsLastSibling();
             oldViews.Remove(view);

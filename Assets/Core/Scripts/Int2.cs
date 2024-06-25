@@ -56,6 +56,8 @@ namespace Core
         public static Int2 operator -(Int2 a, Int2 b) => new(a.x - b.x, a.y - b.y);
         public static Int2 operator *(Int2 a, int b) => new(a.x * b, a.y * b);
         public static Int2 operator *(int a, Int2 b) => new(a * b.x, a * b.y);
+        public static Vector2 operator *(Int2 a, float b) => new(a.x * b, a.y * b);
+        public static Vector2 operator *(float a, Int2 b) => new(a * b.x, a * b.y);
         public static Int2 operator /(Int2 a, int b) => new(a.x / b, a.y / b);
         public static bool operator ==(Int2 lhs, Int2 rhs) => lhs.x == rhs.x && lhs.y == rhs.y;
         public static bool operator !=(Int2 lhs, Int2 rhs) => !(lhs == rhs);

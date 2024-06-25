@@ -58,12 +58,12 @@ namespace Match3
                 }
             }
             Changed();
-            await engine.Wait(0.2f);
+            await game.Wait(0.2f);
             for (int i = 0; i < targetTiles.Count; i++)
             {
                 _ = targetTiles[i].Hit();
             }
-            await engine.Wait(0.5f);
+            await game.Wait(0.5f);
             engine.RemoveEntity(this);
         }
     }

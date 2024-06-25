@@ -39,7 +39,7 @@ namespace Match3
         protected override async Task OnHit()
         {
             await base.OnHit();
-            await engine.Wait(0.2f);
+            await game.Wait(0.2f);
             if (prefab.direction == ClearLineDirection.Horizontal)
             {
                 for (int i = 0; i <= game.width * 2; i++)
@@ -51,7 +51,7 @@ namespace Match3
                     if (tile != null)
                     {
                         _ = tile.Hit();
-                        // if (i % 2 == 0) await engine.Wait(0.1f);
+                        // if (i % 2 == 0) await game.Wait(0.1f);
                     }
                 }
             }
@@ -66,11 +66,11 @@ namespace Match3
                     if (tile != null)
                     {
                         _ = tile.Hit();
-                        // if (i % 2 == 0) await engine.Wait(0.1f);
+                        // if (i % 2 == 0) await game.Wait(0.1f);
                     }
                 }
             }
-            await engine.Wait(0.3f);
+            await game.Wait(0.3f);
             engine.RemoveEntity(this);
         }
     }

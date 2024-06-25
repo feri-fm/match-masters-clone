@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Core
@@ -133,16 +134,16 @@ namespace Core
             {
                 id = id,
                 key = key,
-                data = json,
+                data = json.json,
             };
         }
         public void Load(EntityData data)
         {
-            Load(data.data);
+            Load(new JsonData(data.data));
         }
         public void PostLoad(EntityData data)
         {
-            PostLoad(data.data);
+            PostLoad(new JsonData(data.data));
         }
     }
 
@@ -156,6 +157,6 @@ namespace Core
     {
         public Id id;
         public string key;
-        public JsonData data;
+        public JObject data;
     }
 }

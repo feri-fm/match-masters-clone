@@ -9,36 +9,46 @@ namespace Match3
         public override Trait CreateTrait() => new SwappableTileTrait();
 
         private Vector3 startPos;
+        private bool isDown;
+
         private void OnMouseDown()
         {
-            startPos = Input.mousePosition;
+            if (!UIFilter.IsPointerClear())
+            {
+                startPos = Input.mousePosition;
+                isDown = true;
+            }
         }
         private void OnMouseUp()
         {
-            var game = engine.engine.GetEntity<GameEntity>().game;
-            var tileView = entity as TileView;
-            var tile = tileView.tile;
-
-            if (game.isEvaluating) return;
-
-            var delta = Input.mousePosition - startPos;
-            if (delta.magnitude > 0)
+            if (isDown)
             {
-                if (Mathf.Abs(Mathf.Abs(delta.x) - Mathf.Abs(delta.y)) > minDelta)
-                {
-                    var dir = Vector2Int.zero;
-                    if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
-                        dir.x = (int)Mathf.Sign(delta.x);
-                    else
-                        dir.y = (int)Mathf.Sign(delta.y);
+                isDown = false;
+                var game = engine.engine.GetEntity<GameEntity>().game;
+                var tileView = entity as TileView;
+                var tile = tileView.tile;
 
-                    var otherPoint = tile.position + (Int2)dir;
-                    if (game.ValidatePoint(otherPoint))
+                if (game.isEvaluating) return;
+
+                var delta = Input.mousePosition - startPos;
+                if (delta.magnitude > 0)
+                {
+                    if (Mathf.Abs(Mathf.Abs(delta.x) - Mathf.Abs(delta.y)) > minDelta)
                     {
-                        var otherTile = game.GetTileAt(otherPoint);
-                        if (otherTile != null)
+                        var dir = Vector2Int.zero;
+                        if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+                            dir.x = (int)Mathf.Sign(delta.x);
+                        else
+                            dir.y = (int)Mathf.Sign(delta.y);
+
+                        var otherPoint = tile.position + (Int2)dir;
+                        if (game.ValidatePoint(otherPoint))
                         {
-                            game.TrySwap(tile, otherTile);
+                            var otherTile = game.GetTileAt(otherPoint);
+                            if (otherTile != null)
+                            {
+                                game.TrySwap(tile, otherTile);
+                            }
                         }
                     }
                 }

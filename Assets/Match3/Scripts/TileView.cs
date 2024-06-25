@@ -42,6 +42,7 @@ namespace Match3
             {
                 isHit = true;
                 game.hittings += 1;
+                game.OnTileHit(this);
                 onHit.Invoke();
                 await OnHit();
                 game.hittings -= 1;

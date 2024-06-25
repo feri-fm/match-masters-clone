@@ -733,8 +733,8 @@ MonoBehaviour:
     seed: 12345
     width: 8
     height: 8
-    minCount: 8
-    maxCount: 12
+    minBeads: 6
+    maxBeads: 10
     beads: 6
 --- !u!4 &903415496
 Transform:
@@ -1510,6 +1510,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bindOnAwake: 1
   target: {fileID: 903415495}
+--- !u!114 &1309281179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309281174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3656f30684992a147860ac34a1a145cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  validPointerObjects: []
 --- !u!1 &1367190288
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ namespace ImUI
         protected override void LoadView(View view)
         {
             base.LoadView(view);
-            view.transform.parent = container;
+            view.transform.SetParent(container);
         }
 
         protected override void LoadState(HorizontalLayoutViewState state)

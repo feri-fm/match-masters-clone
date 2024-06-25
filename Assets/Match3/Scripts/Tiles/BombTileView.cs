@@ -40,7 +40,7 @@ namespace Match3
         protected override async Task OnHit()
         {
             await base.OnHit();
-            await engine.Wait(0.2f);
+            await game.Wait(0.2f);
             var offset = position - Int2.one * 2;
             foreach (var point in prefab.area.points)
             {
@@ -54,7 +54,7 @@ namespace Match3
                     }
                 }
             }
-            await engine.Wait(0.3f);
+            await game.Wait(0.3f);
             engine.RemoveEntity(this);
         }
     }

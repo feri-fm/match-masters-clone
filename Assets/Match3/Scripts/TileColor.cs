@@ -51,7 +51,7 @@ namespace Match3
                 case (int)TileColorSamples.Orange: return "Orange";
                 case (int)TileColorSamples.Purple: return "Purple";
             }
-            return "Color: " + value;
+            return $"Color({value})";
         }
     }
 

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ImUI
@@ -6,12 +8,30 @@ namespace ImUI
     public class ImUIBuilder
     {
         public float indent = 0;
+        public bool disabled;
 
         public ImUIManager manager { get; }
 
         public ImUIBuilder(ImUIManager manager)
         {
             this.manager = manager;
+        }
+
+        public void Reset()
+        {
+            disabled = false;
+            indent = 0;
+        }
+
+        private float lastIndent;
+        public void StashIndent(float newIndent)
+        {
+            lastIndent = indent;
+            indent = newIndent;
+        }
+        public void LoadIndent()
+        {
+            indent = lastIndent;
         }
 
         public void Title(string label, params ViewParam[] viewParams)
@@ -71,6 +91,37 @@ namespace ImUI
         public void BeginHorizontal(float height, params ViewParam[] viewParams)
         {
             manager.BuildLayoutView("horizontal", new HorizontalLayoutViewState(height), viewParams);
+        }
+
+        private List<string> tabs = new();
+        public void Tab(string title, Action content) => Tab(title, title, content);
+        public void Tab(string title, int indent, Action content) => Tab(title, title, indent, content);
+        public void Tab(string tabName, string title, Action content) => Tab(tabName, title, 40, content);
+        public void Tab(string tabName, string title, int _indent, Action content)
+        {
+            if (Button(title + (tabs.Contains(tabName) ? " <" : " >")))
+            {
+                if (tabs.Contains(tabName))
+                    tabs.Remove(tabName);
+                else
+                    tabs.Add(tabName);
+            }
+            if (tabs.Contains(tabName))
+            {
+                indent += _indent;
+                content.Invoke();
+                Space(15);
+                indent -= _indent;
+            }
+        }
+
+        public void Row(Action content)
+        {
+            BeginHorizontal(50);
+            StashIndent(0);
+            content.Invoke();
+            LoadIndent();
+            EndLayout();
         }
     }
 }

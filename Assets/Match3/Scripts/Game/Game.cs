@@ -26,10 +26,14 @@ namespace Match3
 
         public Dictionary<TileColor, int> colorsCount = new();
 
+        public event Action<Tile> onTileHit = delegate { };
+
         public Int2 swappedA;
         public Int2 swappedB;
 
         public int hittings;
+
+        private bool removed;
 
         public void Setup(GameEntity entity, GameOptions options)
         {
@@ -40,12 +44,14 @@ namespace Match3
             random.SetMax(100);
             engine.onEntityRemoved += OnEntityRemoved;
             tiles = new Tile[width, height];
+            removed = false;
             ResetColors();
         }
 
         public void Remove()
         {
             engine.onEntityRemoved -= OnEntityRemoved;
+            removed = true;
         }
 
         public void BuildGrid()
@@ -65,7 +71,8 @@ namespace Match3
         {
             if (entity is Tile tile)
             {
-                SetTileAt(tile.position, null);
+                if (GetTileAt(tile.position) == tile)
+                    SetTileAt(tile.position, null);
             }
         }
 
@@ -88,27 +95,29 @@ namespace Match3
                     while (TryGetMatch(out var match))
                     {
                         await ApplyMatch(match);
+                        await Wait(0);
                         loop = true;
                     }
                 }
 
                 while (hittings > 0)
                 {
-                    await engine.Wait(0);
+                    await Wait(0);
                 }
 
-                if (loop) await engine.Wait(0.4f);
+                if (loop) await Wait(0.2f);
 
                 while (CanApplyGravity())
                 {
                     ApplyGravity();
+                    await Wait(0.02f);
                     FillTopRow();
-                    await engine.Wait(0.1f);
+                    await Wait(0.02f);
                     loop = true;
                 }
                 ApplyGravity();
                 if (loop) changed = true;
-                if (loop) await engine.Wait(0.3f);
+                if (loop) await Wait(0.3f);
             } while (loop);
             isEvaluating = false;
             return changed;
@@ -120,31 +129,55 @@ namespace Match3
             isEvaluating = true;
             swappedA = a;
             swappedB = b;
-            Swap(a, b);
-            await engine.Wait(0.4f);
-            if (!await Evaluate())
+            var tileA = GetTileAt(a);
+            var tileB = GetTileAt(b);
+
+            if (tileA.HasTrait<PowerUpTrait>() && tileB.HasTrait<PowerUpTrait>())
             {
-                isEvaluating = true;
+                hittings = 0;
 
-                var tileA = GetTileAt(a);
-                var tileB = GetTileAt(b);
-
-                if (tileA.HasTrait<PowerUpTrait>() && tileB.HasTrait<PowerUpTrait>())
+                if (tileA is ClearLineTile lineA && tileB is ClearLineTile lineB
+                    && lineA.prefab.direction == lineB.prefab.direction)
                 {
-                    hittings = 0;
-                    _ = tileA.Hit();
-                    _ = tileB.Hit();
-                    while (hittings > 0)
-                        await engine.Wait(0);
-                    await Evaluate();
+                    var prefab = config.GetRewardTile<ClearLineTileView>(lineA.color, e => e.direction != lineA.prefab.direction);
+                    engine.RemoveEntity(tileA);
+                    tileA = CreateTileFromView(prefab);
+                    SetTileAt(a, tileA);
+                    tileA.WithTrait<AnimatorTrait>(t => t.Jump());
+                    tileA.canHit = true;
                 }
-                else
+
+                SetTileAt(a, null);
+                SetTileAt(b, tileA);
+                tileA.WithTrait<AnimatorTrait>(t => t.MoveTo());
+                await Wait(0.3f);
+                _ = tileA.Hit();
+                _ = tileB.Hit();
+                while (hittings > 0)
+                    await Wait(0);
+                await Evaluate();
+            }
+            else
+            {
+                Swap(a, b);
+                tileA.WithTrait<AnimatorTrait>(t => t.MoveTo());
+                tileB.WithTrait<AnimatorTrait>(t => t.MoveTo());
+                await Wait(0.15f);
+                if (!await Evaluate())
                 {
                     Swap(a, b);
-                    await engine.Wait(0.3f);
+                    tileA.WithTrait<AnimatorTrait>(t => t.MoveTo());
+                    tileB.WithTrait<AnimatorTrait>(t => t.MoveTo());
+                    await Wait(0.15f);
                     isEvaluating = false;
                 }
             }
+        }
+
+        public async Task Wait(float time)
+        {
+            await engine.Wait(time);
+            if (removed) throw new Exception("Game removed!");
         }
 
         public bool ValidatePoint(Int2 p) => p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
@@ -183,7 +216,7 @@ namespace Match3
             SetTileAt(b, temp);
         }
 
-        private bool AnyMatch()
+        public bool AnyMatch()
         {
             for (int p = 0; p < config.match.search.Length; p++)
             {
@@ -280,9 +313,15 @@ namespace Match3
                     case MatchPattern.Reward.Lightning: prefab = config.GetRewardTile<LightningTileView>(match.color); break;
                     case MatchPattern.Reward.Bomb: prefab = config.GetRewardTile<BombTileView>(match.color); break;
                 }
+                if (IsNotEmptyAt(point))
+                {
+                    // throw new Exception("Reward point is not available");
+                    // engine.RemoveEntity(GetTileAt(point));
+                }
                 var tile = CreateTileFromView(prefab);
                 SetTileAt(point, tile);
                 tile.WithTrait<AnimatorTrait>(t => t.Spawn());
+                await Wait(0.3f);
             }
         }
 
@@ -350,6 +389,12 @@ namespace Match3
                 }
             }
         }
+
+        public void OnTileHit(Tile tile)
+        {
+            onTileHit.Invoke(tile);
+        }
+
         private void ResetColors()
         {
             colorsCount[TileColor.blue] = 0;
@@ -421,133 +466,13 @@ namespace Match3
             return tile;
         }
 
-        public async Task RunProgram(Func<Game, Task> action)
+        public async Task RunCommand(GameCommand command)
         {
             isEvaluating = true;
-            await action.Invoke(this);
+            await command.Run(this);
             while (hittings > 0)
-                await engine.Wait(0);
+                await Wait(0);
             await Evaluate();
-        }
-
-        public async Task Shuffle()
-        {
-            await RunProgram(async (g) =>
-            {
-                for (int i = 0; i < 20; i++)
-                {
-                    var a = RandPoint();
-                    var b = RandPoint();
-                    if (g.IsNotEmptyAt(a) && g.IsNotEmptyAt(b))
-                    {
-                        g.Swap(a, b);
-                        if (g.AnyMatch())
-                            g.Swap(a, b);
-                    }
-                }
-                await g.engine.Wait(0.6f);
-            });
-        }
-        public async Task TwoColors()
-        {
-            await RunProgram(async (g) =>
-            {
-                foreach (var tile in tiles)
-                {
-                    engine.RemoveEntity(tile);
-                }
-                var s1 = RandInt(options.beads);
-                var s2 = (s1 + 1 + RandInt(options.beads - 2)) % options.beads;
-                for (int i = 0; i < width; i++)
-                {
-                    for (int j = 0; j < height; j++)
-                    {
-                        var black = (i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0);
-                        var bead = black ? config.beads[s1] : config.beads[s2];
-                        var tile = CreateColoredTile(bead);
-                        var point = new Int2(i, j);
-                        SetTileAt(point, tile);
-                        tile.WithTrait<AnimatorTrait>(t => t.Jump());
-                    }
-                }
-                await engine.Wait(0.1f);
-            });
-        }
-        public async Task Duck()
-        {
-            await RunProgram(async (g) =>
-            {
-                for (int i = 0; i < g.width; i++)
-                {
-                    var tile = GetTileAt(new Int2(i, 3));
-                    if (tile != null)
-                    {
-                        _ = tile.Hit();
-                        await g.engine.Wait(0.05f);
-                    }
-                }
-                await engine.Wait(0.2f);
-            });
-        }
-        public async Task Rocket()
-        {
-            await RunProgram(async (g) =>
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    var tile = GetTileAt(g.RandPoint());
-                    if (tile != null)
-                    {
-                        _ = tile.Hit();
-                        await g.engine.Wait(0.2f);
-                    }
-                }
-                await engine.Wait(0.3f);
-            });
-        }
-        public async Task Bucket()
-        {
-            await RunProgram(async (g) =>
-            {
-                var color = config.beads[2 + g.RandInt(options.beads - 2)].color;
-                var prefab = g.config.GetBeadTile(color);
-                for (int i = 0; i < 6; i++)
-                {
-                    var point = g.RandPoint();
-                    var tile = GetTileAt(point);
-                    if (tile != null && tile is BeadTile beadTile && beadTile.color != color)
-                    {
-                        g.engine.RemoveEntity(beadTile);
-                        var newTile = g.CreateColoredTile(prefab);
-                        SetTileAt(point, newTile);
-                        newTile.WithTrait<AnimatorTrait>(t => t.Spawn());
-                        await g.engine.Wait(0.1f);
-                    }
-                }
-                await engine.Wait(0.4f);
-            });
-        }
-        public async Task Hat()
-        {
-            await RunProgram(async (g) =>
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    var point = g.RandPoint();
-                    var tile = GetTileAt(point);
-                    if (tile != null && tile is BeadTile beadTile)
-                    {
-                        var color = beadTile.color;
-                        var prefab = g.RandElement(g.config.rewardTiles.Where(e => e.color == color).ToArray());
-                        g.engine.RemoveEntity(beadTile);
-                        var newTile = g.CreateTile(prefab);
-                        SetTileAt(point, newTile);
-                        newTile.WithTrait<AnimatorTrait>(t => t.Spawn());
-                        await g.engine.Wait(0.1f);
-                    }
-                }
-                await engine.Wait(0.4f);
-            });
         }
 
         public GameData Save()

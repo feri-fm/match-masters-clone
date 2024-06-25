@@ -73,42 +73,42 @@ public class SampleEngineViewLoader : MonoBehaviour
     public async void Shuffle()
     {
         if (!game.isEvaluating)
-            await game.game.Shuffle();
+            await game.game.RunCommand(new ShuffleCommand());
     }
 
     [Member]
     public async void TwoColors()
     {
         if (!game.isEvaluating)
-            await game.game.TwoColors();
+            await game.game.RunCommand(new TwoColorsCommand());
     }
 
     [Member]
     public async void Rocket()
     {
         if (!game.isEvaluating)
-            await game.game.Rocket();
+            await game.game.RunCommand(new RocketCommand());
     }
 
     [Member]
     public async void Bucket()
     {
         if (!game.isEvaluating)
-            await game.game.Bucket();
+            await game.game.RunCommand(new BucketCommand());
     }
 
     [Member]
     public async void Duck()
     {
         if (!game.isEvaluating)
-            await game.game.Duck();
+            await game.game.RunCommand(new DuckCommand());
     }
 
     [Member]
     public async void Hat()
     {
         if (!game.isEvaluating)
-            await game.game.Hat();
+            await game.game.RunCommand(new HatCommand());
     }
 
     [Member]

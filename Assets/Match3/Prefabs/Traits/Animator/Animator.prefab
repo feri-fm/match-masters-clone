@@ -101,28 +101,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   key: animator
-  drag: 0.76
-  squashDistance: -0.05
+  drag: 0.75
+  squashDistance: -1
+  speed: 10
   forceOverDistance:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 221.89938
-      outSlope: 221.89938
+      inSlope: 374.48694
+      outSlope: 374.48694
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.048891786
+      outWeight: 0.03715776
     - serializedVersion: 3
       time: 4
       value: 400
-      inSlope: 47.884247
-      outSlope: 47.884247
+      inSlope: 18.396225
+      outSlope: 18.396225
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.08865708
+      inWeight: 0.19230765
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

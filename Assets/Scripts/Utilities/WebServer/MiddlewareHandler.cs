@@ -35,16 +35,8 @@ namespace WebServer
         {
             foreach (var middleware in middlewares)
             {
-                try
-                {
-                    await middleware.HandleContext(context);
-                    if (context.response.closed) return true;
-                }
-                catch (System.Exception exception)
-                {
-                    context.exception = exception;
-                    return false;
-                }
+                await middleware.HandleContext(context);
+                if (context.response.closed) return true;
             }
             return true;
         }

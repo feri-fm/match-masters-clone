@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEditor.Experimental.GraphView;
 
 namespace WebServer
 {
@@ -41,9 +40,16 @@ namespace WebServer
             {
                 if (handler.CanHandleContext(context))
                 {
-                    if (await handler.HandleContext(context))
+                    try
                     {
-                        return true;
+                        if (await handler.HandleContext(context))
+                        {
+                            return true;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        context.exception = exception;
                     }
                 }
             }

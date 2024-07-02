@@ -23,7 +23,7 @@ namespace WebServer
             StartSending();
             StartReceiving();
 
-            await context.response.SendJson(new { hello = "World" });
+            await context.response.Send(new { hello = "World" });
 
             return true;
         }

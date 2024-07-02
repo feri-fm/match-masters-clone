@@ -14,7 +14,7 @@ namespace WebServer
         public override async Task<bool> HandleContext(Context context)
         {
             Debug.LogError("Exception: " + context.exception);
-            await context.response.SendJson(context.exception.ToString());
+            await context.response.Send(context.exception.ToString());
             return true;
         }
     }

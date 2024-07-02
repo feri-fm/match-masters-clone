@@ -11,6 +11,9 @@ namespace WebServer
         public Response response;
         public HttpListenerContext httpListenerContext;
 
+        public Router router;
+
+        public bool closed;
         public Exception exception = null;
 
         public Context(HttpListenerContext httpListenerContext)
@@ -18,6 +21,11 @@ namespace WebServer
             this.httpListenerContext = httpListenerContext;
             request = new Request(this);
             response = new Response(this);
+        }
+
+        public void Close()
+        {
+            closed = true;
         }
     }
 
@@ -38,8 +46,6 @@ namespace WebServer
         public Context context;
         public HttpListenerResponse httpResponse;
 
-        public bool closed;
-
         public Response(Context context)
         {
             this.context = context;
@@ -49,10 +55,15 @@ namespace WebServer
         public void Close()
         {
             httpResponse.Close();
-            closed = true;
+            context.Close();
         }
 
-        public async Task SendJson(object data)
+        public Response Status(ushort status)
+        {
+            return this;
+        }
+
+        public async Task Send(object data)
         {
             var json = data.ToJson();
 

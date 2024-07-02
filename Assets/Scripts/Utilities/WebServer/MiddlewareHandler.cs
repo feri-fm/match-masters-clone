@@ -36,7 +36,7 @@ namespace WebServer
             foreach (var middleware in middlewares)
             {
                 await middleware.HandleContext(context);
-                if (context.response.closed) return true;
+                if (context.closed) return true;
             }
             return true;
         }

@@ -7,31 +7,31 @@ namespace WebServer
 {
     public class Router : ContextHandler
     {
-        public string path;
+        public string localPattern;
         public List<ContextHandler> handlers = new();
 
+        public bool exactMatch;
+        public Pattern pattern;
         public Router parent;
 
         public Router()
         {
-            path = "";
+            localPattern = "";
         }
-        public Router(string path)
+        public Router(string localPattern)
         {
-            this.path = path;
+            this.localPattern = localPattern;
         }
 
-        public Router(string path, Router parent)
+        public Router(string localPattern, Router parent)
         {
-            this.path = path;
+            this.localPattern = localPattern;
             this.parent = parent;
         }
 
         public override bool CanHandleContext(Context context)
         {
-            //TODO: use path to match
-            var fullPath = GetFullPath();
-            return CheckPattern(context.request.httpRequest.RawUrl, fullPath);
+            return CheckPattern(context.request.httpRequest.RawUrl);
         }
 
         public override async Task<bool> HandleContext(Context context)
@@ -42,6 +42,7 @@ namespace WebServer
                 {
                     try
                     {
+                        context.router = this;
                         if (await handler.HandleContext(context))
                         {
                             return true;
@@ -56,18 +57,32 @@ namespace WebServer
             return false;
         }
 
-        public string GetFullPath()
+        public void Build()
         {
-            if (parent != null)
+            var hasChild = false;
+            foreach (var handler in handlers)
             {
-                return parent.GetFullPath() + path;
+                if (handler is Router router)
+                {
+                    hasChild = true;
+                    router.Build();
+                }
             }
-            return path;
+
+            exactMatch = !hasChild;
+            var patternString = localPattern;
+            var currentParent = parent;
+            while (currentParent != null)
+            {
+                patternString = currentParent.localPattern + patternString;
+                currentParent = currentParent.parent;
+            }
+            pattern = new Pattern(patternString);
         }
 
-        public bool CheckPattern(string rawUrl, string pattern)
+        public bool CheckPattern(string url)
         {
-            return rawUrl.StartsWith(pattern);
+            return pattern.Check(url, exactMatch);
         }
 
         public Router In(string path)
@@ -103,7 +118,7 @@ namespace WebServer
         }
         public override string ToString()
         {
-            return path;
+            return localPattern;
         }
 
         public Router Use(params AsyncMiddlewareCall[] actions) => Use("", actions);
@@ -117,5 +132,74 @@ namespace WebServer
         public Router Post(params AsyncMiddlewareCall[] actions) => Post("", actions);
         public Router Post(string path, params AsyncMiddlewareCall[] actions)
             => Use(path, new MiddlewareHandler("POST", actions.Select(e => new AsyncMiddleware(e)).ToArray()));
+
+        public Router Put(params AsyncMiddlewareCall[] actions) => Put("", actions);
+        public Router Put(string path, params AsyncMiddlewareCall[] actions)
+            => Use(path, new MiddlewareHandler("PUT", actions.Select(e => new AsyncMiddleware(e)).ToArray()));
+
+        public Router Delete(params AsyncMiddlewareCall[] actions) => Delete("", actions);
+        public Router Delete(string path, params AsyncMiddlewareCall[] actions)
+            => Use(path, new MiddlewareHandler("DELETE", actions.Select(e => new AsyncMiddleware(e)).ToArray()));
+    }
+
+    public class Pattern
+    {
+        public string patternString;
+        public string[] segments;
+        public string[] paramKeys;
+        public bool[] isParam;
+
+        public Dictionary<string, string> parameters = new();
+
+        public Pattern(string patternString)
+        {
+            patternString = patternString.Trim();
+            if (patternString[0] == '/')
+                patternString = patternString.Substring(1);
+            if (patternString[patternString.Length - 1] == '/')
+                patternString = patternString.Substring(0, patternString.Length - 1);
+            this.patternString = patternString.Trim();
+            segments = patternString.Split("/");
+            paramKeys = new string[segments.Length];
+            isParam = new bool[segments.Length];
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (segments[i].StartsWith(":"))
+                {
+                    paramKeys[i] = segments[i].Substring(1);
+                    isParam[i] = true;
+                }
+                else
+                {
+                    paramKeys[i] = "";
+                    isParam[i] = false;
+                }
+            }
+        }
+
+        public bool Check(string url, bool exact)
+        {
+            parameters.Clear();
+            url = url.Trim();
+            if (url[0] == '/')
+                url = url.Substring(1);
+            if (url[url.Length - 1] == '/')
+                url = url.Substring(0, url.Length - 1);
+            var urlSegments = url.Split("/");
+            if (exact && urlSegments.Length != segments.Length) return false;
+            if (!exact && urlSegments.Length < segments.Length) return false;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (isParam[i])
+                {
+                    parameters[paramKeys[i]] = urlSegments[i];
+                }
+                else
+                {
+                    if (segments[i] != urlSegments[i]) return false;
+                }
+            }
+            return true;
+        }
     }
 }

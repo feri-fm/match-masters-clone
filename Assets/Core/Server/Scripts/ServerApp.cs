@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using UnityEngine;
 using WebServer;
 
@@ -26,6 +24,15 @@ namespace MMC.Server
         {
             module.Setup(this);
             modules.Add(module);
+        }
+
+        public T Find<T>() where T : Module
+        {
+            return modules.Find(e => e is T) as T;
+        }
+        public Module Find(Type type)
+        {
+            return modules.Find(e => type.IsAssignableFrom(e.GetType()));
         }
 
         public void RegisterAssemblyModules()
@@ -71,27 +78,13 @@ namespace MMC.Server
         public void Listen(ushort port)
         {
             app.Listen(port);
+            Debug.Log("Server listening on " + port);
         }
 
         public void Stop()
         {
             app.Stop();
-        }
-
-        private void __Start()
-        {
-            var connectionString = "mongodb://localhost:27017";
-            // var connectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
-            // if (connectionString == null)
-            // {
-            //     Console.WriteLine("You must set your 'MONGODB_URI' environment variable. To learn how to set it, see https://www.mongodb.com/docs/drivers/csharp/current/quick-start/#set-your-connection-string");
-            //     Environment.Exit(0);
-            // }
-            var client = new MongoClient(connectionString);
-            var collection = client.GetDatabase("karo-ludo").GetCollection<BsonDocument>("users");
-            var filter = Builders<BsonDocument>.Filter.Eq("username", "User_17");
-            var document = collection.Find(filter).First();
-            Debug.Log(document);
+            Debug.Log("Server stopped");
         }
     }
 }

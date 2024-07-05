@@ -4,5 +4,7 @@ namespace MMC.Server
     public class UsersController : Controller
     {
         public override string routeName => "/users";
+
+        [UseModule] public UsersService service;
     }
 }

@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using MMC.Server.Models;
+using Newtonsoft.Json.Linq;
+using UnityEngine;
 using WebServer;
 
 namespace MMC.Server
@@ -9,10 +12,12 @@ namespace MMC.Server
     public abstract class Controller : Module
     {
         public abstract string routeName { get; }
+        public Router router;
 
         private RouteAttribute lastAttr;
 
-        public Router router;
+        [UseModule] public AuthService auth;
+        [UseModule] public UsersService users;
 
         protected void BuildRoute(params AsyncMiddlewareCall[] calls)
         {
@@ -61,11 +66,35 @@ namespace MMC.Server
             };
         }
 
-        public AsyncMiddlewareCall Auth()
+        public AsyncMiddlewareCall AuthUser()
         {
             return async (req, res) =>
             {
-
+                var token = req.GetHeader("x-auth-token");
+                if (token != null)
+                {
+                    if (auth.VerifyToken(token, out var json))
+                    {
+                        var data = json.FromJson<UserModel>();
+                        var user = await users.GetUser(data.id);
+                        if (user != null)
+                        {
+                            req.Put(user);
+                        }
+                        else
+                        {
+                            await res.SendError(404, "User not found");
+                        }
+                    }
+                    else
+                    {
+                        await res.SendError(401, "Invalid Token");
+                    }
+                }
+                else
+                {
+                    await res.SendError(400, "No token provided");
+                }
             };
         }
 

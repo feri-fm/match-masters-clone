@@ -1,3 +1,5 @@
+using MMC.Server.Models;
+
 namespace MMC.Server
 {
     [Controller]
@@ -9,22 +11,19 @@ namespace MMC.Server
         public void Register() => BuildRoute(
             async (req, res) =>
             {
-                await res.Send(new { username = "register_boo" });
+                var user = await users.CreateNewUser();
+                var token = auth.EncodeToken(user.BuildToken);
+                await res.AddHeader("x-auth-token", token).Send(user);
             }
         );
 
-        [RoutePost("/login")]
-        public void Login() => BuildRoute(
-            ValidateBody(),
-            QueryOne<UserModel>(),
+        [RouteGet("/validate")]
+        public void Validate() => BuildRoute(
+            AuthUser(),
             async (req, res) =>
             {
-                var stream = req.httpRequest.InputStream;
-                var length = req.httpRequest.ContentLength64;
-                var bytes = new byte[length];
-                await stream.ReadAsync(bytes, 0, (int)length);
-                var text = req.httpRequest.ContentEncoding.GetString(bytes);
-                await res.Send(new { username = "boo", data = text });
+                var user = req.Get<UserModel>();
+                await res.Send(user);
             }
         );
     }

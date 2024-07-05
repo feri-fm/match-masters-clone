@@ -9,7 +9,7 @@ namespace MMC.Server
 
         [RouteGet("/")]
         public void GetGames() => BuildRoute(
-            Auth(),
+            AuthUser(),
             QueryAll<GameModel>(),
             async (req, res) =>
             {
@@ -19,7 +19,7 @@ namespace MMC.Server
 
         [RouteGet("/:id")]
         public void GetGame() => BuildRoute(
-            Auth(),
+            AuthUser(),
             QueryAll<GameModel>(),
             async (req, res) =>
             {

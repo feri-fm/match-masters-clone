@@ -10,7 +10,7 @@ namespace WebClient
     {
         public UnityWebRequest request { get; private set; }
 
-        public string sendJson { get; private set; }
+        public string requestBody { get; private set; }
 
         public bool showLoading { get; private set; }
         public bool showError { get; private set; }
@@ -50,14 +50,14 @@ namespace WebClient
         public Request(string method, string url, string json, Action<Request> send)
         {
             this.send = send;
-            sendJson = json;
+            requestBody = json;
             showLoading = true;
             showError = true;
             request = new UnityWebRequest(url, method);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
             request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-            Header("content-type", "application/json");
+            AddHeader("content-type", "application/json");
         }
 
         public Request(UnityWebRequest unityWebRequest, Action<Request> send)
@@ -77,10 +77,15 @@ namespace WebClient
             onFailure?.Invoke(this);
         }
 
-        public Request Header(string name, string value)
+        public Request AddHeader(string name, string value)
         {
             request.SetRequestHeader(name, value ?? "");
             return this;
+        }
+
+        public string GetResponseHeader(string key)
+        {
+            return request.GetResponseHeader(key);
         }
 
         public Request Ignore(params long[] codes)

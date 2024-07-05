@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
+using MMC.Network.GameMiddleware;
 using MMC.Server;
 using MMC.Server.Models;
 using MongoDB.Bson;
 using UnityEngine;
 
-namespace MMC.Network.Session
+namespace MMC.Network.SessionMiddleware
 {
     public partial class SessionNetworkMiddleware
     {
@@ -49,19 +51,12 @@ namespace MMC.Network.Session
             }
         }
 
-        public async void Kick(NetworkConnectionToClient conn, string message)
-        {
-            conn.Send(new KickClientMessage(message));
-            await new WaitForSeconds(0.2f);
-            conn.Disconnect();
-        }
-
         public async void WaitForAuth(NetworkConnectionToClient conn)
         {
             await new WaitForSeconds(2);
             if (waitingConnections.Contains(conn))
             {
-                Kick(conn, "No auth token received");
+                manager.Kick(conn, "No auth token received");
             }
         }
 
@@ -72,6 +67,14 @@ namespace MMC.Network.Session
         public void OnSessionClosed(Session session)
         {
 
+        }
+
+        public void WithSession(NetworkConnectionToClient conn, Action<Session> action)
+        {
+            if (sessionByConn.TryGetValue(conn, out var session))
+            {
+                action.Invoke(session);
+            }
         }
 
         private async void OnAuthMessage(NetworkConnectionToClient conn, AuthServerMessage msg)
@@ -93,7 +96,7 @@ namespace MMC.Network.Session
                         authConnections.Remove(conn);
                         if (sessionById.TryGetValue(user.id, out var otherSession))
                         {
-                            Kick(otherSession.conn, "you logged in with another device");
+                            manager.Kick(otherSession.conn, "you logged in with another device");
                             ClearConnection(otherSession.conn);
                         }
                         var session = new Session(conn, user);
@@ -105,12 +108,12 @@ namespace MMC.Network.Session
                 }
                 else
                 {
-                    Kick(conn, "User Not Found");
+                    manager.Kick(conn, "User Not Found");
                 }
             }
             else
             {
-                Kick(conn, "Invalid token");
+                manager.Kick(conn, "Invalid token");
             }
         }
     }

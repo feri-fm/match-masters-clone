@@ -15,6 +15,8 @@ namespace MMC.Network
 
         private string _name;
 
+        public NetNetworkManager networkManager => NetNetworkManager.instance;
+
         private void Awake()
         {
             SetName(base.name);

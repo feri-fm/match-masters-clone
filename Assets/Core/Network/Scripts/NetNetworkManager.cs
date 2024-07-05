@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using kcp2k;
 using Mirror;
-using MMC.Network.Game;
-using MMC.Network.Session;
+using MMC.Game;
+using MMC.Network.GameMiddleware;
+using MMC.Network.SessionMiddleware;
 using MMC.Server;
 using MongoDB.Driver.Linq;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace MMC.Network
 
         public SessionNetworkMiddleware session { get; private set; }
         public GameNetworkMiddleware game { get; private set; }
+
+        public GameManager gameManager => GameManager.instance;
 
         public static NetNetworkManager instance { get; private set; }
 
@@ -35,7 +38,8 @@ namespace MMC.Network
             ForEachMiddleware(e => e._Setup(this));
 
             //TODO: start server shouldn't happen on game scene, just for testing
-            StartServer();
+            if (Application.isEditor)
+                StartServer();
         }
 
         public void ForEachMiddleware(Action<NetNetworkMiddleware> action)
@@ -67,8 +71,23 @@ namespace MMC.Network
             StartClient();
         }
 
-        public override void OnStartClient() { base.OnStartClient(); ForEachMiddleware(e => e.OnStartClient()); }
-        public override void OnStopClient() { base.OnStopClient(); ForEachMiddleware(e => e.OnStopClient()); }
+        public async void Kick(NetworkConnectionToClient conn, string message)
+        {
+            conn.Send(new KickClientMessage(message));
+            await new WaitForSeconds(0.2f);
+            conn.Disconnect();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient(); ForEachMiddleware(e => e.OnStartClient());
+            NetworkClient.RegisterHandler<KickClientMessage>(OnKickClientMessage);
+        }
+        public override void OnStopClient()
+        {
+            base.OnStopClient(); ForEachMiddleware(e => e.OnStopClient());
+            NetworkClient.UnregisterHandler<KickClientMessage>();
+        }
         public override void OnClientConnect() { base.OnClientConnect(); ForEachMiddleware(e => e.OnClientConnect()); }
         public override void OnClientDisconnect() { base.OnClientDisconnect(); ForEachMiddleware(e => e.OnClientDisconnect()); }
 
@@ -76,11 +95,28 @@ namespace MMC.Network
         public override void OnStopServer() { base.OnStopServer(); ForEachMiddleware(e => e.OnStopServer()); }
         public override void OnServerConnect(NetworkConnectionToClient conn) { base.OnServerConnect(conn); ForEachMiddleware(e => e.OnServerConnect(conn)); }
         public override void OnServerDisconnect(NetworkConnectionToClient conn) { ForEachMiddleware(e => e.OnServerDisconnect(conn)); base.OnServerDisconnect(conn); }
+
+
+        public void OnKickClientMessage(KickClientMessage msg)
+        {
+            Popup.ShowAlert(msg.message);
+            gameManager.isConnected = false;
+        }
     }
 
     public class NetworkConnectionInfo
     {
         public string address;
         public ushort port;
+    }
+
+    public struct KickClientMessage : NetworkMessage
+    {
+        public string message;
+
+        public KickClientMessage(string message)
+        {
+            this.message = message;
+        }
     }
 }

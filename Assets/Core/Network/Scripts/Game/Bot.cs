@@ -1,6 +1,8 @@
-namespace MMC.Network.Game
+using UnityEngine;
+
+namespace MMC.Network.GameMiddleware
 {
-    public class Bot
+    public class Bot : MonoBehaviour
     {
 
     }

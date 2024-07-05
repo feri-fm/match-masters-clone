@@ -88,6 +88,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc8bc1e3915e3294bb79011a8d4757d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  configs:
+  - {fileID: 11400000, guid: 1b9e620c96760704f94518bc020b049b, type: 2}
+  games: []
 --- !u!1 &2412452968461134882
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +157,10 @@ MonoBehaviour:
   playerPrefab: {fileID: 0}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 5450831854151979981, guid: 49cf120498ee7a5408ebff7704aad404, type: 3}
+  - {fileID: 5495073337813636774, guid: 8f83b816fa2db8b41b33f3a269c4b836, type: 3}
+  - {fileID: 7506757259381461847, guid: e94509f4dc43f4042a56d5cace60bbb9, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -170,6 +176,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
+  serverManager: {fileID: 0}
   middlewares:
   - {fileID: 342737944423228570}
   - {fileID: 8320119784431495535}

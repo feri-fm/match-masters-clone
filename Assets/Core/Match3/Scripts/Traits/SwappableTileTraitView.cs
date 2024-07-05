@@ -24,7 +24,8 @@ namespace MMC.Match3
             if (isDown)
             {
                 isDown = false;
-                var game = engine.engine.GetEntity<GameEntity>().game;
+                var gameEntity = engine.engine.GetEntity<GameEntity>();
+                var game = gameEntity.game;
                 var tileView = entity as TileView;
                 var tile = tileView.tile;
 
@@ -48,6 +49,7 @@ namespace MMC.Match3
                             if (otherTile != null)
                             {
                                 game.TrySwap(tile, otherTile);
+                                gameEntity.onSawp.Invoke(tile.position, otherTile.position);
                             }
                         }
                     }

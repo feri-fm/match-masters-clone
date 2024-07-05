@@ -2,7 +2,7 @@ using System;
 using Mirror;
 using MMC.Server.Models;
 
-namespace MMC.Network.Session
+namespace MMC.Network.SessionMiddleware
 {
     public class Session
     {

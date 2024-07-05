@@ -24,6 +24,8 @@ namespace MMC.Match3
 
         public RandomTable random { get; private set; }
 
+        public Func<TileColor, TileColor> colorMap = (c) => c; // i was here
+
         public Dictionary<TileColor, int> colorsCount = new();
 
         public event Action<Tile> onTileHit = delegate { };

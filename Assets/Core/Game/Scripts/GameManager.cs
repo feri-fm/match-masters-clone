@@ -15,6 +15,8 @@ namespace MMC.Game
         public ConnectingPanel connectingPanel => panelGroup.GetPanel<ConnectingPanel>();
         public MenuPanel menuPanel => panelGroup.GetPanel<MenuPanel>();
         public AuthPanel authPanel => panelGroup.GetPanel<AuthPanel>();
+        public JoiningPanel joiningPanel => panelGroup.GetPanel<JoiningPanel>();
+        public GamePanel gamePanel => panelGroup.GetPanel<GamePanel>();
 
         public event Action onStateChanged = delegate { };
 
@@ -27,27 +29,9 @@ namespace MMC.Game
         private void Awake()
         {
             instance = this;
-            networkManager.transport.OnClientError += (e, s) =>
-            {
-                Debug.LogError(s + ", " + e);
-                ChangeState(() => isConnecting = false);
-            };
-            networkManager.transport.OnClientConnected += () =>
-            {
-
-            };
             networkManager.transport.OnClientDisconnected += () =>
             {
-                if (isConnected)
-                {
-                    ChangeState(() => isConnected = false);
-                    StartMenu();
-                }
-                else
-                {
-                    ChangeState(() => isConnecting = false);
-                    connectingPanel.OpenPanel();
-                }
+                OnDisconnect();
             };
         }
 
@@ -83,6 +67,7 @@ namespace MMC.Game
                     ChangeState(() => isConnecting = true);
                     webRequestManager.Validate().R(r =>
                     {
+                        ChangeState(() => isConnecting = false);
                         StartMenu();
                     }).F(r =>
                     {
@@ -99,22 +84,48 @@ namespace MMC.Game
         public void StartMenu()
         {
             menuPanel.OpenPanel();
-            connectingPanel.OpenPanel();
-            ChangeState(() => isConnecting = true);
-            webRequestManager.GetNetworkConnection().R(r =>
+            if (!isConnected)
             {
-                var connection = r.GetBody<NetworkConnectionInfo>();
-                networkManager.StartClient(connection);
-            }).F(r =>
-            {
-                ChangeState(() => isConnecting = false);
-            }).Send();
+                connectingPanel.OpenPanel();
+                ChangeState(() => isConnecting = true);
+                webRequestManager.GetNetworkConnection().R(r =>
+                {
+                    var connection = r.GetBody<NetworkConnectionInfo>();
+                    networkManager.StartClient(connection);
+                }).F(r =>
+                {
+                    ChangeState(() => isConnecting = false);
+                }).Send();
+            }
         }
 
-        public void SessionCreated()
+        public void OnDisconnect()
         {
+            Debug.Log("On disconnected");
+            if (isConnected)
+            {
+                ChangeState(() => isConnected = false);
+                StartMenu();
+            }
+            else
+            {
+                ChangeState(() => isConnecting = false);
+                connectingPanel.OpenPanel();
+            }
+        }
+
+        public void OnSessionCreated()
+        {
+            Debug.Log("Session created");
             ChangeState(() => isConnected = true);
             connectingPanel.ClosePanel();
+        }
+
+        public void Join()
+        {
+            var config = networkManager.game.configs[0];
+            joiningPanel.Setup(config);
+            joiningPanel.OpenPanel();
         }
 
         private void Update()

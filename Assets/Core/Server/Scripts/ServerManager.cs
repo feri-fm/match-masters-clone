@@ -23,7 +23,8 @@ namespace MMC.Server
         private void Start()
         {
             //TODO: start server shouldn't happen on game scene, just for testing
-            StartServer();
+            if (Application.isEditor)
+                StartServer();
         }
 
         private void Setup()

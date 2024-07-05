@@ -15,14 +15,16 @@ namespace MMC.Game
 
         public GameManager game => GameManager.instance;
 
+        public string tokenKey => Application.isEditor ? "token_editor" : "token";
+
         private void Start()
         {
             requestBuilder = new WebRequestBuilder();
             requestBuilder.config = config;
 
-            if (PlayerPrefs.HasKey("token"))
+            if (PlayerPrefs.HasKey(tokenKey))
             {
-                token = PlayerPrefs.GetString("token");
+                token = PlayerPrefs.GetString(tokenKey);
                 hasToken = true;
             }
             else
@@ -55,7 +57,7 @@ namespace MMC.Game
         public Request Register() => requestBuilder.Post("/api/auth/register").R(r =>
         {
             token = r.GetResponseHeader("x-auth-token");
-            PlayerPrefs.SetString("token", token);
+            PlayerPrefs.SetString(tokenKey, token);
             hasToken = true;
             isLoggedIn = true;
             game.user = r.GetBody<UserModel>();
@@ -71,7 +73,7 @@ namespace MMC.Game
 
         public void Logout()
         {
-            PlayerPrefs.DeleteKey("token");
+            PlayerPrefs.DeleteKey(tokenKey);
             isLoggedIn = false;
             hasToken = false;
             game.user = new UserModel();

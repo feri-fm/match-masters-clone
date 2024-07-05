@@ -5,7 +5,7 @@ namespace MMC.Game
     public class BasePanel : Panel
     {
         public GameManager game => GameManager.instance;
-        public NetNetworkManager networkManager => NetNetworkManager.instance;
+        public NetNetworkManager network => NetNetworkManager.instance;
 
         private bool dirty;
 

@@ -1,4 +1,5 @@
 using Mirror;
+using MMC.Game;
 using MMC.Server;
 using UnityEngine;
 
@@ -6,13 +7,14 @@ namespace MMC.Network
 {
     public class NetNetworkMiddleware : MonoBehaviour
     {
-        public NetNetworkManager networkManager { get; private set; }
+        public NetNetworkManager manager { get; private set; }
+        public GameManager gameManager => GameManager.instance;
 
-        public ServerManager serverManager => networkManager.serverManager;
+        public ServerManager serverManager => manager.serverManager;
 
-        public void _Setup(NetNetworkManager networkManager)
+        public void _Setup(NetNetworkManager manager)
         {
-            this.networkManager = networkManager;
+            this.manager = manager;
             SetupServer();
             SetupClient();
         }

@@ -6,13 +6,13 @@ using MMC.Network.SessionMiddleware;
 
 namespace MMC.Network.GameMiddleware
 {
-    public class Room
+    public class NetRoom
     {
         public Guid id;
-        public Config config;
+        public NetConfig config;
         public List<RoomPlayer> players = new();
 
-        public void Setup(Config config)
+        public void Setup(NetConfig config)
         {
             id = Guid.NewGuid();
             this.config = config;
@@ -46,10 +46,10 @@ namespace MMC.Network.GameMiddleware
         {
             return players.Count >= 2;
         }
-        public Game Launch()
+        public NetGame Launch()
         {
             var game = UnityEngine.Object.Instantiate(config.gamePrefab);
-            var gamePlayers = new List<Player>();
+            var gamePlayers = new List<NetPlayer>();
             game.id = id;
             for (int i = 0; i < players.Count; i++)
             {

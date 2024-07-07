@@ -49,7 +49,7 @@ namespace MMC.Match3
                             if (otherTile != null)
                             {
                                 game.TrySwap(tile, otherTile);
-                                gameEntity.onSawp.Invoke(tile.position, otherTile.position);
+                                gameEntity.onSwap.Invoke(tile.position, otherTile.position);
                             }
                         }
                     }

@@ -9,11 +9,11 @@ namespace MMC.Network.GameMiddleware
 {
     public partial class GameNetworkMiddleware
     {
-        public List<Room> rooms = new();
-        public List<Game> games = new();
+        public List<NetRoom> rooms = new();
+        public List<NetGame> games = new();
 
-        public Dictionary<NetworkConnectionToClient, Room> roomByConn = new();
-        public Dictionary<NetworkConnectionToClient, Game> gameByConn = new();
+        public Dictionary<NetworkConnectionToClient, NetRoom> roomByConn = new();
+        public Dictionary<NetworkConnectionToClient, NetGame> gameByConn = new();
 
         private float lastJoined;
 
@@ -92,7 +92,7 @@ namespace MMC.Network.GameMiddleware
             }
         }
 
-        public async void QueueLaunch(Room room)
+        public async void QueueLaunch(NetRoom room)
         {
             await new WaitForSeconds(1);
             if (room.CanLaunch())
@@ -134,7 +134,7 @@ namespace MMC.Network.GameMiddleware
                 }
 
                 var joined = false;
-                Room room = null;
+                NetRoom room = null;
                 var player = new RoomPlayer(msg.config, session);
                 foreach (var _room in rooms)
                 {

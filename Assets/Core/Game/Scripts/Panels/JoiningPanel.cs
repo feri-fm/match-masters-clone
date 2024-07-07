@@ -27,7 +27,7 @@ namespace MMC.Game
             }
         }
 
-        public async void Setup(Config config)
+        public async void Setup(NetConfig config)
         {
             network.game.roomPlayers = null;
             await new WaitForSeconds(0.5f);

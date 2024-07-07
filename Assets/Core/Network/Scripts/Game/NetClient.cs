@@ -7,16 +7,16 @@ using UnityEngine;
 namespace MMC.Network.GameMiddleware
 {
     [RequireComponent(typeof(NetworkMatch))]
-    public class Client : NetBehaviour
+    public class NetClient : NetBehaviour
     {
         [SyncVar] public Guid id;
 
-        public Player player;
+        public NetPlayer player;
         public RoomPlayer roomPlayer => player.roomPlayer;
         public Session session => roomPlayer.session;
-        public Game game => player.game;
+        public NetGame game => player.game;
 
-        public void Setup(Player player)
+        public void Setup(NetPlayer player)
         {
             this.player = player;
             id = player.id;

@@ -5,11 +5,11 @@ namespace MMC.Network.GameMiddleware
 {
     public partial class GameNetworkMiddleware
     {
-        public Game game;
-        public Player player;
-        public Client client;
-        public List<Player> players = new List<Player>();
-        public List<Client> clients = new List<Client>();
+        public NetGame game;
+        public NetPlayer player;
+        public NetClient client;
+        public List<NetPlayer> players = new List<NetPlayer>();
+        public List<NetClient> clients = new List<NetClient>();
 
         private bool dirtyFetch = false;
         private bool gameStarted = false;
@@ -77,18 +77,18 @@ namespace MMC.Network.GameMiddleware
             }
         }
 
-        public void _SetGame(Game game)
+        public void _SetGame(NetGame game)
         {
             this.game = game;
             MarkDirtyFetch();
         }
-        public void _RemoveGame(Game game)
+        public void _RemoveGame(NetGame game)
         {
             if (this.game == game)
                 this.game = null;
             MarkDirtyFetch();
         }
-        public void _AddPlayer(Player player)
+        public void _AddPlayer(NetPlayer player)
         {
             if (!players.Contains(player))
             {
@@ -96,12 +96,12 @@ namespace MMC.Network.GameMiddleware
             }
             MarkDirtyFetch();
         }
-        public void _RemovePlayer(Player player)
+        public void _RemovePlayer(NetPlayer player)
         {
             players.Remove(player);
             MarkDirtyFetch();
         }
-        public void _AddClient(Client player)
+        public void _AddClient(NetClient player)
         {
             if (!clients.Contains(player))
             {
@@ -109,7 +109,7 @@ namespace MMC.Network.GameMiddleware
             }
             MarkDirtyFetch();
         }
-        public void _RemoveClient(Client player)
+        public void _RemoveClient(NetClient player)
         {
             clients.Remove(player);
             MarkDirtyFetch();
@@ -164,7 +164,7 @@ namespace MMC.Network.GameMiddleware
             }
         }
 
-        public void JoinGame(Config config)
+        public void JoinGame(NetConfig config)
         {
             NetworkClient.Send(new JoinRoomServerMessage(config.key));
         }

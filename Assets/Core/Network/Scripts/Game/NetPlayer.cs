@@ -5,21 +5,21 @@ using UnityEngine;
 namespace MMC.Network.GameMiddleware
 {
     [RequireComponent(typeof(NetworkMatch))]
-    public class Player : NetBehaviour
+    public class NetPlayer : NetBehaviour
     {
         [SyncVar] public Guid id;
 
-        public Client client;
-        public Game game;
+        public NetClient client;
+        public NetGame game;
         public RoomPlayer roomPlayer;
 
         public bool hasClient => client != null;
 
-        public void SetupClient(Client client)
+        public void SetupClient(NetClient client)
         {
             this.client = client;
         }
-        public void Setup(Game game, RoomPlayer roomPlayer)
+        public void Setup(NetGame game, RoomPlayer roomPlayer)
         {
             id = Guid.NewGuid();
             this.game = game;

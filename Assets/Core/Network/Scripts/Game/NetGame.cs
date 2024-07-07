@@ -12,7 +12,7 @@ using UnityEngine;
 namespace MMC.Network.GameMiddleware
 {
     [RequireComponent(typeof(NetworkMatch))]
-    public class Game : NetBehaviour
+    public class NetGame : NetBehaviour
     {
         [SyncVar] public Guid id;
         [SyncVar] public string configKey;
@@ -26,13 +26,13 @@ namespace MMC.Network.GameMiddleware
 
         public readonly SyncList<Guid> playersId = new SyncList<Guid>();
 
-        public Room room { get; private set; }
-        public Config config { get; private set; }
-        public List<Player> players { get; private set; } = new List<Player>();
+        public NetRoom room { get; private set; }
+        public NetConfig config { get; private set; }
+        public List<NetPlayer> players { get; private set; } = new List<NetPlayer>();
 
         public GameManager gameManager => GameManager.instance;
 
-        public void Setup(Room room, List<Player> players)
+        public void Setup(NetRoom room, List<NetPlayer> players)
         {
             this.room = room;
             this.players = players;
@@ -122,7 +122,7 @@ namespace MMC.Network.GameMiddleware
             engine.Evaluate();
 
             game = engine.GetEntity<GameEntity>();
-            game.onSawp += (a, b) =>
+            game.onSwap += (a, b) =>
             {
                 gameManager.networkManager.game.client.CmdSwap(a, b);
             };

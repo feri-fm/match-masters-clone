@@ -128,6 +128,14 @@ namespace MMC.EngineCore
                 _entities[i].PostLoad(data.entities[i]);
             }
         }
+
+        public Engine CopyEngine()
+        {
+            var engine = new Engine(config);
+            var data = Save();
+            engine.Load(data);
+            return engine;
+        }
     }
 
     public class EngineData

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Mirror;
+using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
 {
@@ -54,7 +55,11 @@ namespace MMC.Network.GameMiddleware
             }
         }
 
-        public void OnGameStart() { }
+        public void OnGameStart()
+        {
+            client.CmdRequestGameplayStartData();
+            game.StartGameClient();
+        }
         public void OnGameStop() { }
 
         public void OnClearConnection()

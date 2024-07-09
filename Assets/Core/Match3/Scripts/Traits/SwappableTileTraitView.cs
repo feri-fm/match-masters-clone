@@ -49,7 +49,6 @@ namespace MMC.Match3
                             if (otherTile != null)
                             {
                                 game.TrySwap(tile, otherTile);
-                                gameEntity.onSwap.Invoke(tile.position, otherTile.position);
                             }
                         }
                     }

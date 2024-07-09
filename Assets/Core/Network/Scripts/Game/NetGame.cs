@@ -17,12 +17,11 @@ namespace MMC.Network.GameMiddleware
         [SyncVar] public Guid id;
         [SyncVar] public string configKey;
 
-        public EngineView engineViewPrefab;
-        public EngineView engineView;
+        public TwoPlayerGameplayView gameplayViewPrefab;
         public EngineConfig engineConfig;
 
-        public Engine engine;
-        public GameEntity game;
+        public TwoPlayerGameplayView gameplayView;
+        public TwoPlayerGameplay gameplay;
 
         public readonly SyncList<Guid> playersId = new SyncList<Guid>();
 
@@ -32,36 +31,56 @@ namespace MMC.Network.GameMiddleware
 
         public GameManager gameManager => GameManager.instance;
 
+        public Hash128 lastHash;
+
+        private GameplayData startData;
+
         public void Setup(NetRoom room, List<NetPlayer> players)
         {
             this.room = room;
             this.players = players;
             config = room.config;
+            configKey = config.key;
 
+            playersId.Clear();
             GetComponent<NetworkMatch>().matchId = id;
             foreach (var player in players)
             {
                 player.GetComponent<NetworkMatch>().matchId = id;
                 if (player.hasClient)
                     player.client.GetComponent<NetworkMatch>().matchId = id;
+                playersId.Add(player.id);
             }
 
-            engine = new Engine(engineConfig);
-            game = engine.CreateEntity("game") as GameEntity;
+            gameplay = new TwoPlayerGameplay();
             var options = config.gameOptions.JsonCopy();
             options.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            game.Setup(options);
-
-            engine.Evaluate();
+            gameplay.Setup(gameplayViewPrefab, options);
+            startData = gameplay.Save();
+            gameplay.Evaluate();
+            lastHash = gameplay.GetHash();
         }
 
-        public override void OnStartClient()
+        public void StartGameClient()
         {
-            base.OnStartClient();
+            StartGameClient();
             config = networkManager.game.configs.Find(e => e.key == configKey);
             networkManager.game._SetGame(this);
 
-            engineView = Instantiate(engineViewPrefab, transform);
+            gameplay = new TwoPlayerGameplay();
+            gameplayView = ObjectPool.global.Spawn(gameplayViewPrefab, transform);
+
+            gameplayView.Setup(gameplay);
+            gameplay.Setup(gameplayViewPrefab, config.gameOptions);
+            gameplay.onTrySwap += (a, b) =>
+            {
+                var hash = gameplay.GetHash();
+                var fast = gameplay.GetFastGameplay();
+                fast.TrySwap(a, b);
+                var afterHash = fast.GetHash();
+                networkManager.game.client.CmdSwap(
+                    hash.ToString(), afterHash.ToString(), a, b);
+            };
         }
         public override void OnStopClient()
         {
@@ -93,55 +112,32 @@ namespace MMC.Network.GameMiddleware
             players.Clear();
         }
 
-        public void SendEngineData(NetworkConnectionToClient conn)
+        public void PlayerAction(Action<NetGame> action)
         {
-            TargetLoadEngineData(conn, engine.Save().ToJson());
+            action.Invoke(this);
+            lastHash = gameplay.GetHash();
+        }
+
+        public void SendGameplayData(NetworkConnectionToClient conn)
+        {
+            TargetLoadGameplayData(conn, gameplay.Save().ToJson());
+        }
+        public void SendGameplayStartData(NetworkConnectionToClient conn)
+        {
+            TargetLoadGameplayData(conn, startData.ToJson());
+        }
+
+        [TargetRpc]
+        private void TargetLoadGameplayData(NetworkConnectionToClient _, string gameplayDataJson)
+        {
+            var gameplayData = gameplayDataJson.FromJson<GameplayData>();
+            gameplay.Load(gameplayData);
+            gameplay.Evaluate();
         }
         [TargetRpc]
-        private void TargetLoadEngineData(NetworkConnectionToClient conn, string engineDataJson)
+        public void TargetTrySwap(NetworkConnectionToClient _, Int2 a, Int2 b)
         {
-            var engineData = engineDataJson.FromJson<EngineData>();
-            LoadEngine(engineData);
-        }
-
-        [TargetRpc]
-        public void TargetSwap(NetworkConnectionToClient conn, Int2 a, Int2 b)
-        {
-            game.game.TrySwap(a, b);
-        }
-
-        public void LoadEngine(EngineData data)
-        {
-            if (engine != null)
-                engine.Clear();
-
-            engine = new Engine(engineConfig);
-            engine.waiter = Wait;
-            engineView.Setup(engine);
-            engine.Load(data);
-            engine.Evaluate();
-
-            game = engine.GetEntity<GameEntity>();
-            game.onSwap += (a, b) =>
-            {
-                gameManager.networkManager.game.client.CmdSwap(a, b);
-            };
-        }
-
-        public Task Wait(float time)
-        {
-            var tcs = new TaskCompletionSource<byte>();
-            StartCoroutine(IWait(time, () =>
-            {
-                tcs.SetResult(0);
-            }));
-            return tcs.Task;
-
-            IEnumerator IWait(float time, Action callback)
-            {
-                yield return new WaitForSeconds(time);
-                callback.Invoke();
-            }
+            gameplay.TrySwap(a, b);
         }
     }
 }

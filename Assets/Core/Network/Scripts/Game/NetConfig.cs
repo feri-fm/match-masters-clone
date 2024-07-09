@@ -6,7 +6,7 @@ namespace MMC.Network.GameMiddleware
     [CreateAssetMenu(fileName = "GameConfig", menuName = "GameConfig", order = 0)]
     public class NetConfig : ScriptableObject
     {
-        public string key => name;
+        public string key;
 
         public GameOptions gameOptions;
 

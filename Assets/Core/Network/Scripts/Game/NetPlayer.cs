@@ -1,5 +1,6 @@
 using System;
 using Mirror;
+using MMC.EngineCore;
 using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
@@ -8,6 +9,7 @@ namespace MMC.Network.GameMiddleware
     public class NetPlayer : NetBehaviour
     {
         [SyncVar] public Guid id;
+        [SyncVar] public int index;
 
         public NetClient client;
         public NetGame game;
@@ -19,9 +21,10 @@ namespace MMC.Network.GameMiddleware
         {
             this.client = client;
         }
-        public void Setup(NetGame game, RoomPlayer roomPlayer)
+        public void Setup(NetGame game, int index, RoomPlayer roomPlayer)
         {
             id = Guid.NewGuid();
+            this.index = index;
             this.game = game;
             this.roomPlayer = roomPlayer;
         }
@@ -37,5 +40,31 @@ namespace MMC.Network.GameMiddleware
             networkManager.game._RemovePlayer(this);
         }
 
+        public void PlayerAction(Action<NetGame> action)
+        {
+            game.PlayerAction(action);
+        }
+        public void OnOthers(Action<NetworkConnectionToClient> action)
+        {
+            foreach (var player in game.players)
+            {
+                if (player.hasClient && player.client != client)
+                {
+                    action.Invoke(player.client.session.conn);
+                }
+            }
+        }
+
+        public void TrySwap(Int2 a, Int2 b)
+        {
+            PlayerAction(game =>
+            {
+                game.gameplay.TrySwap(a, b);
+                OnOthers(conn =>
+                {
+                    game.TargetTrySwap(conn, a, b);
+                });
+            });
+        }
     }
 }

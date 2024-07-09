@@ -26,7 +26,6 @@ namespace MMC.Network.GameMiddleware
         {
             base.OnStartClient();
             networkManager.game._AddClient(this);
-            CmdRequestEngineData();
         }
         public override void OnStopClient()
         {
@@ -34,23 +33,32 @@ namespace MMC.Network.GameMiddleware
             networkManager.game._RemoveClient(this);
         }
 
-        [Command]
-        public void CmdRequestEngineData()
+        public void ClientAction(string hash, string afterHash, Action action)
         {
-            game.SendEngineData(session.conn);
-        }
-
-        [Command]
-        public void CmdSwap(Int2 a, Int2 b)
-        {
-            game.game.game.TrySwap(a, b);
-            foreach (var player in game.players)
+            if (game.lastHash.ToString() != hash.ToString())
             {
-                if (player.hasClient && player.client != this)
+                Debug.Log("!!!! Invalid hash before move");
+                game.SendGameplayData(session.conn);
+            }
+            else
+            {
+                action.Invoke();
+                if (game.lastHash.ToString() != afterHash)
                 {
-                    game.TargetSwap(player.client.session.conn, a, b);
+                    Debug.Log("!!!! Invalid hash after moved");
+                    game.SendGameplayData(session.conn);
                 }
             }
         }
+
+        [Command]
+        public void CmdRequestGameplayStartData()
+        {
+            game.SendGameplayStartData(session.conn);
+        }
+
+        [Command]
+        public void CmdSwap(string hash, string afterHash, Int2 a, Int2 b)
+            => ClientAction(hash, afterHash, () => player.TrySwap(a, b));
     }
 }

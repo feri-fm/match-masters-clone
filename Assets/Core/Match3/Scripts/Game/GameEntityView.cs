@@ -16,8 +16,6 @@ namespace MMC.Match3
     {
         public Game game { get; private set; }
 
-        public Action<Int2, Int2> onSwap = delegate { };
-
         public bool isEvaluating => game.isEvaluating;
 
         protected override void OnSetup()

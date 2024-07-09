@@ -46,6 +46,17 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        foreach (var pool in pools)
+        {
+            foreach (var obj in pool.Value)
+            {
+                obj.Destroy();
+            }
+        }
+    }
+
     public void Pool(object key, PoolObject obj)
     {
         if (!pools.ContainsKey(key))

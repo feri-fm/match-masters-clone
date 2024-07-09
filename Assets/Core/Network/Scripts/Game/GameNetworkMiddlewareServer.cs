@@ -44,7 +44,7 @@ namespace MMC.Network.GameMiddleware
 
         private void Update()
         {
-            if (rooms.Count > 0 && Time.time > lastJoined + 3)
+            if (rooms.Count > 0 && Time.time > lastJoined + 1)
             {
                 foreach (var room in rooms)
                 {

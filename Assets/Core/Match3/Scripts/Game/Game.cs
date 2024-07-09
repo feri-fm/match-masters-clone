@@ -24,12 +24,13 @@ namespace MMC.Match3
 
         public RandomTable random { get; private set; }
 
-        public Func<TileColor, TileColor> colorMap = (c) => c; // i was here
+        public Func<TileColor, TileColor> colorMap = (c) => c;
 
         public Dictionary<TileColor, int> colorsCount = new();
 
         public event Action<Tile> onTileHit = delegate { };
         public event Action<Tile, Tile> onTrySwap = delegate { };
+        public event Action<Tile, Tile> onSwapped = delegate { };
 
         public Int2 swappedA;
         public Int2 swappedB;
@@ -79,8 +80,14 @@ namespace MMC.Match3
             }
         }
 
+        private bool _isInEvaluate;
         public async Task<bool> Evaluate()
         {
+            if (_isInEvaluate)
+            {
+                throw new Exception("Game is already evaluating!");
+            }
+            _isInEvaluate = true;
             isEvaluating = true;
             var changed = false;
             bool loop;
@@ -123,6 +130,7 @@ namespace MMC.Match3
                 if (loop) await Wait(0.3f);
             } while (loop);
             isEvaluating = false;
+            _isInEvaluate = false;
             return changed;
         }
 
@@ -180,6 +188,9 @@ namespace MMC.Match3
                     isEvaluating = false;
                 }
             }
+
+            if (!withoutNotify)
+                onSwapped.Invoke(tileA, tileB);
         }
 
         public async Task Wait(float time)
@@ -485,12 +496,12 @@ namespace MMC.Match3
 
         public GameData Save()
         {
-            var ids = new Id[width, height];
+            var ids = new int[width, height];
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    ids[i, j] = tiles[i, j]?.id ?? Id.empty;
+                    ids[i, j] = tiles[i, j]?.id.value ?? -1;
                 }
             }
             return new GameData()
@@ -516,7 +527,6 @@ namespace MMC.Match3
                     }
                 }
             }
-            _ = Evaluate();
         }
     }
 
@@ -559,6 +569,6 @@ namespace MMC.Match3
     {
         public GameOptions options;
         public RandomTableData random;
-        public Id[,] tiles;
+        public int[,] tiles;
     }
 }

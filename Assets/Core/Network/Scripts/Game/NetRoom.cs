@@ -55,7 +55,7 @@ namespace MMC.Network.GameMiddleware
             {
                 var player = UnityEngine.Object.Instantiate(config.playerPrefab);
                 gamePlayers.Add(player);
-                player.Setup(game, players[i]);
+                player.Setup(game, i, players[i]);
                 if (players[i].hasSession)
                 {
                     var client = UnityEngine.Object.Instantiate(config.clientPrefab);

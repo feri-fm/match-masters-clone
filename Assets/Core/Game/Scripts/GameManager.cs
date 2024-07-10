@@ -117,6 +117,7 @@ namespace MMC.Game
         public void OnSessionCreated()
         {
             Debug.Log("Session created");
+            ChangeState(() => isConnecting = false);
             ChangeState(() => isConnected = true);
             connectingPanel.ClosePanel();
         }
@@ -126,6 +127,15 @@ namespace MMC.Game
             var config = networkManager.game.configs[0];
             joiningPanel.Setup(config);
             joiningPanel.OpenPanel();
+        }
+
+        public void Logout()
+        {
+            ChangeState(() => isConnecting = false);
+            ChangeState(() => isConnected = false);
+            webRequestManager.Logout();
+            networkManager.StopClient();
+            Startup();
         }
 
         private void Update()

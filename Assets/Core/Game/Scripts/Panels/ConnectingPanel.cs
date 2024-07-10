@@ -15,7 +15,7 @@ namespace MMC.Game
         [Member]
         public void Connect()
         {
-            game.StartMenu();
+            game.Startup();
         }
     }
 }

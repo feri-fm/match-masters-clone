@@ -15,6 +15,7 @@ namespace MMC.Match3
         public BeadTileView[] beads;
         public LifetimeEffect[] effects;
         public ColoredTileView[] rewardTiles;
+        public ColoredTileView[] coloredTiles;
 
         public BeadTileView GetBeadTile(TileColor color)
         {
@@ -31,6 +32,10 @@ namespace MMC.Match3
         public LifetimeEffect GetEffect(TileColor color)
         {
             return effects.First(e => e.color == color);
+        }
+        public ColoredTileView GetColoredTile(TileColor color)
+        {
+            return coloredTiles.First(e => e.color == color);
         }
     }
 }

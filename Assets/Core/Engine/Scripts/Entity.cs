@@ -126,6 +126,8 @@ namespace MMC.EngineCore
         public virtual void Load(JsonData data) { }
         public virtual void PostLoad(JsonData data) { }
 
+        public virtual string GetDataKey() => key;
+
         public EntityData Save()
         {
             var json = new JsonData();
@@ -133,7 +135,7 @@ namespace MMC.EngineCore
             return new EntityData()
             {
                 id = id,
-                key = key,
+                key = GetDataKey(),
                 data = json.json,
             };
         }

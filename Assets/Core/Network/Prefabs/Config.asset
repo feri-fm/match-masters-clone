@@ -18,8 +18,8 @@ MonoBehaviour:
     width: 7
     height: 7
     minBeads: 6
-    maxBeads: 10
-    beads: 6
+    maxBeads: 15
+    beads: 5
   gamePrefab: {fileID: 5495073337813636773, guid: 8f83b816fa2db8b41b33f3a269c4b836, type: 3}
   playerPrefab: {fileID: 7506757259381461844, guid: e94509f4dc43f4042a56d5cace60bbb9, type: 3}
   clientPrefab: {fileID: 5450831854151979982, guid: 49cf120498ee7a5408ebff7704aad404, type: 3}

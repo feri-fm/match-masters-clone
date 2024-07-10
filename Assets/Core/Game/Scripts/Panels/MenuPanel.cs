@@ -15,5 +15,11 @@ namespace MMC.Game
         {
             game.Join();
         }
+
+        [Member]
+        public void Logout()
+        {
+            game.Logout();
+        }
     }
 }

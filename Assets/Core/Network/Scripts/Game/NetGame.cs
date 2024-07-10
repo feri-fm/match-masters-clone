@@ -61,31 +61,37 @@ namespace MMC.Network.GameMiddleware
             lastHash = gameplay.GetHash();
         }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            networkManager.game._SetGame(this);
+        }
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            networkManager.game._RemoveGame(this);
+        }
+
         public void StartGameClient()
         {
-            StartGameClient();
             config = networkManager.game.configs.Find(e => e.key == configKey);
-            networkManager.game._SetGame(this);
 
             gameplay = new TwoPlayerGameplay();
             gameplayView = ObjectPool.global.Spawn(gameplayViewPrefab, transform);
 
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
+
+            gameplay.SetIsOpponent(networkManager.game.player.index != 0);
             gameplay.onTrySwap += (a, b) =>
             {
-                var hash = gameplay.GetHash();
                 var fast = gameplay.GetFastGameplay();
+                var beforeHash = fast.GetHash();
                 fast.TrySwap(a, b);
                 var afterHash = fast.GetHash();
                 networkManager.game.client.CmdSwap(
-                    hash.ToString(), afterHash.ToString(), a, b);
+                    beforeHash.ToString(), afterHash.ToString(), a, b);
             };
-        }
-        public override void OnStopClient()
-        {
-            base.OnStopClient();
-            networkManager.game._RemoveGame(this);
         }
 
         public void Leave(NetworkConnectionToClient conn)
@@ -134,10 +140,23 @@ namespace MMC.Network.GameMiddleware
             gameplay.Load(gameplayData);
             gameplay.Evaluate();
         }
+
         [TargetRpc]
-        public void TargetTrySwap(NetworkConnectionToClient _, Int2 a, Int2 b)
+        public void TargetTrySwap(NetworkConnectionToClient _, string beforeHash, string afterHash, Int2 a, Int2 b)
         {
-            gameplay.TrySwap(a, b);
+            var fast = gameplay.GetFastGameplay();
+            var myBeforeHash = fast.GetHash().ToString();
+            fast.TrySwap(a, b);
+            var myAfterHash = fast.GetHash().ToString();
+            if (myBeforeHash != beforeHash || myAfterHash != afterHash)
+            {
+                Debug.Log("!!! client calculated wrong hash");
+                networkManager.game.client.CmdRequestGameplayData();
+            }
+            else
+            {
+                gameplay.TrySwap(a, b);
+            }
         }
     }
 }

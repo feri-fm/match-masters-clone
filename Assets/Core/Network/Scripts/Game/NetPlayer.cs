@@ -59,10 +59,12 @@ namespace MMC.Network.GameMiddleware
         {
             PlayerAction(game =>
             {
+                var beforeHash = game.gameplay.GetHash().ToString();
                 game.gameplay.TrySwap(a, b);
+                var afterHash = game.gameplay.GetHash().ToString();
                 OnOthers(conn =>
                 {
-                    game.TargetTrySwap(conn, a, b);
+                    game.TargetTrySwap(conn, beforeHash, afterHash, a, b);
                 });
             });
         }

@@ -17,6 +17,7 @@ namespace MMC.DebugRoom
         public EngineView engineView;
         public EngineConfig engineConfig;
         public GameOptions gameOptions;
+        public bool isOpponent;
 
         public Engine engine;
         public GameEntity gameEntity;
@@ -45,6 +46,7 @@ namespace MMC.DebugRoom
             gameOptions.beads = ui.Slider("Beads", gameOptions.beads, 2, 6);
             gameOptions.minBeads = ui.Slider("Min Bead", gameOptions.minBeads, 0, 20);
             gameOptions.maxBeads = ui.Slider("Max Bead", gameOptions.maxBeads, 0, 30);
+            isOpponent = ui.Toggle("Is Opponent", isOpponent);
             if (ui.Button("Reload"))
             {
                 var undoRedoSection = manager.GetSection<UndoRedoSection>();
@@ -109,10 +111,21 @@ namespace MMC.DebugRoom
             gameEntity = engine.CreateEntity("game") as GameEntity;
             gameEntity.Setup(gameOptions.JsonCopy());
 
+            SetIsOpponent(isOpponent);
+
             engine.Evaluate();
 
             manager.GetSection<StatsSection>().ResetData();
             onEngineCreated.Invoke(engine);
+        }
+
+        public void SetIsOpponent(bool value)
+        {
+            isOpponent = value;
+            if (isOpponent)
+                gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
+            else
+                gameEntity.game.colorMap = e => e;
         }
 
         public EngineData Save()

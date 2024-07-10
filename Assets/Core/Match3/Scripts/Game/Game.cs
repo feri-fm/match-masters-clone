@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MMC.EngineCore;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace MMC.Match3
@@ -400,11 +399,12 @@ namespace MMC.Match3
                 var point = new Int2(i, height - 1);
                 if (IsEmptyAt(point))
                 {
-                    var bead = CreateColoredTile(GenerateBead(point));
+                    var prefab = GenerateBead(point);
+                    var bead = CreateColoredTile(prefab);
                     SetTileAt(point, bead);
                     bead.WithTrait<AnimatorTrait>(t => t.SpawnAtTop());
 
-                    colorsCount[bead.color] += 1;
+                    colorsCount[MapColor(bead.color)] += 1;
                 }
             }
         }
@@ -430,7 +430,7 @@ namespace MMC.Match3
             {
                 if (tile != null && tile is ColoredTile coloredTile)
                 {
-                    colorsCount[coloredTile.color] += 1;
+                    colorsCount[MapColor(coloredTile.color)] += 1;
                 }
             }
         }
@@ -446,9 +446,9 @@ namespace MMC.Match3
             var down = ValidatePoint(point + Int2.down) ? GetTileAt(point + Int2.down) as BeadTile : null;
             var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as BeadTile : null;
             var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as BeadTile : null;
-            if (down != null) badColors.Add(down.prefab.color);
-            if (left != null) badColors.Add(left.prefab.color);
-            if (right != null) badColors.Add(right.prefab.color);
+            if (down != null) badColors.Add(MapColor(down.prefab.color));
+            if (left != null) badColors.Add(MapColor(left.prefab.color));
+            if (right != null) badColors.Add(MapColor(right.prefab.color));
 
             for (int i = 0; i < options.beads; i++)
             {
@@ -469,11 +469,11 @@ namespace MMC.Match3
                 }
             }
 
-            if (safeShould.Count > 0) return RandElement(safeShould);
-            if (safeCould.Count > 0) return RandElement(safeCould);
-            if (should.Count > 0) return RandElement(should);
-            if (could.Count > 0) return RandElement(could);
-            return RandElement(all);
+            if (safeShould.Count > 0) return MapColor(RandElement(safeShould));
+            if (safeCould.Count > 0) return MapColor(RandElement(safeCould));
+            if (should.Count > 0) return MapColor(RandElement(should));
+            if (could.Count > 0) return MapColor(RandElement(could));
+            return MapColor(RandElement(all));
         }
 
         public T CreateColoredTile<T>(ColoredTileView<T> view) where T : ColoredTile => CreateTileFromView(view) as T;
@@ -483,6 +483,26 @@ namespace MMC.Match3
             var tile = engine.CreateEntity(view) as Tile;
             tile.SetupGame(this);
             return tile;
+        }
+
+        public T MapColor<T>(T prefab) where T : TileView
+        {
+            return MapColor(prefab as TileView) as T;
+        }
+        public TileView MapColor(TileView prefab)
+        {
+            if (prefab is ColoredTileView coloredTile) return MapColor(coloredTile);
+            return prefab;
+        }
+        public ColoredTileView MapColor(ColoredTileView prefab)
+        {
+            var newColor = MapColor(prefab.color);
+            if (newColor == prefab.color) return prefab;
+            return config.coloredTiles.FirstOrDefault(e => e.color == newColor && e.GetType() == prefab.GetType()) ?? prefab;
+        }
+        public TileColor MapColor(TileColor color)
+        {
+            return colorMap.Invoke(color);
         }
 
         public async Task RunCommand(GameCommand command)
@@ -519,11 +539,22 @@ namespace MMC.Match3
             {
                 for (int j = 0; j < height; j++)
                 {
-                    tiles[i, j] = engine.entities.Find(e => e is Tile tile && tile.position == new Int2(i, j)) as Tile;
-                    if (tiles[i, j] != null)
+                    var tile = engine.entities.Find(e => e is Tile tile && tile.position == new Int2(i, j)) as Tile;
+                    if (tile != null)
                     {
-                        tiles[i, j].WithTrait<AnimatorTrait>(t => t.Jump());
-                        tiles[i, j].SetupGame(this);
+                        var newPrefab = MapColor(tile.prefab as TileView);
+                        if (newPrefab != tile.prefab)
+                        {
+                            var newTile = engine.CreateEntity(newPrefab, tile.id) as Tile;
+                            var tileData = tile.Save();
+                            newTile.Load(tileData);
+                            newTile.PostLoad(tileData);
+                            engine.RemoveEntity(tile);
+                            tile = newTile;
+                        }
+                        tile.WithTrait<AnimatorTrait>(t => t.Jump());
+                        tile.SetupGame(this);
+                        tiles[i, j] = tile;
                     }
                 }
             }

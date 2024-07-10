@@ -74,6 +74,7 @@ namespace MMC.Game
         public void Logout()
         {
             PlayerPrefs.DeleteKey(tokenKey);
+            token = "";
             isLoggedIn = false;
             hasToken = false;
             game.user = new UserModel();

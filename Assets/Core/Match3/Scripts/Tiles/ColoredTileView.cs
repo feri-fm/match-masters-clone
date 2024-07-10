@@ -18,6 +18,11 @@ namespace MMC.Match3
     public abstract class ColoredTile : Tile<ColoredTileView>
     {
         public TileColor color => prefab.color;
+
+        public override string GetDataKey()
+        {
+            return game.MapColor(prefab).key;
+        }
     }
 
     public abstract class ColoredTileView<T> : ColoredTileView where T : Tile

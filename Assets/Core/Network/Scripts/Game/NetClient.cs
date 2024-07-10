@@ -58,7 +58,13 @@ namespace MMC.Network.GameMiddleware
         }
 
         [Command]
-        public void CmdSwap(string hash, string afterHash, Int2 a, Int2 b)
-            => ClientAction(hash, afterHash, () => player.TrySwap(a, b));
+        public void CmdRequestGameplayData()
+        {
+            game.SendGameplayData(session.conn);
+        }
+
+        [Command]
+        public void CmdSwap(string beforeHash, string afterHash, Int2 a, Int2 b)
+            => ClientAction(beforeHash, afterHash, () => player.TrySwap(a, b));
     }
 }

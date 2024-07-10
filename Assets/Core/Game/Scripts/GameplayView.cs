@@ -53,9 +53,9 @@ namespace MMC.Game
 
         public EngineConfig engineConfig => prefab.engineConfig;
 
+        public bool isOpponent { get; private set; }
         public event Action<Int2, Int2> onTrySwap = delegate { };
         public event Action<Int2, Int2> onSwapped = delegate { };
-
         public event Action<Engine> onNewEngine = delegate { };
 
         public virtual void Setup() { }
@@ -68,7 +68,14 @@ namespace MMC.Game
             engine = new Engine(engineConfig);
             gameEntity = engine.CreateEntity("game") as GameEntity;
             gameEntity.Setup(gameOptions);
+            SetupEngine();
+            onNewEngine.Invoke(engine);
 
+            Setup();
+        }
+
+        private void SetupEngine()
+        {
             gameEntity.game.onTrySwap += (a, b) =>
             {
                 onTrySwap.Invoke(a.position, b.position);
@@ -77,10 +84,7 @@ namespace MMC.Game
             {
                 onSwapped.Invoke(a.position, b.position);
             };
-
-            onNewEngine.Invoke(engine);
-
-            Setup();
+            SetIsOpponent(isOpponent);
         }
 
         public Gameplay GetFastGameplay()
@@ -101,6 +105,15 @@ namespace MMC.Game
             gameEntity.game.TrySwap(a, b, true);
         }
 
+        public void SetIsOpponent(bool value)
+        {
+            isOpponent = value;
+            if (isOpponent)
+                gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
+            else
+                gameEntity.game.colorMap = e => e;
+        }
+
         public Hash128 GetHash()
         {
             var data = Save();
@@ -118,14 +131,7 @@ namespace MMC.Game
             engine.Load(data.engine);
             gameEntity = engine.GetEntity<GameEntity>();
             gameOptions = gameEntity.game.options;
-            gameEntity.game.onTrySwap += (a, b) =>
-            {
-                onTrySwap.Invoke(a.position, b.position);
-            };
-            gameEntity.game.onSwapped += (a, b) =>
-            {
-                onSwapped.Invoke(a.position, b.position);
-            };
+            SetupEngine();
 
             var json = new JsonData(data.data);
             json.Load(this);

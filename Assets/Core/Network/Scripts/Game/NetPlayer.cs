@@ -1,6 +1,7 @@
 using System;
 using Mirror;
 using MMC.EngineCore;
+using MMC.Game;
 using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
@@ -16,6 +17,8 @@ namespace MMC.Network.GameMiddleware
         public RoomPlayer roomPlayer;
 
         public bool hasClient => client != null;
+
+        public TwoPlayerGameplay gameplay => game.gameplay;
 
         public void SetupClient(NetClient client)
         {
@@ -40,7 +43,7 @@ namespace MMC.Network.GameMiddleware
             networkManager.game._RemovePlayer(this);
         }
 
-        public void PlayerAction(Action<NetGame> action)
+        public void ServerAction(Action<NetGame> action)
         {
             game.PlayerAction(action);
         }
@@ -57,16 +60,19 @@ namespace MMC.Network.GameMiddleware
 
         public void TrySwap(Int2 a, Int2 b)
         {
-            PlayerAction(game =>
+            if (gameplay.IsTurn(index))
             {
-                var beforeHash = game.gameplay.GetHash().ToString();
-                game.gameplay.TrySwap(a, b);
-                var afterHash = game.gameplay.GetHash().ToString();
-                OnOthers(conn =>
+                ServerAction(game =>
                 {
-                    game.TargetTrySwap(conn, beforeHash, afterHash, a, b);
+                    var hash = gameplay.GetHash().ToString();
+                    gameplay.StartMove();
+                    gameplay.TrySwap(a, b);
+                    OnOthers(conn =>
+                    {
+                        game.TargetTrySwap(conn, hash, a, b);
+                    });
                 });
-            });
+            }
         }
     }
 }

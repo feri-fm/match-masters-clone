@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MMC.Game
 {
-    public class GameplayView : PoolObject
+    public class GameplayView : MonoBehaviour
     {
         public EngineConfig engineConfig;
         public EngineView engineView;
@@ -53,9 +53,10 @@ namespace MMC.Game
 
         public EngineConfig engineConfig => prefab.engineConfig;
 
-        public bool isOpponent { get; private set; }
         public event Action<Int2, Int2> onTrySwap = delegate { };
-        public event Action<Int2, Int2> onSwapped = delegate { };
+        public event Action<Int2, Int2> onSwapSucceed = delegate { };
+        public event Action<Int2, Int2> onSwapFailed = delegate { };
+        public event Action<Tile> onRewardMatch = delegate { };
         public event Action<Engine> onNewEngine = delegate { };
 
         public virtual void Setup() { }
@@ -74,17 +75,15 @@ namespace MMC.Game
             Setup();
         }
 
-        private void SetupEngine()
+        protected virtual void SetupEngine()
         {
             gameEntity.game.onTrySwap += (a, b) =>
             {
                 onTrySwap.Invoke(a.position, b.position);
             };
-            gameEntity.game.onSwapped += (a, b) =>
-            {
-                onSwapped.Invoke(a.position, b.position);
-            };
-            SetIsOpponent(isOpponent);
+            gameEntity.game.onSwapSucceed += (a, b) => onSwapSucceed.Invoke(a.position, b.position);
+            gameEntity.game.onSwapFailed += (a, b) => onSwapFailed.Invoke(a.position, b.position);
+            gameEntity.game.onRewardMatch += (a) => onRewardMatch.Invoke(a);
         }
 
         public Gameplay GetFastGameplay()
@@ -100,18 +99,9 @@ namespace MMC.Game
         {
             engine.Evaluate();
         }
-        public void TrySwap(Int2 a, Int2 b)
+        public Task<bool> TrySwap(Int2 a, Int2 b)
         {
-            gameEntity.game.TrySwap(a, b, true);
-        }
-
-        public void SetIsOpponent(bool value)
-        {
-            isOpponent = value;
-            if (isOpponent)
-                gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
-            else
-                gameEntity.game.colorMap = e => e;
+            return gameEntity.game.TrySwap(a, b, true);
         }
 
         public Hash128 GetHash()
@@ -157,5 +147,14 @@ namespace MMC.Game
     {
         public EngineData engine;
         public JObject data;
+    }
+
+    public class Gameplay<T> : Gameplay where T : GameplayView
+    {
+        public new T prefab => base.prefab as T;
+    }
+    public class GameplayView<T> : GameplayView where T : Gameplay
+    {
+        public new T gameplay => base.gameplay as T;
     }
 }

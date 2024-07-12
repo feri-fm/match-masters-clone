@@ -77,7 +77,7 @@ namespace MMC.Network.GameMiddleware
             config = networkManager.game.configs.Find(e => e.key == configKey);
 
             gameplay = new TwoPlayerGameplay();
-            gameplayView = ObjectPool.global.Spawn(gameplayViewPrefab, transform);
+            gameplayView = Instantiate(gameplayViewPrefab, transform);
 
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
@@ -85,13 +85,11 @@ namespace MMC.Network.GameMiddleware
             gameplay.SetIsOpponent(networkManager.game.player.index != 0);
             gameplay.onTrySwap += (a, b) =>
             {
-                var fast = gameplay.GetFastGameplay();
-                var beforeHash = fast.GetHash();
-                fast.TrySwap(a, b);
-                var afterHash = fast.GetHash();
+                gameplay.StartMove();
                 networkManager.game.client.CmdSwap(
-                    beforeHash.ToString(), afterHash.ToString(), a, b);
+                    gameplay.GetHash().ToString(), a, b);
             };
+
         }
 
         public void Leave(NetworkConnectionToClient conn)
@@ -101,7 +99,8 @@ namespace MMC.Network.GameMiddleware
             {
                 var client = player.client;
                 player.client = null;
-                //TODO: activate bot here
+                var bot = Instantiate(config.botPrefab);
+                bot.Setup(player);
                 NetworkServer.DestroyPlayerForConnection(conn);
             }
         }
@@ -142,19 +141,17 @@ namespace MMC.Network.GameMiddleware
         }
 
         [TargetRpc]
-        public void TargetTrySwap(NetworkConnectionToClient _, string beforeHash, string afterHash, Int2 a, Int2 b)
+        public void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
         {
-            var fast = gameplay.GetFastGameplay();
-            var myBeforeHash = fast.GetHash().ToString();
-            fast.TrySwap(a, b);
-            var myAfterHash = fast.GetHash().ToString();
-            if (myBeforeHash != beforeHash || myAfterHash != afterHash)
+            var myHash = gameplay.GetHash().ToString();
+            if (myHash != hash)
             {
-                Debug.Log("!!! client calculated wrong hash");
+                Debug.Log("!!! client has wrong hash");
                 networkManager.game.client.CmdRequestGameplayData();
             }
             else
             {
+                gameplay.StartMove();
                 gameplay.TrySwap(a, b);
             }
         }

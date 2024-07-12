@@ -86,3 +86,6 @@ MonoBehaviour:
   gameplayViewPrefab: {fileID: 5477247772048671607, guid: 99f114ab76e71f24f9b651c8b3b18f1e, type: 3}
   engineConfig: {fileID: 11400000, guid: 65c76f369320de24a85071e18cbc8816, type: 2}
   gameplayView: {fileID: 0}
+  lastHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000

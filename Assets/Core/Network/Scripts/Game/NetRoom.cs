@@ -74,6 +74,11 @@ namespace MMC.Network.GameMiddleware
                     NetworkServer.Spawn(player.client.gameObject);
                     NetworkServer.AddPlayerForConnection(player.client.session.conn, player.client.gameObject);
                 }
+                else
+                {
+                    var bot = UnityEngine.Object.Instantiate(config.botPrefab);
+                    bot.Setup(player);
+                }
             }
 
             return game;

@@ -33,7 +33,7 @@ namespace MMC.Network.GameMiddleware
             networkManager.game._RemoveClient(this);
         }
 
-        public void ClientAction(string hash, string afterHash, Action action)
+        public void ServerAction(string hash, Action action)
         {
             if (game.lastHash.ToString() != hash.ToString())
             {
@@ -43,11 +43,6 @@ namespace MMC.Network.GameMiddleware
             else
             {
                 action.Invoke();
-                if (game.lastHash.ToString() != afterHash)
-                {
-                    Debug.Log("!!!! Invalid hash after moved");
-                    game.SendGameplayData(session.conn);
-                }
             }
         }
 
@@ -64,7 +59,7 @@ namespace MMC.Network.GameMiddleware
         }
 
         [Command]
-        public void CmdSwap(string beforeHash, string afterHash, Int2 a, Int2 b)
-            => ClientAction(beforeHash, afterHash, () => player.TrySwap(a, b));
+        public void CmdSwap(string hash, Int2 a, Int2 b)
+            => ServerAction(hash, () => player.TrySwap(a, b));
     }
 }

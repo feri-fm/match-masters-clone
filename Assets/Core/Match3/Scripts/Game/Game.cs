@@ -29,7 +29,9 @@ namespace MMC.Match3
 
         public event Action<Tile> onTileHit = delegate { };
         public event Action<Tile, Tile> onTrySwap = delegate { };
-        public event Action<Tile, Tile> onSwapped = delegate { };
+        public event Action<Tile, Tile> onSwapFailed = delegate { };
+        public event Action<Tile, Tile> onSwapSucceed = delegate { };
+        public event Action<Tile> onRewardMatch = delegate { };
 
         public Int2 swappedA;
         public Int2 swappedB;
@@ -37,6 +39,19 @@ namespace MMC.Match3
         public int hittings;
 
         private bool removed;
+        private bool isCancelSwap;
+
+        public Guid id { get; }
+
+        public Game()
+        {
+            id = Guid.NewGuid();
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " " + id;
+        }
 
         public void Setup(GameEntity entity, GameOptions options)
         {
@@ -133,18 +148,37 @@ namespace MMC.Match3
             return changed;
         }
 
-        public void TrySwap(Tile a, Tile b) => TrySwap(a.position, b.position);
-        public async void TrySwap(Int2 a, Int2 b, bool withoutNotify = false)
+        public void CancelSwap()
         {
-            if (IsEmptyAt(a) || IsEmptyAt(b)) return;
+            isCancelSwap = true;
+        }
+
+        public Task<bool> TrySwap(Tile a, Tile b) => TrySwap(a.position, b.position);
+        public async Task<bool> TrySwap(Int2 a, Int2 b, bool withoutNotify = false)
+        {
+            if (isEvaluating) return false;
+
+            if (!ValidatePoint(a) || !ValidatePoint(b)) return false;
+
+            if (IsEmptyAt(a) || IsEmptyAt(b)) return false;
+
+            var delta = a - b;
+            if (delta.x < 0) delta.x = -delta.x;
+            if (delta.y < 0) delta.y = -delta.y;
+            if ((delta.x != 0 || delta.y != 1) && (delta.x != 1 || delta.y != 0))
+                return false;
+
             isEvaluating = true;
             swappedA = a;
             swappedB = b;
             var tileA = GetTileAt(a);
             var tileB = GetTileAt(b);
 
+            isCancelSwap = false;
             if (!withoutNotify)
                 onTrySwap.Invoke(tileA, tileB);
+
+            if (isCancelSwap) return false;
 
             if (tileA.HasTrait<PowerUpTrait>() && tileB.HasTrait<PowerUpTrait>())
             {
@@ -185,11 +219,14 @@ namespace MMC.Match3
                     tileB.WithTrait<AnimatorTrait>(t => t.MoveTo());
                     await Wait(0.15f);
                     isEvaluating = false;
+                    onSwapFailed.Invoke(tileA, tileB);
+                    return false;
                 }
             }
 
-            if (!withoutNotify)
-                onSwapped.Invoke(tileA, tileB);
+            onSwapSucceed.Invoke(tileA, tileB);
+
+            return true;
         }
 
         public async Task Wait(float time)
@@ -253,10 +290,14 @@ namespace MMC.Match3
         }
         private bool TryGetMatch(out Match match)
         {
+            return ScanMatch(config.match.patterns, out match);
+        }
+        public bool ScanMatch(MatchPattern[] patterns, out Match match)
+        {
             match = null;
-            for (int p = 0; p < config.match.patterns.Length; p++)
+            for (int p = 0; p < patterns.Length; p++)
             {
-                var pattern = config.match.patterns[p];
+                var pattern = patterns[p];
                 for (int i = 0; i <= width - pattern.width; i++)
                 {
                     for (int j = 0; j <= height - pattern.height; j++)
@@ -339,6 +380,7 @@ namespace MMC.Match3
                 var tile = CreateTileFromView(prefab);
                 SetTileAt(point, tile);
                 tile.WithTrait<AnimatorTrait>(t => t.Spawn());
+                onRewardMatch.Invoke(tile);
                 await Wait(0.3f);
             }
         }

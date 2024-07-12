@@ -119,9 +119,9 @@ namespace MMC.EngineCore
         }
         private void DrawGizmos()
         {
-            for (int i = -preview; i <= preview; i++)
+            for (int i = 0; i < preview; i++)
             {
-                for (int j = -preview; j <= preview; j++)
+                for (int j = 0; j < preview; j++)
                 {
                     Gizmos.DrawWireSphere(GetPosition(new Int2(i, j)), scale * 0.2f);
                 }

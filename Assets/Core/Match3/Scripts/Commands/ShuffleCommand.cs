@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 
 namespace MMC.Match3
 {
+    [System.Serializable]
     public class ShuffleCommand : GameCommand
     {
         [JsonDataInt] public int searchCount = 30;

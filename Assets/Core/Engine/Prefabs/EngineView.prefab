@@ -91,4 +91,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   container: {fileID: 649942508175129627}
   scale: 1
-  preview: 3
+  preview: 7

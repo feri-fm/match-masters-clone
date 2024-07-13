@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using kcp2k;
 using Mirror;
 using MMC.Game;
 using MMC.Network.GameMiddleware;
@@ -14,12 +13,15 @@ namespace MMC.Network
     public partial class NetNetworkManager : NetworkManager
     {
         public ServerManager serverManager;
+        public ServiceManager serviceManager;
         public List<NetNetworkMiddleware> middlewares = new();
 
         public SessionNetworkMiddleware session { get; private set; }
         public GameNetworkMiddleware game { get; private set; }
 
         public GameManager gameManager => GameManager.instance;
+
+        public GameServiceDriver gameService => serviceManager.GetService<GameServiceDriver>();
 
         public static NetNetworkManager instance { get; private set; }
 
@@ -37,9 +39,16 @@ namespace MMC.Network
             base.Start();
             ForEachMiddleware(e => e._Setup(this));
 
+            var transport = GetComponent<TelepathyTransport>();
+            transport.port = gameService.transportPort;
+
             //TODO: start server shouldn't happen on game scene, just for testing
             if (Application.isEditor)
                 StartServer();
+
+#if UNITY_SERVER
+            StartServer();
+#endif
         }
 
         public void ForEachMiddleware(Action<NetNetworkMiddleware> action)
@@ -66,7 +75,7 @@ namespace MMC.Network
         public void StartClient(NetworkConnectionInfo connection)
         {
             networkAddress = connection.address;
-            var transport = GetComponent<KcpTransport>();
+            var transport = GetComponent<TelepathyTransport>();
             transport.port = connection.port;
             StartClient();
         }

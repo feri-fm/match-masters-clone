@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3badda46a391c4f92a68070d31f789, type: 3}
+  m_Name: ServiceManager
+  m_EditorClassIdentifier: 
+  groups:
+  - name: editor
+    services:
+    - {fileID: 11400000, guid: 62cd617a7c6fe9847907b4cbd1b6820b, type: 2}
+  - name: local
+    services:
+    - {fileID: 11400000, guid: a899360f2bef16543b2bd29932823822, type: 2}
+  - name: stage
+    services:
+    - {fileID: 11400000, guid: e08695503d897ce46a0b6a14bd6a6570, type: 2}
+  selectedGroupNameEditor: editor
+  selectedGroupNameBuild: stage

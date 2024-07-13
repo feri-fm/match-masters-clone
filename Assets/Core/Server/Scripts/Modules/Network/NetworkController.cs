@@ -1,4 +1,4 @@
-using kcp2k;
+using Mirror;
 using MMC.Network;
 using MMC.Server.Models;
 
@@ -15,8 +15,8 @@ namespace MMC.Server
             {
                 await res.Send(new NetworkConnectionInfo
                 {
-                    port = NetNetworkManager.instance.GetComponent<KcpTransport>().port,
-                    address = "localhost"
+                    port = ServiceManager.instance.GetService<GameServiceDriver>().transportPort,
+                    address = ServiceManager.instance.GetService<GameServiceDriver>().networkAddress,
                 });
             }
         );

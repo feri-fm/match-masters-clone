@@ -15,12 +15,12 @@ namespace MMC.Game
 
         public GameManager game => GameManager.instance;
 
-        public string tokenKey => Application.isEditor ? "token_editor" : "token";
+        public string tokenKey => game.gameService.dataKey + "_token";
 
         private void Start()
         {
             requestBuilder = new WebRequestBuilder();
-            requestBuilder.config = config;
+            requestBuilder.config = game.gameService.webConfig;
 
             if (PlayerPrefs.HasKey(tokenKey))
             {
@@ -49,7 +49,7 @@ namespace MMC.Game
                     }
                     game.ChangeState();
 
-                    Popup.ShowAlert(r.body);
+                    Popup.ShowAlert(r.error ?? r.body);
                 });
             };
         }

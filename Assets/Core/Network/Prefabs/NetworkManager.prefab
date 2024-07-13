@@ -90,6 +90,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configs:
   - {fileID: 11400000, guid: 1b9e620c96760704f94518bc020b049b, type: 2}
+  game: {fileID: 0}
+  player: {fileID: 0}
+  client: {fileID: 0}
+  players: []
+  clients: []
   games: []
 --- !u!1 &2412452968461134882
 GameObject:
@@ -101,8 +106,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2412452968461134892}
   - component: {fileID: 2412452968461134893}
-  - component: {fileID: 2412452968461134894}
   - component: {fileID: 2412452968461134895}
+  - component: {fileID: 5893502819604625641}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -148,7 +153,7 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 2412452968461134894}
+  transport: {fileID: 5893502819604625641}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
@@ -177,38 +182,10 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   serverManager: {fileID: 0}
+  serviceManager: {fileID: 0}
   middlewares:
   - {fileID: 342737944423228570}
   - {fileID: 8320119784431495535}
---- !u!114 &2412452968461134894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2412452968461134882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  port: 7777
-  DualMode: 1
-  NoDelay: 1
-  Interval: 10
-  Timeout: 10000
-  RecvBufferSize: 7361536
-  SendBufferSize: 7361536
-  FastResend: 2
-  ReceiveWindowSize: 4096
-  SendWindowSize: 4096
-  MaxRetransmit: 40
-  MaximizeSocketBuffers: 1
-  ReliableMaxMessageSize: 297433
-  UnreliableMaxMessageSize: 1194
-  debugLog: 0
-  statisticsGUI: 0
-  statisticsLog: 0
 --- !u!114 &2412452968461134895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,3 +199,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   matchCount: 0
+--- !u!114 &5893502819604625641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2412452968461134882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 7777
+  NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000

@@ -7,6 +7,7 @@ namespace MMC.Match3
     public class MatchConfig : ScriptableObject
     {
         public MatchPattern[] search;
+        public MatchPattern[] moves;
         public MatchPattern[] patterns;
     }
 

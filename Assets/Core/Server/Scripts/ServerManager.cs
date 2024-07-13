@@ -11,9 +11,9 @@ namespace MMC.Server
 {
     public class ServerManager : MonoBehaviour
     {
-        public ushort port = 3000;
-
         public ServerApp app;
+
+        public GameServiceDriver gameService => ServiceManager.instance.GetService<GameServiceDriver>();
 
         private void Awake()
         {
@@ -25,6 +25,10 @@ namespace MMC.Server
             //TODO: start server shouldn't happen on game scene, just for testing
             if (Application.isEditor)
                 StartServer();
+
+#if UNITY_SERVER
+            StartServer();
+#endif
         }
 
         private void Setup()
@@ -36,7 +40,7 @@ namespace MMC.Server
 
         public void StartServer()
         {
-            app.Listen(port);
+            app.Listen(gameService.serverPort);
         }
         public void StopServer()
         {
@@ -44,6 +48,10 @@ namespace MMC.Server
         }
 
         private void OnDestroy()
+        {
+            StopServer();
+        }
+        private void OnApplicationQuit()
         {
             StopServer();
         }

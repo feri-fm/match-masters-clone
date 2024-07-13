@@ -59,6 +59,12 @@ namespace MMC.Network.GameMiddleware
         }
 
         [Command]
+        public void CmdEvaluatingFinished()
+        {
+            game.lastEvaluateTime = Time.time;
+        }
+
+        [Command]
         public void CmdSwap(string hash, Int2 a, Int2 b)
             => ServerAction(hash, () => player.TrySwap(a, b));
     }

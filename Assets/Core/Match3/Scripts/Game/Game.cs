@@ -32,6 +32,7 @@ namespace MMC.Match3
         public event Action<Tile, Tile> onSwapFailed = delegate { };
         public event Action<Tile, Tile> onSwapSucceed = delegate { };
         public event Action<Tile> onRewardMatch = delegate { };
+        public event Action onEvaluatingFinished = delegate { };
 
         public Int2 swappedA;
         public Int2 swappedB;
@@ -145,6 +146,7 @@ namespace MMC.Match3
             } while (loop);
             isEvaluating = false;
             _isInEvaluate = false;
+            onEvaluatingFinished.Invoke();
             return changed;
         }
 
@@ -211,7 +213,7 @@ namespace MMC.Match3
                 Swap(a, b);
                 tileA.WithTrait<AnimatorTrait>(t => t.MoveTo());
                 tileB.WithTrait<AnimatorTrait>(t => t.MoveTo());
-                await Wait(0.15f);
+                await Wait(0.2f);
                 if (!await Evaluate())
                 {
                     Swap(a, b);
@@ -273,20 +275,11 @@ namespace MMC.Match3
 
         public bool AnyMatch()
         {
-            for (int p = 0; p < config.match.search.Length; p++)
-            {
-                var pattern = config.match.search[p];
-                for (int i = 0; i <= width - pattern.width; i++)
-                {
-                    for (int j = 0; j <= height - pattern.height; j++)
-                    {
-                        var point = new Int2(i, j);
-                        if (CheckMatch(point, pattern, out _))
-                            return true;
-                    }
-                }
-            }
-            return false;
+            return ScanMatch(config.match.search, out _);
+        }
+        public bool AnyMove()
+        {
+            return ScanMatch(config.match.moves, out _);
         }
         private bool TryGetMatch(out Match match)
         {

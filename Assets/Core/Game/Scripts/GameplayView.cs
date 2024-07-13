@@ -10,10 +10,13 @@ namespace MMC.Game
 {
     public class GameplayView : MonoBehaviour
     {
+        public ShuffleCommand shuffle;
         public EngineConfig engineConfig;
         public EngineView engineView;
 
         public Gameplay gameplay { get; private set; }
+
+        public virtual void Setup() { }
 
         public void Setup(Gameplay gameplay)
         {
@@ -24,6 +27,8 @@ namespace MMC.Game
                 engine.waiter = Wait;
                 engineView.Setup(engine);
             };
+
+            Setup();
         }
 
         public Task Wait(float time)
@@ -57,7 +62,10 @@ namespace MMC.Game
         public event Action<Int2, Int2> onSwapSucceed = delegate { };
         public event Action<Int2, Int2> onSwapFailed = delegate { };
         public event Action<Tile> onRewardMatch = delegate { };
+        public event Action<Tile> onTileHit = delegate { };
+
         public event Action<Engine> onNewEngine = delegate { };
+        public event Action onEvaluatingFinished = delegate { };
 
         public virtual void Setup() { }
 
@@ -77,13 +85,22 @@ namespace MMC.Game
 
         protected virtual void SetupEngine()
         {
-            gameEntity.game.onTrySwap += (a, b) =>
-            {
-                onTrySwap.Invoke(a.position, b.position);
-            };
+            gameEntity.game.onTrySwap += (a, b) => onTrySwap.Invoke(a.position, b.position);
             gameEntity.game.onSwapSucceed += (a, b) => onSwapSucceed.Invoke(a.position, b.position);
             gameEntity.game.onSwapFailed += (a, b) => onSwapFailed.Invoke(a.position, b.position);
-            gameEntity.game.onRewardMatch += (a) => onRewardMatch.Invoke(a);
+            gameEntity.game.onTileHit += (e) => onTileHit.Invoke(e);
+            gameEntity.game.onRewardMatch += (e) => onRewardMatch.Invoke(e);
+            gameEntity.game.onEvaluatingFinished += () =>
+            {
+                if (!gameEntity.game.AnyMove())
+                {
+                    _ = gameEntity.game.RunCommand(prefab.shuffle);
+                }
+                else
+                {
+                    onEvaluatingFinished.Invoke();
+                }
+            };
         }
 
         public Gameplay GetFastGameplay()

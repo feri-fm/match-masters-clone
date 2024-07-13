@@ -44,7 +44,7 @@ namespace MMC.Network.GameMiddleware
 
         private void Update()
         {
-            if (rooms.Count > 0 && Time.time > lastJoined + 1)
+            if (rooms.Count > 0 && Time.time > lastJoined + manager.gameService.botJoinTime)
             {
                 foreach (var room in rooms)
                 {
@@ -115,8 +115,6 @@ namespace MMC.Network.GameMiddleware
                         gameByConn[player.client.session.conn] = game;
                     }
                 }
-
-                room.SendMessage(new StartGameClientMessage());
             }
         }
 

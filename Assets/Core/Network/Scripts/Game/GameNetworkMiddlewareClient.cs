@@ -22,7 +22,6 @@ namespace MMC.Network.GameMiddleware
             base.OnStartClient();
             NetworkClient.RegisterHandler<JoinedRoomClientMessage>(OnJoinedRoomClientMessage);
             NetworkClient.RegisterHandler<UpdateRoomClientMessage>(OnUpdateRoomClientMessage);
-            NetworkClient.RegisterHandler<StartGameClientMessage>(OnStartGameClientMessage);
             NetworkClient.RegisterHandler<LeaveRoomClientMessage>(OnLeaveRoomClientMessage);
             NetworkClient.RegisterHandler<LeaveGameClientMessage>(OnLeaveGameClientMessage);
         }
@@ -31,7 +30,6 @@ namespace MMC.Network.GameMiddleware
             base.OnStopClient();
             NetworkClient.UnregisterHandler<JoinedRoomClientMessage>();
             NetworkClient.UnregisterHandler<UpdateRoomClientMessage>();
-            NetworkClient.UnregisterHandler<StartGameClientMessage>();
             NetworkClient.UnregisterHandler<LeaveRoomClientMessage>();
             NetworkClient.UnregisterHandler<LeaveGameClientMessage>();
             OnClearConnection();
@@ -57,6 +55,7 @@ namespace MMC.Network.GameMiddleware
 
         public void OnGameStart()
         {
+            gameManager.gamePanel.OpenPanel();
             client.CmdRequestGameplayStartData();
             game.StartGameClient();
         }
@@ -191,10 +190,6 @@ namespace MMC.Network.GameMiddleware
             roomPlayers = msg.players;
             gameManager.ChangeState();
         }
-        public void OnStartGameClientMessage(StartGameClientMessage msg)
-        {
-            gameManager.gamePanel.OpenPanel();
-        }
         public void OnLeaveRoomClientMessage(LeaveRoomClientMessage msg)
         {
             OnClearConnection();
@@ -220,7 +215,6 @@ namespace MMC.Network.GameMiddleware
             this.players = players;
         }
     }
-    public struct StartGameClientMessage : NetworkMessage { }
     public struct LeaveRoomClientMessage : NetworkMessage { }
     public struct LeaveGameClientMessage : NetworkMessage { }
 }

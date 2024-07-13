@@ -8,6 +8,7 @@ namespace MMC.Game
     public class GameManager : MonoBehaviour
     {
         public PanelGroup panelGroup;
+        public ServiceManager serviceManager;
         public WebRequestManager webRequestManager;
         public NetNetworkManager networkManager;
 
@@ -17,6 +18,9 @@ namespace MMC.Game
         public AuthPanel authPanel => panelGroup.GetPanel<AuthPanel>();
         public JoiningPanel joiningPanel => panelGroup.GetPanel<JoiningPanel>();
         public GamePanel gamePanel => panelGroup.GetPanel<GamePanel>();
+        public FinishGamePanel finishGamePanel => panelGroup.GetPanel<FinishGamePanel>();
+
+        public GameServiceDriver gameService => serviceManager.GetService<GameServiceDriver>();
 
         public event Action onStateChanged = delegate { };
 
@@ -33,6 +37,8 @@ namespace MMC.Game
             {
                 OnDisconnect();
             };
+
+            Application.targetFrameRate = 60;
         }
 
         private async void Start()

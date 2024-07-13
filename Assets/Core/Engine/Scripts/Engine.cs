@@ -71,6 +71,10 @@ namespace MMC.EngineCore
             evaluator.Evaluate(entities.ToArray());
         }
 
+        public T GetEntity<T>(Id id) where T : Entity
+        {
+            return entities.Find(e => e.id == id) as T;
+        }
         public T GetEntity<T>() where T : Entity
         {
             return entities.Find(e => e is T) as T;

@@ -8,10 +8,10 @@ namespace MMC.Network.GameMiddleware
 {
     public class NetBot : MonoBehaviour
     {
-        public ShuffleCommand shuffle;
-        public MatchPattern[] patterns;
+        public float waitTime = 1.5f;
+        public MatchPattern[] goodMoves;
 
-        public NetPlayer player;
+        public NetPlayer player { get; private set; }
         public NetGame netGame => player.game;
         public TwoPlayerGameplay gameplay => netGame.gameplay;
         public Match3.Game game => netGame.gameplay.gameEntity.game;
@@ -20,7 +20,7 @@ namespace MMC.Network.GameMiddleware
         {
             this.player = player;
             transform.parent = player.transform;
-            lastSwap = Time.time + 1;
+            lastSwap = Time.time + waitTime;
         }
 
         private float lastSwap;
@@ -28,7 +28,7 @@ namespace MMC.Network.GameMiddleware
         {
             if (gameplay.IsTurn(player.index))
             {
-                if (Time.time > lastSwap + 3)
+                if (Time.time > lastSwap + waitTime && Time.time > netGame.lastEvaluateTime + waitTime)
                 {
                     lastSwap = Time.time;
                     Think();
@@ -50,17 +50,13 @@ namespace MMC.Network.GameMiddleware
             // var b = start + dir;
             // player.TrySwap(a, b);
 
-            if (game.ScanMatch(patterns, out var match))
+            if (game.ScanMatch(goodMoves, out var match)
+                || game.ScanMatch(game.config.match.moves, out match))
             {
                 var offset = match.offset;
                 var a = offset + match.pattern.rewardPoints[0];
                 var b = offset + match.pattern.rewardPoints[1];
                 player.TrySwap(a, b);
-            }
-            else
-            {
-                throw new NotImplementedException("shuffle in when no move over network not supported yet");
-                // _ = game.RunCommand(shuffle);
             }
         }
     }

@@ -31,7 +31,10 @@ namespace MMC.Network.GameMiddleware
 
         public GameManager gameManager => GameManager.instance;
 
+        public NetClient client => networkManager.game.client;
+
         public Hash128 lastHash;
+        public float lastEvaluateTime;
 
         private GameplayData startData;
 
@@ -81,15 +84,18 @@ namespace MMC.Network.GameMiddleware
 
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
-
             gameplay.SetIsOpponent(networkManager.game.player.index != 0);
+            gameplay.ShowStartMessage();
             gameplay.onTrySwap += (a, b) =>
             {
-                gameplay.StartMove();
-                networkManager.game.client.CmdSwap(
+                client.CmdSwap(
                     gameplay.GetHash().ToString(), a, b);
+                gameplay.StartMove();
             };
-
+            gameplay.onEvaluatingFinished += () =>
+            {
+                client.CmdEvaluatingFinished();
+            };
         }
 
         public void Leave(NetworkConnectionToClient conn)
@@ -119,6 +125,7 @@ namespace MMC.Network.GameMiddleware
 
         public void PlayerAction(Action<NetGame> action)
         {
+            lastEvaluateTime = Time.time + 20;
             action.Invoke(this);
             lastHash = gameplay.GetHash();
         }
@@ -138,10 +145,11 @@ namespace MMC.Network.GameMiddleware
             var gameplayData = gameplayDataJson.FromJson<GameplayData>();
             gameplay.Load(gameplayData);
             gameplay.Evaluate();
+            client.CmdEvaluatingFinished();
         }
 
         [TargetRpc]
-        public void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
+        public async void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
         {
             var myHash = gameplay.GetHash().ToString();
             if (myHash != hash)
@@ -151,8 +159,14 @@ namespace MMC.Network.GameMiddleware
             }
             else
             {
+                var tile = gameplay.gameEntity.game.GetTileAt(a);
+                if (tile != null)
+                {
+                    gameplayView.SetHandAt(tile.id);
+                    await new WaitForSeconds(0.4f);
+                }
                 gameplay.StartMove();
-                gameplay.TrySwap(a, b);
+                await gameplay.TrySwap(a, b);
             }
         }
     }

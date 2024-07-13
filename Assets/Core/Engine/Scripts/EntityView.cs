@@ -62,6 +62,10 @@ namespace MMC.EngineCore
         {
             return traits.Find(e => e.trait == trait);
         }
+        public T GetTrait<T>() where T : TraitView
+        {
+            return traits.Find(e => e is T) as T;
+        }
     }
     public abstract class EntityView<T> : EntityView where T : Entity
     {

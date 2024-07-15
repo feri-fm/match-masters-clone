@@ -5,7 +5,7 @@ namespace MMC.Game
         [Member]
         public void Menu()
         {
-            network.game.LeaveGame();
+            network.game.client.LeaveGame();
         }
     }
 }

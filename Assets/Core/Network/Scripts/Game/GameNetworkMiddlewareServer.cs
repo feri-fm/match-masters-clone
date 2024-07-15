@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
 {
-    public partial class GameNetworkMiddleware
+    public class GameNetworkMiddlewareServer : NetNetworkMiddlewareServer<GameNetworkMiddleware>
     {
         public List<NetRoom> rooms = new();
         public List<NetGame> games = new();
@@ -17,33 +17,34 @@ namespace MMC.Network.GameMiddleware
 
         private float lastJoined;
 
-        public override void OnStartServer()
+        public override void OnStart()
         {
-            base.OnStartServer();
+            base.OnStart();
             rooms.Clear();
             NetworkServer.RegisterHandler<JoinRoomServerMessage>(OnJoinRoomServerMessage);
             NetworkServer.RegisterHandler<LeaveRoomServerMessage>(OnLeaveRoomServerMessage);
             NetworkServer.RegisterHandler<LeaveGameServerMessage>(OnLeaveGameServerMessage);
         }
-        public override void OnStopServer()
+        public override void OnStop()
         {
-            base.OnStopServer();
+            base.OnStop();
             NetworkServer.UnregisterHandler<JoinRoomServerMessage>();
             NetworkServer.UnregisterHandler<LeaveRoomServerMessage>();
             NetworkServer.UnregisterHandler<LeaveGameServerMessage>();
         }
-        public override void OnServerConnect(NetworkConnectionToClient conn)
+        public override void OnConnect(NetworkConnectionToClient conn)
         {
-            base.OnServerConnect(conn);
+            base.OnConnect(conn);
         }
-        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        public override void OnDisconnect(NetworkConnectionToClient conn)
         {
             ClearConnection(conn);
-            base.OnServerDisconnect(conn);
+            base.OnDisconnect(conn);
         }
 
-        private void Update()
+        public override void Update()
         {
+            base.Update();
             if (rooms.Count > 0 && Time.time > lastJoined + manager.gameService.botJoinTime)
             {
                 foreach (var room in rooms)
@@ -124,7 +125,7 @@ namespace MMC.Network.GameMiddleware
 
             WithSession(conn, session =>
             {
-                var config = configs.Find(e => e.key == msg.config);
+                var config = middleware.configs.Find(e => e.key == msg.config);
                 if (config == null)
                 {
                     manager.Kick(conn, "Invalid config key");

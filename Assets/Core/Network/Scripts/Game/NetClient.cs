@@ -25,12 +25,12 @@ namespace MMC.Network.GameMiddleware
         public override void OnStartClient()
         {
             base.OnStartClient();
-            networkManager.game._AddClient(this);
+            networkManager.game.client._AddClient(this);
         }
         public override void OnStopClient()
         {
             base.OnStopClient();
-            networkManager.game._RemoveClient(this);
+            networkManager.game.client._RemoveClient(this);
         }
 
         public void ServerAction(string hash, Action action)

@@ -33,7 +33,7 @@ namespace MMC.Game
             game.ChangeState(() =>
             {
                 game.user.SelectBooster(game.config, data.key);
-                game.networkManager.menu.UpdateSelectedItems(game.user.selectedItems.ToArray());
+                game.networkManager.menu.client.UpdateSelectedItems(game.user.selectedItems.ToArray());
             });
         }
 
@@ -43,7 +43,7 @@ namespace MMC.Game
             game.ChangeState(() =>
             {
                 game.user.inventory.AddItem(data.key);
-                game.networkManager.menu.UnlockBooster(data);
+                game.networkManager.menu.client.UnlockBooster(data);
             });
         }
 
@@ -54,7 +54,7 @@ namespace MMC.Game
             {
                 game.user.inventory.ChangeCount(data.key, 1);
                 var count = game.user.inventory.GetCount(data.key);
-                game.networkManager.menu.SetItemCount(data.key, count);
+                game.networkManager.menu.client.SetItemCount(data.key, count);
             });
         }
 

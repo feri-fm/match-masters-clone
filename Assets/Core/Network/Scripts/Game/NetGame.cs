@@ -31,7 +31,7 @@ namespace MMC.Network.GameMiddleware
 
         public GameManager gameManager => GameManager.instance;
 
-        public NetClient client => networkManager.game.client;
+        public NetClient client => networkManager.game.client.client;
 
         public Hash128 lastHash;
         public float lastEvaluateTime;
@@ -67,12 +67,12 @@ namespace MMC.Network.GameMiddleware
         public override void OnStartClient()
         {
             base.OnStartClient();
-            networkManager.game._SetGame(this);
+            networkManager.game.client._SetGame(this);
         }
         public override void OnStopClient()
         {
             base.OnStopClient();
-            networkManager.game._RemoveGame(this);
+            networkManager.game.client._RemoveGame(this);
         }
 
         public void StartGameClient()
@@ -84,7 +84,7 @@ namespace MMC.Network.GameMiddleware
 
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
-            gameplay.SetIsOpponent(networkManager.game.player.index != 0);
+            gameplay.SetIsOpponent(networkManager.game.client.player.index != 0);
             gameplay.ShowStartMessage();
             gameplay.onTrySwap += (a, b) =>
             {
@@ -155,7 +155,7 @@ namespace MMC.Network.GameMiddleware
             if (myHash != hash)
             {
                 Debug.Log("!!! client has wrong hash");
-                networkManager.game.client.CmdRequestGameplayData();
+                networkManager.game.client.client.CmdRequestGameplayData();
             }
             else
             {

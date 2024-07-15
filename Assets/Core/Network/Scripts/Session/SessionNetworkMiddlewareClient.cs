@@ -4,26 +4,26 @@ using UnityEngine;
 
 namespace MMC.Network.SessionMiddleware
 {
-    public partial class SessionNetworkMiddleware
+    public class SessionNetworkMiddlewareClient : NetNetworkMiddlewareClient<SessionNetworkMiddleware>
     {
-        public override void OnStartClient()
+        public override void OnStart()
         {
-            base.OnStartClient();
+            base.OnStart();
             NetworkClient.RegisterHandler<SessionCreatedClientMessage>(OnSessionCreatedClientMessage);
         }
-        public override void OnStopClient()
+        public override void OnStop()
         {
-            base.OnStopClient();
+            base.OnStop();
             NetworkClient.UnregisterHandler<SessionCreatedClientMessage>();
         }
-        public override void OnClientConnect()
+        public override void OnConnect()
         {
-            base.OnClientConnect();
+            base.OnConnect();
             NetworkClient.Send(new AuthServerMessage(gameManager.webRequestManager.token));
         }
-        public override void OnClientDisconnect()
+        public override void OnDisconnect()
         {
-            base.OnClientDisconnect();
+            base.OnDisconnect();
         }
 
         public void OnSessionCreatedClientMessage(SessionCreatedClientMessage msg)

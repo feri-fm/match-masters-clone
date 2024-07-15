@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace MMC.Network.SessionMiddleware
 {
-    public partial class SessionNetworkMiddleware
+    public class SessionNetworkMiddlewareServer : NetNetworkMiddlewareServer<SessionNetworkMiddleware>
     {
         public Dictionary<NetworkConnectionToClient, Session> sessionByConn = new();
         public Dictionary<ObjectId, Session> sessionById = new();
@@ -17,26 +17,26 @@ namespace MMC.Network.SessionMiddleware
         public List<NetworkConnectionToClient> waitingConnections = new();
         public List<NetworkConnectionToClient> authConnections = new();
 
-        public override void OnStartServer()
+        public override void OnStart()
         {
-            base.OnStartServer();
+            base.OnStart();
             NetworkServer.RegisterHandler<AuthServerMessage>(OnAuthMessage);
         }
-        public override void OnStopServer()
+        public override void OnStop()
         {
-            base.OnStopServer();
+            base.OnStop();
             NetworkServer.UnregisterHandler<AuthServerMessage>();
         }
-        public override void OnServerConnect(NetworkConnectionToClient conn)
+        public override void OnConnect(NetworkConnectionToClient conn)
         {
-            base.OnServerConnect(conn);
+            base.OnConnect(conn);
             waitingConnections.Add(conn);
             WaitForAuth(conn);
         }
-        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        public override void OnDisconnect(NetworkConnectionToClient conn)
         {
             ClearConnection(conn);
-            base.OnServerDisconnect(conn);
+            base.OnDisconnect(conn);
         }
 
         public void ClearConnection(NetworkConnectionToClient conn)
@@ -69,7 +69,7 @@ namespace MMC.Network.SessionMiddleware
 
         }
 
-        public void WithSession(NetworkConnectionToClient conn, Action<Session> action)
+        public void _WithSession(NetworkConnectionToClient conn, Action<Session> action)
         {
             if (sessionByConn.TryGetValue(conn, out var session))
             {

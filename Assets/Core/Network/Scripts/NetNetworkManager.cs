@@ -7,17 +7,21 @@ using MMC.Network.MenuMiddleware;
 using MMC.Network.SessionMiddleware;
 using MMC.Server;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace MMC.Network
 {
-    public partial class NetNetworkManager : NetworkManager
+    public class NetNetworkManager : NetworkManager
     {
         public List<NetNetworkMiddleware> middlewares = new();
 
         public SessionNetworkMiddleware session { get; private set; }
         public GameNetworkMiddleware game { get; private set; }
         public MenuNetworkMiddleware menu { get; private set; }
+
+        public Dictionary<string, ServerListener> serverListeners = new();
+        public Dictionary<string, ClientListener> clientListeners = new();
 
         public GameManager gameManager => GameManager.instance;
         public ServerManager serverManager => ServerManager.instance;
@@ -94,22 +98,76 @@ namespace MMC.Network
         {
             base.OnStartClient(); ForEachMiddleware(e => e.OnStartClient());
             NetworkClient.RegisterHandler<KickClientMessage>(OnKickClientMessage);
+            NetworkClient.RegisterHandler<SocketMessage>(OnSocketClientMessage);
         }
         public override void OnStopClient()
         {
             base.OnStopClient(); ForEachMiddleware(e => e.OnStopClient());
             NetworkClient.UnregisterHandler<KickClientMessage>();
+            NetworkClient.UnregisterHandler<SocketMessage>();
         }
         public override void OnClientConnect() { base.OnClientConnect(); ForEachMiddleware(e => e.OnClientConnect()); }
         public override void OnClientDisconnect() { base.OnClientDisconnect(); ForEachMiddleware(e => e.OnClientDisconnect()); }
 
-        public override void OnStartServer() { base.OnStartServer(); ForEachMiddleware(e => e.OnStartServer()); }
-        public override void OnStopServer() { base.OnStopServer(); ForEachMiddleware(e => e.OnStopServer()); }
+        public override void OnStartServer()
+        {
+            base.OnStartServer(); ForEachMiddleware(e => e.OnStartServer());
+            NetworkServer.RegisterHandler<SocketMessage>(OnSocketServerMessage);
+        }
+        public override void OnStopServer()
+        {
+            base.OnStopServer(); ForEachMiddleware(e => e.OnStopServer());
+            NetworkServer.UnregisterHandler<SocketMessage>();
+        }
         public override void OnServerConnect(NetworkConnectionToClient conn) { base.OnServerConnect(conn); ForEachMiddleware(e => e.OnServerConnect(conn)); }
         public override void OnServerDisconnect(NetworkConnectionToClient conn) { ForEachMiddleware(e => e.OnServerDisconnect(conn)); base.OnServerDisconnect(conn); }
 
 
-        public void OnKickClientMessage(KickClientMessage msg)
+        public void ClientEmit(string key, object data)
+        {
+            NetworkClient.Send(new SocketMessage(key, data.ToJson()));
+        }
+        public void ClientOn<T>(string key, Action<T> onData)
+        {
+            if (!clientListeners.TryGetValue(key, out var listener))
+            {
+                listener = new ClientListener(key);
+                clientListeners.Add(key, listener);
+            }
+            listener.actions.Add(d => onData.Invoke(d.ToObject<T>()));
+        }
+        public void ServerEmit(Session session, string key, object data)
+        {
+            session.conn.Send(new SocketMessage(key, data.ToJson()));
+        }
+        public void ServerOn<T>(string key, Action<Session, T> onData)
+        {
+            if (!serverListeners.TryGetValue(key, out var listener))
+            {
+                listener = new ServerListener(key);
+                serverListeners.Add(key, listener);
+            }
+            listener.actions.Add((s, d) => onData.Invoke(s, d.ToObject<T>()));
+        }
+        private void OnSocketClientMessage(SocketMessage msg)
+        {
+            if (clientListeners.TryGetValue(msg.key, out var listener))
+            {
+                listener.Invoke(JToken.Parse(msg.data));
+            }
+        }
+        private void OnSocketServerMessage(NetworkConnectionToClient conn, SocketMessage msg)
+        {
+            session.server.WithSession(conn, session =>
+            {
+                if (serverListeners.TryGetValue(msg.key, out var listener))
+                {
+                    listener.Invoke(session, JToken.Parse(msg.data));
+                }
+            });
+        }
+
+        private void OnKickClientMessage(KickClientMessage msg)
         {
             Popup.ShowAlert(msg.message);
             gameManager.isConnected = false;
@@ -129,6 +187,18 @@ namespace MMC.Network
         public KickClientMessage(string message)
         {
             this.message = message;
+        }
+    }
+
+    public struct SocketMessage : NetworkMessage
+    {
+        public string key;
+        public string data;
+
+        public SocketMessage(string key, string data)
+        {
+            this.key = key;
+            this.data = data;
         }
     }
 }

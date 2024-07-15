@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
 {
-    public partial class GameNetworkMiddleware
+    public class GameNetworkMiddlewareClient : NetNetworkMiddlewareClient<GameNetworkMiddleware>
     {
         public NetGame game;
         public NetPlayer player;
@@ -17,35 +17,36 @@ namespace MMC.Network.GameMiddleware
 
         public RoomPlayerData[] roomPlayers;
 
-        public override void OnStartClient()
+        public override void OnStart()
         {
-            base.OnStartClient();
+            base.OnStart();
             NetworkClient.RegisterHandler<JoinedRoomClientMessage>(OnJoinedRoomClientMessage);
             NetworkClient.RegisterHandler<UpdateRoomClientMessage>(OnUpdateRoomClientMessage);
             NetworkClient.RegisterHandler<LeaveRoomClientMessage>(OnLeaveRoomClientMessage);
             NetworkClient.RegisterHandler<LeaveGameClientMessage>(OnLeaveGameClientMessage);
         }
-        public override void OnStopClient()
+        public override void OnStop()
         {
-            base.OnStopClient();
+            base.OnStop();
             NetworkClient.UnregisterHandler<JoinedRoomClientMessage>();
             NetworkClient.UnregisterHandler<UpdateRoomClientMessage>();
             NetworkClient.UnregisterHandler<LeaveRoomClientMessage>();
             NetworkClient.UnregisterHandler<LeaveGameClientMessage>();
             OnClearConnection();
         }
-        public override void OnClientConnect()
+        public override void OnConnect()
         {
-            base.OnClientConnect();
+            base.OnConnect();
         }
-        public override void OnClientDisconnect()
+        public override void OnDisconnect()
         {
-            base.OnClientDisconnect();
+            base.OnDisconnect();
             OnClearConnection();
         }
 
-        private void LateUpdate()
+        public override void LateUpdate()
         {
+            base.LateUpdate();
             if (dirtyFetch)
             {
                 dirtyFetch = false;
@@ -66,18 +67,18 @@ namespace MMC.Network.GameMiddleware
             foreach (var player in players.ToArray())
             {
                 player.OnStopClient();
-                Destroy(player.gameObject);
+                Object.Destroy(player.gameObject);
             }
             foreach (var client in clients.ToArray())
             {
                 client.OnStopClient();
-                Destroy(client.gameObject);
+                Object.Destroy(client.gameObject);
             }
             var g = game;
             if (g != null)
             {
                 g.OnStopClient();
-                Destroy(g.gameObject);
+                Object.Destroy(g.gameObject);
             }
         }
 

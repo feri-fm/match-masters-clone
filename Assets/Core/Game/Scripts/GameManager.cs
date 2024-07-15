@@ -8,6 +8,7 @@ namespace MMC.Game
     public class GameManager : MonoBehaviour
     {
         public PanelGroup panelGroup;
+        public GameConfig config;
         public ServiceManager serviceManager;
         public WebRequestManager webRequestManager;
         public NetNetworkManager networkManager;
@@ -19,6 +20,7 @@ namespace MMC.Game
         public JoiningPanel joiningPanel => panelGroup.GetPanel<JoiningPanel>();
         public GamePanel gamePanel => panelGroup.GetPanel<GamePanel>();
         public FinishGamePanel finishGamePanel => panelGroup.GetPanel<FinishGamePanel>();
+        public BoostersPanel boostersPanel => panelGroup.GetPanel<BoostersPanel>();
 
         public GameServiceDriver gameService => serviceManager.GetService<GameServiceDriver>();
 
@@ -27,6 +29,10 @@ namespace MMC.Game
         public UserModel user;
         public bool isConnecting;
         public bool isConnected;
+
+        public GameData data;
+
+        private bool dirtyData;
 
         public static GameManager instance { get; private set; }
 
@@ -43,6 +49,11 @@ namespace MMC.Game
 
         private async void Start()
         {
+            if (PlayerPrefs.HasKey(gameService.dataKey))
+            {
+                data = PlayerPrefs.GetString(gameService.dataKey).FromJson<GameData>();
+            }
+
             await 0.1f;
             Startup();
         }
@@ -128,8 +139,14 @@ namespace MMC.Game
             connectingPanel.ClosePanel();
         }
 
+        public void Play()
+        {
+            boostersPanel.OpenPanel();
+        }
+
         public void Join()
         {
+            //TODO: net config shouldn't come like this
             var config = networkManager.game.configs[0];
             joiningPanel.Setup(config);
             joiningPanel.OpenPanel();
@@ -151,7 +168,11 @@ namespace MMC.Game
 
         private void LateUpdate()
         {
-
+            if (dirtyData)
+            {
+                dirtyData = false;
+                PlayerPrefs.SetString(gameService.dataKey, data.ToJson());
+            }
         }
 
         public void ChangeState() => ChangeState(() => { });
@@ -160,5 +181,18 @@ namespace MMC.Game
             action.Invoke();
             onStateChanged.Invoke();
         }
+
+        public void ChangeData(Action action) => ChangeData((_) => action.Invoke());
+        public void ChangeData(Action<GameData> action)
+        {
+            action.Invoke(data);
+            dirtyData = true;
+            ChangeState();
+        }
+    }
+
+    public class GameData
+    {
+
     }
 }

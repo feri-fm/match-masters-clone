@@ -15,8 +15,17 @@ namespace MMC.Server
 
         public GameServiceDriver gameService => ServiceManager.instance.GetService<GameServiceDriver>();
 
+        public static ServerManager instance { get; private set; }
+
         private void Awake()
         {
+            if (instance != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            instance = this;
+            DontDestroyOnLoad(gameObject);
             Setup();
         }
 

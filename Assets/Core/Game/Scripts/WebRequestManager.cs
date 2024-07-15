@@ -42,7 +42,7 @@ namespace MMC.Game
                 });
                 req.F(r =>
                 {
-                    if (r.status == 401)
+                    if (r.status == 401 || r.status == 404)
                     {
                         Logout();
                         game.Startup();

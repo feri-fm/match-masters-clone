@@ -1,5 +1,7 @@
+using System;
 using Mirror;
 using MMC.Game;
+using MMC.Network.SessionMiddleware;
 using MMC.Server;
 using UnityEngine;
 
@@ -17,6 +19,11 @@ namespace MMC.Network
             this.manager = manager;
             SetupServer();
             SetupClient();
+        }
+
+        public void WithSession(NetworkConnectionToClient conn, Action<Session> action)
+        {
+            manager.session.WithSession(conn, action);
         }
 
         public virtual void SetupClient() { }

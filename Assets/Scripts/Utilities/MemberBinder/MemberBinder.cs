@@ -234,9 +234,9 @@ public class TextMember : Member<TextAdaptor>
 
 public class ListLoaderMember : Member<ListLoader>
 {
-    public void Setup(IEnumerable items)
+    public void UpdateItems(IEnumerable items)
     {
-        For(e => e.Setup(items));
+        For(e => e.UpdateItems(items));
     }
 
     public void Clear()

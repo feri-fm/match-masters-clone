@@ -122,7 +122,7 @@ namespace MMC.Network.GameMiddleware
         {
             if (roomByConn.ContainsKey(conn)) return;
 
-            manager.session.WithSession(conn, session =>
+            WithSession(conn, session =>
             {
                 var config = configs.Find(e => e.key == msg.config);
                 if (config == null)

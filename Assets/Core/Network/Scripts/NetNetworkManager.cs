@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mirror;
 using MMC.Game;
 using MMC.Network.GameMiddleware;
+using MMC.Network.MenuMiddleware;
 using MMC.Network.SessionMiddleware;
 using MMC.Server;
 using MongoDB.Driver.Linq;
@@ -12,14 +13,15 @@ namespace MMC.Network
 {
     public partial class NetNetworkManager : NetworkManager
     {
-        public ServerManager serverManager;
-        public ServiceManager serviceManager;
         public List<NetNetworkMiddleware> middlewares = new();
 
         public SessionNetworkMiddleware session { get; private set; }
         public GameNetworkMiddleware game { get; private set; }
+        public MenuNetworkMiddleware menu { get; private set; }
 
         public GameManager gameManager => GameManager.instance;
+        public ServerManager serverManager => ServerManager.instance;
+        public ServiceManager serviceManager => ServiceManager.instance;
 
         public GameServiceDriver gameService => serviceManager.GetService<GameServiceDriver>();
 
@@ -32,6 +34,7 @@ namespace MMC.Network
 
             session = middlewares.Find(e => e is SessionNetworkMiddleware) as SessionNetworkMiddleware;
             game = middlewares.Find(e => e is GameNetworkMiddleware) as GameNetworkMiddleware;
+            menu = middlewares.Find(e => e is MenuNetworkMiddleware) as MenuNetworkMiddleware;
         }
 
         public override void Start()

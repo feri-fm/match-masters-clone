@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec054e83d806774b8bc18a9a3367f93, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  boosters:
+  - {fileID: -3310007829789703599, guid: 5f6575519fc3e6541a901d3d50fba1c7, type: 3}
+  - {fileID: 4447488677818823145, guid: 9f7027276f58ec74a9fb0aaf512ce3e7, type: 3}
+  - {fileID: -6623690503772520091, guid: d5218b0875218214d9b4d13d0b983510, type: 3}
+  - {fileID: 154267082146078898, guid: b400bad084fe0ea41ab48123a9cf5c94, type: 3}
+  - {fileID: -2469180125131806316, guid: 7636125f0bc8c0a4482e1ab5e116bdfc, type: 3}
+  - {fileID: 4588751852896720042, guid: 2207bacf2e9719847bee0583d4ccd540, type: 3}
+  - {fileID: -2488320582839219072, guid: 0a99093487db281428a275129fa7b2fc, type: 3}
+  - {fileID: 5091697796093182816, guid: c6cacdc9788288b4ea6de9d7a8cd667d, type: 3}
+  perks: []

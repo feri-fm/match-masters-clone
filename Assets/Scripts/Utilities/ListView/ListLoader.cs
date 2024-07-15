@@ -1,41 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 [RequireComponent(typeof(ObjectPool))]
 public class ListLoader : MonoBehaviour
 {
-    public ListItem prefab;
     public Transform container;
+    public ListItem prefab;
+    public bool notScenePrefab;
+
+    public readonly List<ListItem> currentItems = new();
 
     public ObjectPool pool => _pool ?? (_pool = GetComponent<ObjectPool>()); ObjectPool _pool;
 
-    public List<ListItem> currentItems { get; } = new List<ListItem>();
-
     private void Awake()
     {
-        prefab.SetActive(false);
-    }
-
-    public void Setup(IEnumerable items)
-    {
-        Clear();
-        var index = 0;
-        foreach (var data in items)
+        if (!notScenePrefab)
         {
-            var item = pool.Spawn(prefab, container);
-            item.transform.SetAsLastSibling();
-            currentItems.Add(item);
-            item._Setup(this, data, index);
-            index++;
+            prefab.SetActive(false);
         }
     }
 
     public void Clear()
     {
         foreach (var item in currentItems)
-            item.Pool();
+        {
+            Destroy(item.gameObject);
+        }
+
         currentItems.Clear();
+    }
+
+    public void UpdateItems(IEnumerable items)
+    {
+        var leftItems = currentItems.ToList();
+        var index = 0;
+        foreach (var item in items)
+        {
+            var view = leftItems.Find(e => e.IsEqual(e.data));
+            if (view == null)
+            {
+                view = pool.Spawn(prefab, container);
+                view.gameObject.SetActive(true);
+                view._SetupLoader(this);
+                currentItems.Add(view);
+            }
+            else
+            {
+                leftItems.Remove(view);
+            }
+
+            view.transform.SetSiblingIndex(index);
+            index++;
+            view._SetupData(item);
+        }
+
+        foreach (var item in leftItems)
+        {
+            currentItems.Remove(item);
+            item.Pool();
+        }
     }
 }

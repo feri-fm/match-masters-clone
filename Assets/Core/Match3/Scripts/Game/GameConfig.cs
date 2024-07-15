@@ -7,7 +7,7 @@ namespace MMC.Match3
     using System.Linq;
     using UnityEngine;
 
-    [CreateAssetMenu(fileName = "GameConfig", menuName = "GameConfig")]
+    [CreateAssetMenu(fileName = "GameConfig", menuName = "Match3/GameConfig")]
     public class GameConfig : ScriptableObject
     {
         public MatchConfig match;

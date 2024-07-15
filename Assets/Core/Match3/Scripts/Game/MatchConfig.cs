@@ -3,7 +3,7 @@ using MMC.EngineCore;
 
 namespace MMC.Match3
 {
-    [CreateAssetMenu(fileName = "GameConfigMatch", menuName = "GameConfigMatch")]
+    [CreateAssetMenu(fileName = "MatchConfig", menuName = "Match3/MatchConfig")]
     public class MatchConfig : ScriptableObject
     {
         public MatchPattern[] search;

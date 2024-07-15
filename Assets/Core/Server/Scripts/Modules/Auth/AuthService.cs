@@ -16,6 +16,7 @@ namespace MMC.Server
         public override void Build()
         {
             base.Build();
+            //TODO: this is not how we should use rsa keys
             rsaKey = RSA.Create();
             if (PlayerPrefs.HasKey("rsa_key"))
             {

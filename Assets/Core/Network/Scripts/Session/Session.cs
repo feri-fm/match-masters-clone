@@ -6,9 +6,9 @@ namespace MMC.Network.SessionMiddleware
 {
     public class Session
     {
-        public Guid id;
-        public NetworkConnectionToClient conn;
-        public UserModel user;
+        public Guid id { get; }
+        public NetworkConnectionToClient conn { get; }
+        public UserModel user { get; }
 
         public Session(NetworkConnectionToClient conn, UserModel user)
         {

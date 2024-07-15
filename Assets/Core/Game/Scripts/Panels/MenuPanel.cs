@@ -11,9 +11,9 @@ namespace MMC.Game
         }
 
         [Member]
-        public void Join()
+        public void Play()
         {
-            game.Join();
+            game.Play();
         }
 
         [Member]

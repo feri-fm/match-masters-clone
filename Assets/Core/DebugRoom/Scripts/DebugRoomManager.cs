@@ -57,7 +57,7 @@ namespace MMC.DebugRoom
 
         private void Render()
         {
-            pagesListLoader.Setup(pages);
+            pagesListLoader.UpdateItems(pages);
             foreach (var page in pages)
             {
                 page.SetPage(page == currentPage);

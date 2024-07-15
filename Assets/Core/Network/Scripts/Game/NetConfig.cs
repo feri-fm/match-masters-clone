@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
 {
-    [CreateAssetMenu(fileName = "GameConfig", menuName = "GameConfig", order = 0)]
+    [CreateAssetMenu(fileName = "NetGameConfig", menuName = "NetGame/NetGameConfig")]
     public class NetConfig : ScriptableObject
     {
         public string key;

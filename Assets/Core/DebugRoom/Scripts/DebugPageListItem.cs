@@ -4,7 +4,7 @@ namespace MMC.DebugRoom
     {
         public TextMember title;
 
-        public override void Setup()
+        protected override void Setup()
         {
             base.Setup();
             title.text = data.title;

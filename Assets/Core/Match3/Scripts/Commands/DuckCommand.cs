@@ -3,6 +3,7 @@ using MMC.EngineCore;
 
 namespace MMC.Match3
 {
+    [System.Serializable]
     public class DuckCommand : GameCommand
     {
         [JsonDataInt] public int height = 3;

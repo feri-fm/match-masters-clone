@@ -13,11 +13,11 @@ namespace MMC.Game
         {
             base.OnRender();
             myUsername.text = game.user.username;
-            var players = network.game.client.roomPlayers;
-            if (players != null)
+            var roomData = network.game.client.roomData;
+            if (roomData != null)
             {
-                if (players.Any(e => e.username != game.user.username))
-                    otherUsername.text = players.First(e => e.username != game.user.username).username;
+                if (roomData.players.Any(e => e.username != game.user.username))
+                    otherUsername.text = roomData.players.First(e => e.username != game.user.username).username;
                 else
                     otherUsername.text = "finding...";
             }
@@ -29,7 +29,7 @@ namespace MMC.Game
 
         public async void Setup(NetConfig config)
         {
-            network.game.client.roomPlayers = null;
+            network.game.client.roomData = null;
             await new WaitForSeconds(0.5f);
             network.game.client.JoinGame(config);
         }

@@ -86,7 +86,7 @@ namespace MMC.Network.GameMiddleware
 
         public void SendUpdate()
         {
-            SendMessage(new UpdateRoomClientMessage(players.Select(e => e.data).ToArray()));
+            SendMessage(new UpdateRoomClientMessage(GetData()));
         }
 
         public void SendMessage<T>(T message) where T : struct, NetworkMessage
@@ -99,6 +99,19 @@ namespace MMC.Network.GameMiddleware
                 }
             }
         }
+
+        public RoomData GetData()
+        {
+            return new RoomData()
+            {
+                players = players.Select(e => e.data).ToArray()
+            };
+        }
+    }
+
+    public class RoomData
+    {
+        public RoomPlayerData[] players;
     }
 
     public class RoomPlayer
@@ -122,14 +135,18 @@ namespace MMC.Network.GameMiddleware
             data = new RoomPlayerData()
             {
                 id = Guid.NewGuid(),
-                username = session.user.username
+                username = session.user.username,
+                //TODO: this is not good way of getting config
+                booster = session.user.GetBooster(NetNetworkManager.instance.config),
+                perks = session.user.GetPerks(NetNetworkManager.instance.config),
             };
         }
     }
     public struct RoomPlayerData
-
     {
         public Guid id;
         public string username;
+        public string booster;
+        public string[] perks;
     }
 }

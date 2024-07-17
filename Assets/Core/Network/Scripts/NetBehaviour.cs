@@ -13,6 +13,8 @@ namespace MMC.Network
             set => SetName(value);
         }
 
+        public string displayName => base.name;
+
         private string _name;
 
         public NetNetworkManager networkManager => NetNetworkManager.instance;

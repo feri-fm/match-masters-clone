@@ -4,6 +4,7 @@ public abstract class ListItem : PoolObject
 {
     public ListLoader loader { get; private set; }
 
+    public int index { get; private set; }
     public object data { get; private set; }
 
     protected virtual void Setup()
@@ -20,20 +21,21 @@ public abstract class ListItem : PoolObject
         this.loader = loader;
     }
 
-    public void _SetupData(object data)
+    public void _Setup(int index, object data)
     {
+        this.index = index;
         this.data = data;
         Setup();
     }
 }
 
-public class ListItem<T> : ListItem where T : class
+public class ListItem<T> : ListItem
 {
-    public new T data => base.data as T;
+    public new T data => (T)base.data;
 
     public sealed override bool IsEqual(object data)
     {
-        return IsEqual(data as T);
+        return IsEqual((T)data);
     }
 
     protected virtual bool IsEqual(T data)

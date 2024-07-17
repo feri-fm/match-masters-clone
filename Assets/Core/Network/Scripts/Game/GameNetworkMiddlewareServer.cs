@@ -52,7 +52,12 @@ namespace MMC.Network.GameMiddleware
                     var player = new RoomPlayer(room.config.key, new RoomPlayerData()
                     {
                         id = Guid.NewGuid(),
-                        username = "bot_" + UnityEngine.Random.Range(1000, 9999)
+                        username = "bot_" + UnityEngine.Random.Range(1000, 9999),
+                        booster = manager.config.boosters.Random().key,
+                        perks = new string[] {
+                            manager.config.perks[0].key,
+                            manager.config.perks[1].key
+                        }
                     });
                     if (room.CanJoin(player))
                     {

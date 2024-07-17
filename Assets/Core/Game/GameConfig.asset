@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec054e83d806774b8bc18a9a3367f93, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
+  defaultBooster: {fileID: -2488320582839219072, guid: 0a99093487db281428a275129fa7b2fc, type: 3}
+  defaultPerks:
+  - {fileID: -2485488522493187943, guid: 9208014d3500ac941bceaed018baa2d9, type: 3}
+  - {fileID: 1525381223908887279, guid: e1f4d64184dec0b40b07b732c6a87a88, type: 3}
   boosters:
   - {fileID: -3310007829789703599, guid: 5f6575519fc3e6541a901d3d50fba1c7, type: 3}
   - {fileID: 4447488677818823145, guid: 9f7027276f58ec74a9fb0aaf512ce3e7, type: 3}
@@ -21,4 +25,6 @@ MonoBehaviour:
   - {fileID: 4588751852896720042, guid: 2207bacf2e9719847bee0583d4ccd540, type: 3}
   - {fileID: -2488320582839219072, guid: 0a99093487db281428a275129fa7b2fc, type: 3}
   - {fileID: 5091697796093182816, guid: c6cacdc9788288b4ea6de9d7a8cd667d, type: 3}
-  perks: []
+  perks:
+  - {fileID: -2485488522493187943, guid: 9208014d3500ac941bceaed018baa2d9, type: 3}
+  - {fileID: 1525381223908887279, guid: e1f4d64184dec0b40b07b732c6a87a88, type: 3}

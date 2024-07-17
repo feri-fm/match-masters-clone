@@ -7,5 +7,11 @@ namespace MMC.Game
         {
             network.game.client.LeaveGame();
         }
+
+        [Member]
+        public void RequestGameplay()
+        {
+            network.game.client.client.CmdRequestGameplayData();
+        }
     }
 }

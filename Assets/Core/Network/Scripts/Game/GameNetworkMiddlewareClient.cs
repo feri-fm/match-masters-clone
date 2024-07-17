@@ -15,7 +15,7 @@ namespace MMC.Network.GameMiddleware
         private bool dirtyFetch = false;
         private bool gameStarted = false;
 
-        public RoomPlayerData[] roomPlayers;
+        public RoomData roomData;
 
         public override void OnStart()
         {
@@ -188,7 +188,7 @@ namespace MMC.Network.GameMiddleware
         }
         public void OnUpdateRoomClientMessage(UpdateRoomClientMessage msg)
         {
-            roomPlayers = msg.players;
+            roomData = msg.room;
             gameManager.ChangeState();
         }
         public void OnLeaveRoomClientMessage(LeaveRoomClientMessage msg)
@@ -209,11 +209,11 @@ namespace MMC.Network.GameMiddleware
     }
     public struct UpdateRoomClientMessage : NetworkMessage
     {
-        public RoomPlayerData[] players;
+        public RoomData room;
 
-        public UpdateRoomClientMessage(RoomPlayerData[] players)
+        public UpdateRoomClientMessage(RoomData room)
         {
-            this.players = players;
+            this.room = room;
         }
     }
     public struct LeaveRoomClientMessage : NetworkMessage { }

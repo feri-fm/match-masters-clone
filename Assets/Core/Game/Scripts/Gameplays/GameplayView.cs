@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using MMC.EngineCore;
 using MMC.Match3;
@@ -13,10 +14,14 @@ namespace MMC.Game
         public ShuffleCommand shuffle;
         public EngineConfig engineConfig;
         public EngineView engineView;
+        public CameraRig cameraRig;
 
         public Gameplay gameplay { get; private set; }
 
-        public virtual void Setup() { }
+        private bool dirty;
+
+        protected virtual void Setup() { }
+        protected virtual void Render() { }
 
         public void Setup(Gameplay gameplay)
         {
@@ -28,7 +33,20 @@ namespace MMC.Game
                 engineView.Setup(engine);
             };
 
+            gameplay.onChanged += () => dirty = true;
+
+            GameManager.instance.cameraController.SetRig(cameraRig);
+
             Setup();
+        }
+
+        protected virtual void LateUpdate()
+        {
+            if (dirty)
+            {
+                dirty = false;
+                Render();
+            }
         }
 
         public Task Wait(float time)
@@ -63,9 +81,13 @@ namespace MMC.Game
         public event Action<Int2, Int2> onSwapFailed = delegate { };
         public event Action<Tile> onRewardMatch = delegate { };
         public event Action<Tile> onTileHit = delegate { };
+        public event Action onTryUseBooster = delegate { };
+        public event Action<int> onTryUsePerk = delegate { };
 
         public event Action<Engine> onNewEngine = delegate { };
         public event Action onEvaluatingFinished = delegate { };
+
+        public event Action onChanged = delegate { };
 
         public virtual void Setup() { }
 
@@ -103,6 +125,11 @@ namespace MMC.Game
             };
         }
 
+        public void Changed()
+        {
+            onChanged.Invoke();
+        }
+
         public Gameplay GetFastGameplay()
         {
             var gameplay = Activator.CreateInstance(GetType()) as Gameplay;
@@ -115,17 +142,33 @@ namespace MMC.Game
         public void Evaluate()
         {
             engine.Evaluate();
+            Changed();
         }
+
         public Task<bool> TrySwap(Int2 a, Int2 b)
         {
             return gameEntity.game.TrySwap(a, b, true);
         }
 
-        public Hash128 GetHash()
+        public async Task UseBooster(Booster booster, bool withoutNotify = false)
+        {
+            if (!withoutNotify)
+                onTryUseBooster.Invoke();
+            await booster.Use(this);
+        }
+
+        public async Task UsePerk(int index, Perk perk, bool withoutNotify = false)
+        {
+            if (!withoutNotify)
+                onTryUsePerk.Invoke(index);
+            await perk.Use(this);
+        }
+
+        public string GetHash()
         {
             var data = Save();
             var hash = Hash128.Compute(data.ToJson());
-            return hash;
+            return hash.ToString();
         }
 
         public void Load(GameplayData data)
@@ -143,6 +186,8 @@ namespace MMC.Game
             var json = new JsonData(data.data);
             json.Load(this);
             Load(json);
+
+            Changed();
         }
         public GameplayData Save()
         {
@@ -164,6 +209,74 @@ namespace MMC.Game
     {
         public EngineData engine;
         public JObject data;
+    }
+
+    public abstract class GameplayPlayer
+    {
+        public int score;
+        public int boosterScore;
+        public bool[] usedPerks;
+
+        public Gameplay gameplay;
+        public Booster booster;
+        public Perk[] perks;
+
+        public abstract bool isMyPlayer { get; }
+        public abstract bool isTurn { get; }
+        public abstract int totalRounds { get; }
+        public abstract int totalMoves { get; }
+        public abstract int round { get; }
+        public abstract int moves { get; }
+
+        public void Setup(Gameplay gameplay, Booster booster, Perk[] perks)
+        {
+            this.gameplay = gameplay;
+            this.booster = booster;
+            this.perks = perks;
+            usedPerks = new bool[perks.Length];
+        }
+
+        public async Task UseBooster(bool withoutNotify = false)
+        {
+            if (isTurn && !gameplay.gameEntity.isEvaluating && boosterScore >= booster.requiredScore)
+            {
+                await gameplay.UseBooster(booster, withoutNotify);
+                boosterScore = 0;
+                gameplay.Changed();
+            }
+        }
+
+        public async Task UsePerk(int index, bool withoutNotify = false)
+        {
+            if (isTurn && !gameplay.gameEntity.isEvaluating && !usedPerks[index])
+            {
+                var task = gameplay.UsePerk(index, perks[index], withoutNotify);
+                usedPerks[index] = true;
+                gameplay.Changed();
+                await task;
+                gameplay.Changed();
+            }
+        }
+
+        public virtual void Save(JsonData data) { }
+        public virtual void Load(JsonData data) { }
+
+        public JsonData _Save()
+        {
+            var data = new JsonData();
+            data.W("s", score);
+            data.W("b", boosterScore);
+            data.W("p", usedPerks);
+            Save(data);
+            return data;
+        }
+        public void _Load(JsonData data)
+        {
+            score = data.R<int>("s");
+            boosterScore = data.R<int>("b");
+            usedPerks = data.R<bool[]>("p");
+            Load(data);
+        }
     }
 
     public class Gameplay<T> : Gameplay where T : GameplayView

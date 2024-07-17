@@ -6,6 +6,9 @@ namespace MMC.Game
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Game/GameConfig")]
     public class GameConfig : ScriptableObject
     {
+        public Booster defaultBooster;
+        public List<Perk> defaultPerks;
+
         public List<Booster> boosters = new();
         public List<Perk> perks = new();
 

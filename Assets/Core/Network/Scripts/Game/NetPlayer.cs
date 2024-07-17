@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Mirror;
 using MMC.EngineCore;
 using MMC.Game;
@@ -11,14 +12,21 @@ namespace MMC.Network.GameMiddleware
     {
         [SyncVar] public Guid id;
         [SyncVar] public int index;
+        [SyncVar] public RoomPlayerData playerData;
 
         public NetClient client;
         public NetGame game;
         public RoomPlayer roomPlayer;
+        public Booster booster;
+        public Perk[] perks;
 
         public bool hasClient => client != null;
 
         public TwoPlayerGameplay gameplay => game.gameplay;
+
+        public TwoPlayerGameplayPlayer gameplayPlayer => index == 0 ? gameplay.myPlayer : gameplay.opponentPlayer;
+
+        public GameManager gameManager => GameManager.instance;
 
         public void SetupClient(NetClient client)
         {
@@ -30,11 +38,17 @@ namespace MMC.Network.GameMiddleware
             this.index = index;
             this.game = game;
             this.roomPlayer = roomPlayer;
+            playerData = roomPlayer.data;
+
+            booster = networkManager.config.GetBooster(playerData.booster);
+            perks = playerData.perks.Select(e => networkManager.config.GetPerk(e)).ToArray();
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
+            booster = gameManager.config.GetBooster(playerData.booster);
+            perks = playerData.perks.Select(e => gameManager.config.GetPerk(e)).ToArray();
             networkManager.game.client._AddPlayer(this);
         }
         public override void OnStopClient()
@@ -43,9 +57,12 @@ namespace MMC.Network.GameMiddleware
             networkManager.game.client._RemovePlayer(this);
         }
 
-        public void ServerAction(Action<NetGame> action)
+        public void TurnAction(Action<NetGame> action)
         {
-            game.PlayerAction(action);
+            if (gameplayPlayer.isTurn)
+            {
+                game.PlayerAction(action);
+            }
         }
         public void OnOthers(Action<NetworkConnectionToClient> action)
         {
@@ -60,19 +77,40 @@ namespace MMC.Network.GameMiddleware
 
         public void TrySwap(Int2 a, Int2 b)
         {
-            if (gameplay.IsTurn(index))
+            TurnAction(game =>
             {
-                ServerAction(game =>
+                var hash = gameplay.GetHash();
+                gameplay.StartMove();
+                gameplay.TrySwap(a, b);
+                OnOthers(conn =>
                 {
-                    var hash = gameplay.GetHash().ToString();
-                    gameplay.StartMove();
-                    gameplay.TrySwap(a, b);
-                    OnOthers(conn =>
-                    {
-                        game.TargetTrySwap(conn, hash, a, b);
-                    });
+                    game.TargetTrySwap(conn, hash, a, b);
                 });
-            }
+            });
+        }
+        public void UseBooster()
+        {
+            TurnAction(game =>
+            {
+                var hash = gameplay.GetHash();
+                _ = gameplayPlayer.UseBooster();
+                OnOthers(conn =>
+                {
+                    game.TargetUseBooster(conn, hash);
+                });
+            });
+        }
+        public void UsePerk(int index)
+        {
+            TurnAction(game =>
+            {
+                var hash = gameplay.GetHash();
+                _ = gameplayPlayer.UsePerk(index);
+                OnOthers(conn =>
+                {
+                    game.TargetUsePerk(conn, hash, index);
+                });
+            });
         }
     }
 }

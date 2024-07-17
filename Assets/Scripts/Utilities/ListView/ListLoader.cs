@@ -52,8 +52,8 @@ public class ListLoader : MonoBehaviour
             }
 
             view.transform.SetSiblingIndex(index);
+            view._Setup(index, item);
             index++;
-            view._SetupData(item);
         }
 
         foreach (var item in leftItems)

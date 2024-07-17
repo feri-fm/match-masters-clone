@@ -134,12 +134,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   configs:
   - {fileID: 11400000, guid: 1b9e620c96760704f94518bc020b049b, type: 2}
-  game: {fileID: 0}
-  player: {fileID: 0}
-  client: {fileID: 0}
-  players: []
-  clients: []
-  games: []
 --- !u!1 &2412452968461134882
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,8 +220,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  serverManager: {fileID: 0}
-  serviceManager: {fileID: 0}
+  config: {fileID: 11400000, guid: f35dfc3455d10584d885143694b06577, type: 2}
   middlewares:
   - {fileID: 342737944423228570}
   - {fileID: 8320119784431495535}

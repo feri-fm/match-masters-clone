@@ -44,4 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4588d6efbfcd008499887ce4b857273b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 0}
+  requiredScore: 2
+  icon: {fileID: 21300000, guid: 11a21f717a87e1446915006c33012787, type: 3}
+  command:
+    height: 3
+    timeDelay: 0.05

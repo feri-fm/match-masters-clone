@@ -35,7 +35,7 @@ namespace MMC.Network.GameMiddleware
 
         public void ServerAction(string hash, Action action)
         {
-            if (game.lastHash.ToString() != hash.ToString())
+            if (game.lastHash != hash)
             {
                 Debug.Log("!!!! Invalid hash before move");
                 game.SendGameplayData(session.conn);
@@ -67,5 +67,13 @@ namespace MMC.Network.GameMiddleware
         [Command]
         public void CmdSwap(string hash, Int2 a, Int2 b)
             => ServerAction(hash, () => player.TrySwap(a, b));
+
+        [Command]
+        public void CmdUseBooster(string hash)
+            => ServerAction(hash, () => player.UseBooster());
+
+        [Command]
+        public void CmdUsePerk(string hash, int index)
+            => ServerAction(hash, () => player.UsePerk(index));
     }
 }

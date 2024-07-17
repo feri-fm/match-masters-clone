@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using MMC.EngineCore;
 
@@ -14,6 +15,17 @@ namespace MMC.Match3
         {
             this.game = game;
             await Run();
+        }
+
+        public GameCommand Instantiate()
+        {
+            var commandData = new JsonData();
+            JsonData.Save(this, commandData);
+
+            var commandCopy = Activator.CreateInstance(GetType());
+            JsonData.Load(commandCopy, commandData);
+
+            return commandCopy as GameCommand;
         }
     }
 }

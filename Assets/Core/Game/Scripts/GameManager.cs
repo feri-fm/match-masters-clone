@@ -7,8 +7,9 @@ namespace MMC.Game
 {
     public class GameManager : MonoBehaviour
     {
-        public PanelGroup panelGroup;
         public GameConfig config;
+        public PanelGroup panelGroup;
+        public CameraController cameraController;
         public ServiceManager serviceManager;
         public WebRequestManager webRequestManager;
         public NetNetworkManager networkManager;

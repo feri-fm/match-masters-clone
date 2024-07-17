@@ -7,7 +7,6 @@ namespace MMC.Game
     public class WebRequestManager : MonoBehaviour
     {
         public WebRequestBuilder requestBuilder;
-        public WebClientConfig config;
 
         public string token;
         public bool hasToken;

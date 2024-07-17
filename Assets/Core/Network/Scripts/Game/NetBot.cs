@@ -26,7 +26,7 @@ namespace MMC.Network.GameMiddleware
         private float lastSwap;
         private void Update()
         {
-            if (gameplay.IsTurn(player.index))
+            if (!gameplay.isFinished && gameplay.IsTurn(player.index))
             {
                 if (Time.time > lastSwap + waitTime && Time.time > netGame.lastEvaluateTime + waitTime)
                 {

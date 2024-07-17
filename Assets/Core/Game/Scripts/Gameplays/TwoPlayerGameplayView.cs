@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MMC.EngineCore;
 using MMC.Match3;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +10,8 @@ namespace MMC.Game
 {
     public class TwoPlayerGameplayView : GameplayView<TwoPlayerGameplay>
     {
-        public int maxRounds = 5;
-        public int maxMoves = 2;
+        public int totalRounds = 5;
+        public int totalMoves = 2;
         public float messageTime = 1;
         public float handTime = 0.4f;
         public Color myColor;
@@ -25,7 +26,8 @@ namespace MMC.Game
         public GameObjectMember myTurn;
         public GameObjectMember opponentTurn;
         public GameObjectMember finished;
-        public TextMember status;
+        public GameplayPlayerView myPlayer;
+        public GameplayPlayerView opponentPlayer;
 
         private List<GameplayMessage> messages = new();
 
@@ -39,7 +41,7 @@ namespace MMC.Game
             messageAlpha = messageColor.value.color.a;
         }
 
-        public override void Setup()
+        protected override void Setup()
         {
             base.Setup();
             finished.SetActive(false);
@@ -52,15 +54,16 @@ namespace MMC.Game
             };
         }
 
-        private void LateUpdate()
+        protected override void Render()
         {
-            status.text = $"Index: {(gameplay.isOpponent ? 1 : 0)}";
-            status.text += $"\tTurn: {gameplay.turn}";
-            status.text += $"\nMoves: {gameplay.moves}";
-            status.text += $"\tRound: {gameplay.round}";
-            status.text += $"\n<b><color=blue>Score:</color> {gameplay.myScore}</b>";
-            status.text += $"\t<b><color=red>Score:</color> {gameplay.opponentScore}</b>";
+            base.Render();
+            if (gameplay.myPlayer != null) myPlayer.Render(gameplay.myPlayer);
+            if (gameplay.opponentPlayer != null) opponentPlayer.Render(gameplay.opponentPlayer);
+        }
 
+        protected override void LateUpdate()
+        {
+            base.LateUpdate();
             myTurn.SetActive(gameplay.IsMyTurn());
             opponentTurn.SetActive(!gameplay.IsMyTurn());
 
@@ -130,11 +133,13 @@ namespace MMC.Game
         public int turn;
         public bool earnedExtraMove;
 
-        public int myScore;
-        public int opponentScore;
+        public TwoPlayerGameplayPlayer myPlayer;
+        public TwoPlayerGameplayPlayer opponentPlayer;
 
         public event Action<GameplayMessage> onMessage = delegate { };
         public event Action onFinish = delegate { };
+
+        public bool isFinished { get; private set; }
 
         public bool isOpponent { get; private set; }
 
@@ -142,8 +147,14 @@ namespace MMC.Game
         {
             base.Setup();
             round = 0;
-            moves = prefab.maxMoves;
+            moves = prefab.totalMoves;
             turn = 0;
+
+            myPlayer = new TwoPlayerGameplayPlayer();
+            opponentPlayer = new TwoPlayerGameplayPlayer();
+
+            myPlayer.index = 0;
+            opponentPlayer.index = 1;
 
             onSwapSucceed += (a, b) =>
             {
@@ -159,9 +170,22 @@ namespace MMC.Game
             };
             onTileHit += (tile) =>
             {
-                if (IsMyTurn()) myScore += 1;
-                else opponentScore += 1;
+                if (IsMyTurn())
+                {
+                    myPlayer.score += 1;
+                    if (tile is ColoredTile colored && colored.color == TileColor.blue)
+                        myPlayer.boosterScore = Mathf.Min(myPlayer.boosterScore + 1, myPlayer.booster.requiredScore);
+                }
+                else
+                {
+                    opponentPlayer.score += 1;
+                    if (tile is ColoredTile colored && colored.color == TileColor.red)
+                        opponentPlayer.boosterScore = Mathf.Min(opponentPlayer.boosterScore + 1, opponentPlayer.booster.requiredScore);
+                }
+                Changed();
             };
+
+            Changed();
         }
 
         public void ShowStartMessage()
@@ -177,6 +201,8 @@ namespace MMC.Game
         {
             base.SetupEngine();
             SetIsOpponent(isOpponent);
+            if (isOpponent)
+                gameEntity.game.ApplyColorMap();
         }
 
         public void SetIsOpponent(bool value)
@@ -186,11 +212,27 @@ namespace MMC.Game
                 gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
             else
                 gameEntity.game.colorMap = e => e;
+
+            if (myPlayer != null) myPlayer.index = MyIndex();
+            if (opponentPlayer != null) opponentPlayer.index = OpponentIndex();
         }
 
+        public TwoPlayerGameplayPlayer GetCurrentPlayer()
+        {
+            if (turn == MyIndex()) return myPlayer;
+            else return opponentPlayer;
+        }
+        public int MyIndex()
+        {
+            return isOpponent ? 1 : 0;
+        }
+        public int OpponentIndex()
+        {
+            return isOpponent ? 0 : 1;
+        }
         public bool IsMyTurn()
         {
-            return isOpponent ? IsTurn(1) : IsTurn(0);
+            return IsTurn(MyIndex());
         }
         public bool IsTurn(int index)
         {
@@ -200,6 +242,7 @@ namespace MMC.Game
         {
             moves -= 1;
             earnedExtraMove = false;
+            Changed();
         }
         public void ExtraMove()
         {
@@ -208,28 +251,32 @@ namespace MMC.Game
                 earnedExtraMove = true;
                 moves += 1;
                 ShowMessage("Extra Move!", IsMyTurn() ? GameplayColor.My : GameplayColor.Opponent);
+                Changed();
             }
         }
         public void FailedMove()
         {
             moves += 1;
+            Changed();
         }
         public void EndMove()
         {
             if (moves <= 0)
             {
                 turn += 1;
-                moves = prefab.maxMoves;
+                moves = prefab.totalMoves;
                 if (turn >= 2)
                 {
                     turn = 0;
                     round += 1;
 
-                    if (round >= prefab.maxRounds)
+                    if (round >= prefab.totalRounds)
                     {
                         //TODO: finish game here
+                        isFinished = true;
                         onFinish.Invoke();
                         // ShowMessage("Game finished", GameplayColor.Natural);
+                        Changed();
                         return;
                     }
                     else
@@ -243,6 +290,7 @@ namespace MMC.Game
                 else
                     ShowMessage("Opponent turn", GameplayColor.Opponent);
             }
+            Changed();
         }
 
         public void ShowMessage(string text, GameplayColor color)
@@ -257,6 +305,12 @@ namespace MMC.Game
             data.W("moves", moves);
             data.W("turn", turn);
             data.W("earnedExtraMove", earnedExtraMove);
+            data.W("isFinished", isFinished);
+
+            var p0 = isOpponent ? opponentPlayer : myPlayer;
+            var p1 = isOpponent ? myPlayer : opponentPlayer;
+            data.W("p0", p0._Save().json);
+            data.W("p1", p1._Save().json);
         }
         public override void Load(JsonData data)
         {
@@ -265,6 +319,26 @@ namespace MMC.Game
             moves = data.R<int>("moves");
             turn = data.R<int>("turn");
             earnedExtraMove = data.R<bool>("earnedExtraMove");
+            isFinished = data.R<bool>("isFinished");
+
+            var p0 = isOpponent ? opponentPlayer : myPlayer;
+            var p1 = isOpponent ? myPlayer : opponentPlayer;
+            p0._Load(new JsonData(data.R<JObject>("p0")));
+            p1._Load(new JsonData(data.R<JObject>("p1")));
         }
+    }
+
+    public class TwoPlayerGameplayPlayer : GameplayPlayer
+    {
+        public int index;
+
+        public new TwoPlayerGameplay gameplay => base.gameplay as TwoPlayerGameplay;
+
+        public override bool isMyPlayer => gameplay.IsMyTurn();
+        public override bool isTurn => gameplay.IsTurn(index);
+        public override int moves => gameplay.moves;
+        public override int round => gameplay.round;
+        public override int totalMoves => gameplay.prefab.totalMoves;
+        public override int totalRounds => gameplay.prefab.totalRounds;
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JWT.Builder;
 using MMC.Game;
 using MongoDB.Driver;
@@ -39,6 +40,22 @@ namespace MMC.Server.Models
                 }
             }
             selectedItems.Add(key);
+        }
+
+        public string GetBooster(GameConfig config)
+        {
+            return selectedItems.Find(e => config.boosters.Any(b => b.key == e)) ?? config.defaultBooster.key;
+        }
+        public string[] GetPerks(GameConfig config)
+        {
+            var perks = config.defaultPerks.Select(e => e.key).ToArray();
+            var index = 0;
+            for (int i = 0; i < selectedItems.Count && index < perks.Length; i++)
+            {
+                if (config.perks.Any(b => b.key == selectedItems[i]))
+                    perks[index] = selectedItems[i];
+            }
+            return perks;
         }
     }
 

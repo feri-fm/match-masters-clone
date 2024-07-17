@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dataKey: data_editor
   botJoinTime: 1
-  serverPort: 3006
-  transportPort: 7776
+  serverPort: 3016
+  transportPort: 7732
   webConfig:
-    baseUrl: http://localhost:3006
+    baseUrl: http://localhost:3016
   networkAddress: localhost

@@ -543,7 +543,7 @@ namespace MMC.Match3
         public async Task RunCommand(GameCommand command)
         {
             isEvaluating = true;
-            await command.Run(this);
+            await command.Instantiate().Run(this);
             while (hittings > 0)
                 await Wait(0);
             await Evaluate();
@@ -577,14 +577,31 @@ namespace MMC.Match3
                     var tile = engine.entities.Find(e => e is Tile tile && tile.position == new Int2(i, j)) as Tile;
                     if (tile != null)
                     {
+                        tile.WithTrait<AnimatorTrait>(t => t.Jump());
+                        tile.SetupGame(this);
+                        tiles[i, j] = tile;
+                    }
+                }
+            }
+        }
+
+        public void ApplyColorMap()
+        {
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    var tile = engine.entities.Find(e => e is Tile tile && tile.position == new Int2(i, j)) as Tile;
+                    if (tile != null)
+                    {
                         var newPrefab = MapColor(tile.prefab as TileView);
                         if (newPrefab != tile.prefab)
                         {
-                            var newTile = engine.CreateEntity(newPrefab, tile.id) as Tile;
                             var tileData = tile.Save();
+                            engine.RemoveEntity(tile);
+                            var newTile = engine.CreateEntity(newPrefab, tile.id) as Tile;
                             newTile.Load(tileData);
                             newTile.PostLoad(tileData);
-                            engine.RemoveEntity(tile);
                             tile = newTile;
                         }
                         tile.WithTrait<AnimatorTrait>(t => t.Jump());

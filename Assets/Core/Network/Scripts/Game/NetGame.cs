@@ -33,7 +33,7 @@ namespace MMC.Network.GameMiddleware
 
         public NetClient client => networkManager.game.client.client;
 
-        public Hash128 lastHash;
+        public string lastHash;
         public float lastEvaluateTime;
 
         private GameplayData startData;
@@ -55,10 +55,13 @@ namespace MMC.Network.GameMiddleware
                 playersId.Add(player.id);
             }
 
-            gameplay = new TwoPlayerGameplay();
             var options = config.gameOptions.JsonCopy();
             options.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+
+            gameplay = new TwoPlayerGameplay();
             gameplay.Setup(gameplayViewPrefab, options);
+            gameplay.myPlayer.Setup(gameplay, players[0].booster, players[0].perks);
+            gameplay.opponentPlayer.Setup(gameplay, players[1].booster, players[1].perks);
             startData = gameplay.Save();
             gameplay.Evaluate();
             lastHash = gameplay.GetHash();
@@ -85,12 +88,23 @@ namespace MMC.Network.GameMiddleware
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
             gameplay.SetIsOpponent(networkManager.game.client.player.index != 0);
+            gameplay.myPlayer.Setup(gameplay, players[gameplay.MyIndex()].booster, players[gameplay.MyIndex()].perks);
+            gameplay.opponentPlayer.Setup(gameplay, players[gameplay.OpponentIndex()].booster, players[gameplay.OpponentIndex()].perks);
             gameplay.ShowStartMessage();
             gameplay.onTrySwap += (a, b) =>
             {
-                client.CmdSwap(
-                    gameplay.GetHash().ToString(), a, b);
+                client.CmdSwap(gameplay.GetHash(), a, b);
                 gameplay.StartMove();
+            };
+            gameplay.onTryUseBooster += () =>
+            {
+                var hash = gameplay.GetHash();
+                client.CmdUseBooster(hash);
+            };
+            gameplay.onTryUsePerk += (index) =>
+            {
+                var hash = gameplay.GetHash();
+                client.CmdUsePerk(hash, index);
             };
             gameplay.onEvaluatingFinished += () =>
             {
@@ -139,6 +153,20 @@ namespace MMC.Network.GameMiddleware
             TargetLoadGameplayData(conn, startData.ToJson());
         }
 
+        private void TargetAction(string hash, Action action)
+        {
+            var myHash = gameplay.GetHash();
+            if (myHash != hash)
+            {
+                Debug.Log("!!! client has wrong hash");
+                networkManager.game.client.client.CmdRequestGameplayData();
+            }
+            else
+            {
+                action.Invoke();
+            }
+        }
+
         [TargetRpc]
         private void TargetLoadGameplayData(NetworkConnectionToClient _, string gameplayDataJson)
         {
@@ -146,18 +174,13 @@ namespace MMC.Network.GameMiddleware
             gameplay.Load(gameplayData);
             gameplay.Evaluate();
             client.CmdEvaluatingFinished();
+            Debug.Log("Gameplay data loaded from server");
         }
 
         [TargetRpc]
-        public async void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
+        public void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
         {
-            var myHash = gameplay.GetHash().ToString();
-            if (myHash != hash)
-            {
-                Debug.Log("!!! client has wrong hash");
-                networkManager.game.client.client.CmdRequestGameplayData();
-            }
-            else
+            TargetAction(hash, async () =>
             {
                 var tile = gameplay.gameEntity.game.GetTileAt(a);
                 if (tile != null)
@@ -167,7 +190,25 @@ namespace MMC.Network.GameMiddleware
                 }
                 gameplay.StartMove();
                 await gameplay.TrySwap(a, b);
-            }
+            });
+        }
+
+        [TargetRpc]
+        public void TargetUseBooster(NetworkConnectionToClient _, string hash)
+        {
+            TargetAction(hash, async () =>
+            {
+                await gameplay.GetCurrentPlayer().UseBooster(true);
+            });
+        }
+
+        [TargetRpc]
+        public void TargetUsePerk(NetworkConnectionToClient _, string hash, int index)
+        {
+            TargetAction(hash, async () =>
+            {
+                await gameplay.GetCurrentPlayer().UsePerk(index, true);
+            });
         }
     }
 }

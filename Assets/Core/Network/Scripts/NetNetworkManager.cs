@@ -14,6 +14,7 @@ namespace MMC.Network
 {
     public class NetNetworkManager : NetworkManager
     {
+        public GameConfig config;
         public List<NetNetworkMiddleware> middlewares = new();
 
         public SessionNetworkMiddleware session { get; private set; }

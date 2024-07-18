@@ -9,15 +9,25 @@ namespace MMC.Game
         public int requiredScore = 6;
         public Sprite icon;
 
-        protected Gameplay gameplay;
-        protected Match3.Game game => gameplay.gameEntity.game;
-
-        public async Task Use(Gameplay gameplay)
+        public async Task<bool> WriteReader(Gameplay gameplay, GameplayReader reader)
         {
-            this.gameplay = gameplay;
-            await Use();
+            return await Read(new GameplayIns()
+            {
+                gameplay = gameplay,
+                reader = reader,
+            });
         }
 
-        protected virtual Task Use() { return Task.CompletedTask; }
+        public async Task Apply(Gameplay gameplay, GameplayReader reader)
+        {
+            await Use(new GameplayIns()
+            {
+                gameplay = gameplay,
+                reader = reader
+            });
+        }
+
+        protected virtual Task<bool> Read(GameplayIns ins) { return Task.FromResult(true); }
+        protected virtual Task Use(GameplayIns ins) { return Task.CompletedTask; }
     }
 }

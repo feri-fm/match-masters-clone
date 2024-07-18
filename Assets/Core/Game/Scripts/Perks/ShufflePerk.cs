@@ -7,10 +7,10 @@ namespace MMC.Game
     {
         public ShuffleCommand command;
 
-        protected override async Task Use()
+        protected override async Task Use(GameplayIns ins)
         {
-            await base.Use();
-            await game.RunCommand(command);
+            await base.Use(ins);
+            await ins.game.RunCommand(command);
         }
     }
 }

@@ -14,8 +14,8 @@ public class Panel : MonoBehaviour
     public bool isOpen { get; private set; }
     public bool isTop => group.topPanel == this;
 
-    public event UnityAction onOpen = () => { };
-    public event UnityAction onClose = () => { };
+    public event UnityAction onOpen = delegate { };
+    public event UnityAction onClose = delegate { };
 
     private bool didSetup = false;
 

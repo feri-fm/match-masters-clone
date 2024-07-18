@@ -28,7 +28,7 @@ namespace MMC.Game.GameplayPlayerViews
         {
             if (player.isMyPlayer)
             {
-                await player.UseBooster();
+                await player.UseBooster(null);
             }
         }
     }

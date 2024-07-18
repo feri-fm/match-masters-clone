@@ -17,6 +17,8 @@ namespace MMC.Network.GameMiddleware
         [SyncVar] public Guid id;
         [SyncVar] public string configKey;
 
+        public float clientDelay = 0.3f;
+
         public TwoPlayerGameplayView gameplayViewPrefab;
         public EngineConfig engineConfig;
 
@@ -87,24 +89,28 @@ namespace MMC.Network.GameMiddleware
 
             gameplayView.Setup(gameplay);
             gameplay.Setup(gameplayViewPrefab, config.gameOptions);
-            gameplay.SetIsOpponent(networkManager.game.client.player.index != 0);
+            if (networkManager.game.client.player.index != 0)
+                gameplay.SetIsOpponent();
             gameplay.myPlayer.Setup(gameplay, players[gameplay.MyIndex()].booster, players[gameplay.MyIndex()].perks);
             gameplay.opponentPlayer.Setup(gameplay, players[gameplay.OpponentIndex()].booster, players[gameplay.OpponentIndex()].perks);
             gameplay.ShowStartMessage();
+            gameplay.Changed();
+            gameplayView.ForceRender();
+
             gameplay.onTrySwap += (a, b) =>
             {
                 client.CmdSwap(gameplay.GetHash(), a, b);
                 gameplay.StartMove();
             };
-            gameplay.onTryUseBooster += () =>
+            gameplay.onTryUseBooster += (reader) =>
             {
                 var hash = gameplay.GetHash();
-                client.CmdUseBooster(hash);
+                client.CmdUseBooster(hash, reader.Save());
             };
-            gameplay.onTryUsePerk += (index) =>
+            gameplay.onTryUsePerk += (index, reader) =>
             {
                 var hash = gameplay.GetHash();
-                client.CmdUsePerk(hash, index);
+                client.CmdUsePerk(hash, reader.Save(), index);
             };
             gameplay.onEvaluatingFinished += () =>
             {
@@ -170,10 +176,12 @@ namespace MMC.Network.GameMiddleware
         [TargetRpc]
         private void TargetLoadGameplayData(NetworkConnectionToClient _, string gameplayDataJson)
         {
+            var hash = Hash128.Compute(gameplayDataJson);
             var gameplayData = gameplayDataJson.FromJson<GameplayData>();
             gameplay.Load(gameplayData);
             gameplay.Evaluate();
             client.CmdEvaluatingFinished();
+
             Debug.Log("Gameplay data loaded from server");
         }
 
@@ -186,7 +194,7 @@ namespace MMC.Network.GameMiddleware
                 if (tile != null)
                 {
                     gameplayView.SetHandAt(tile.id);
-                    await new WaitForSeconds(0.4f);
+                    await new WaitForSeconds(clientDelay);
                 }
                 gameplay.StartMove();
                 await gameplay.TrySwap(a, b);
@@ -194,20 +202,22 @@ namespace MMC.Network.GameMiddleware
         }
 
         [TargetRpc]
-        public void TargetUseBooster(NetworkConnectionToClient _, string hash)
+        public void TargetUseBooster(NetworkConnectionToClient _, string hash, string reader)
         {
             TargetAction(hash, async () =>
             {
-                await gameplay.GetCurrentPlayer().UseBooster(true);
+                await new WaitForSeconds(clientDelay);
+                await gameplay.GetCurrentPlayer().UseBooster(GameplayReader.From(reader), true);
             });
         }
 
         [TargetRpc]
-        public void TargetUsePerk(NetworkConnectionToClient _, string hash, int index)
+        public void TargetUsePerk(NetworkConnectionToClient _, string hash, string reader, int index)
         {
             TargetAction(hash, async () =>
             {
-                await gameplay.GetCurrentPlayer().UsePerk(index, true);
+                await new WaitForSeconds(clientDelay);
+                await gameplay.GetCurrentPlayer().UsePerk(index, GameplayReader.From(reader), true);
             });
         }
     }

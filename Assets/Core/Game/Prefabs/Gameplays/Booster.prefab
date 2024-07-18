@@ -704,7 +704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9222016279660446165, guid: e3c5e7924d1cd5f429be10c8fc2d78a1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9222016279660446166, guid: e3c5e7924d1cd5f429be10c8fc2d78a1, type: 3}
       propertyPath: m_Pivot.x
@@ -740,7 +740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9222016279660446166, guid: e3c5e7924d1cd5f429be10c8fc2d78a1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9222016279660446166, guid: e3c5e7924d1cd5f429be10c8fc2d78a1, type: 3}
       propertyPath: m_LocalPosition.x

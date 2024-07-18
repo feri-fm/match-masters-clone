@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using ImUI;
 using MMC.EngineCore;
 using MMC.Match3;
 using Newtonsoft.Json.Linq;
@@ -16,6 +17,8 @@ namespace MMC.Game
         public EngineView engineView;
         public CameraRig cameraRig;
 
+        public Member<Blocker> blocker;
+
         public Gameplay gameplay { get; private set; }
 
         private bool dirty;
@@ -23,9 +26,16 @@ namespace MMC.Game
         protected virtual void Setup() { }
         protected virtual void Render() { }
 
+        protected virtual void Start()
+        {
+            blocker.value.gameObject.SetActive(false);
+        }
+
         public void Setup(Gameplay gameplay)
         {
             this.gameplay = gameplay;
+
+            gameplay.view = this;
 
             gameplay.onNewEngine += (engine) =>
             {
@@ -40,6 +50,28 @@ namespace MMC.Game
             Setup();
         }
 
+        public Task<Tile> PromptTile()
+        {
+            var tcs = new TaskCompletionSource<Tile>();
+
+            blocker.value.gameObject.SetActive(true);
+            blocker.value.onClick.AddListener(Use);
+
+            void Use()
+            {
+                blocker.value.onClick.RemoveListener(Use);
+                blocker.value.gameObject.SetActive(false);
+
+                var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                var point = engineView.GetPoint(position);
+                var tile = gameplay.game.ValidatePoint(point) ? gameplay.game.GetTileAt(point) : null;
+
+                tcs.SetResult(tile);
+            }
+
+            return tcs.Task;
+        }
+
         protected virtual void LateUpdate()
         {
             if (dirty)
@@ -47,6 +79,11 @@ namespace MMC.Game
                 dirty = false;
                 Render();
             }
+        }
+
+        public void ForceRender()
+        {
+            Render();
         }
 
         public Task Wait(float time)
@@ -76,13 +113,17 @@ namespace MMC.Game
 
         public EngineConfig engineConfig => prefab.engineConfig;
 
+        public GameplayView view;
+
+        public Match3.Game game => gameEntity.game;
+
         public event Action<Int2, Int2> onTrySwap = delegate { };
         public event Action<Int2, Int2> onSwapSucceed = delegate { };
         public event Action<Int2, Int2> onSwapFailed = delegate { };
         public event Action<Tile> onRewardMatch = delegate { };
         public event Action<Tile> onTileHit = delegate { };
-        public event Action onTryUseBooster = delegate { };
-        public event Action<int> onTryUsePerk = delegate { };
+        public event Action<GameplayReader> onTryUseBooster = delegate { };
+        public event Action<int, GameplayReader> onTryUsePerk = delegate { };
 
         public event Action<Engine> onNewEngine = delegate { };
         public event Action onEvaluatingFinished = delegate { };
@@ -107,11 +148,11 @@ namespace MMC.Game
 
         protected virtual void SetupEngine()
         {
-            gameEntity.game.onTrySwap += (a, b) => onTrySwap.Invoke(a.position, b.position);
-            gameEntity.game.onSwapSucceed += (a, b) => onSwapSucceed.Invoke(a.position, b.position);
-            gameEntity.game.onSwapFailed += (a, b) => onSwapFailed.Invoke(a.position, b.position);
-            gameEntity.game.onTileHit += (e) => onTileHit.Invoke(e);
-            gameEntity.game.onRewardMatch += (e) => onRewardMatch.Invoke(e);
+            gameEntity.game.onTrySwap += (a, b) => { onTrySwap.Invoke(a.position, b.position); Changed(); };
+            gameEntity.game.onSwapSucceed += (a, b) => { onSwapSucceed.Invoke(a.position, b.position); Changed(); };
+            gameEntity.game.onSwapFailed += (a, b) => { onSwapFailed.Invoke(a.position, b.position); Changed(); };
+            gameEntity.game.onTileHit += (e) => { onTileHit.Invoke(e); Changed(); };
+            gameEntity.game.onRewardMatch += (e) => { onRewardMatch.Invoke(e); Changed(); };
             gameEntity.game.onEvaluatingFinished += () =>
             {
                 if (!gameEntity.game.AnyMove())
@@ -122,6 +163,7 @@ namespace MMC.Game
                 {
                     onEvaluatingFinished.Invoke();
                 }
+                Changed();
             };
         }
 
@@ -145,23 +187,29 @@ namespace MMC.Game
             Changed();
         }
 
+        public Task<Tile> PromptTile()
+        {
+            if (view != null) return view.PromptTile();
+            return Task.FromResult<Tile>(null);
+        }
+
         public Task<bool> TrySwap(Int2 a, Int2 b)
         {
             return gameEntity.game.TrySwap(a, b, true);
         }
 
-        public async Task UseBooster(Booster booster, bool withoutNotify = false)
+        public async Task UseBooster(Booster booster, GameplayReader reader, bool withoutNotify = false)
         {
             if (!withoutNotify)
-                onTryUseBooster.Invoke();
-            await booster.Use(this);
+                onTryUseBooster.Invoke(reader);
+            await booster.Apply(this, reader);
         }
 
-        public async Task UsePerk(int index, Perk perk, bool withoutNotify = false)
+        public async Task UsePerk(int index, Perk perk, GameplayReader reader, bool withoutNotify = false)
         {
             if (!withoutNotify)
-                onTryUsePerk.Invoke(index);
-            await perk.Use(this);
+                onTryUsePerk.Invoke(index, reader);
+            await perk.Apply(this, reader);
         }
 
         public string GetHash()
@@ -211,6 +259,19 @@ namespace MMC.Game
         public JObject data;
     }
 
+    public class GameplayReader : JsonData
+    {
+        public string Save() { return json.ToJson(); }
+
+        public GameplayReader() : base() { }
+        public GameplayReader(JObject json) : base(json) { }
+
+        public static GameplayReader From(string json)
+        {
+            return new GameplayReader(JObject.Parse(json));
+        }
+    }
+
     public abstract class GameplayPlayer
     {
         public int score;
@@ -236,21 +297,35 @@ namespace MMC.Game
             usedPerks = new bool[perks.Length];
         }
 
-        public async Task UseBooster(bool withoutNotify = false)
+        public async Task UseBooster(GameplayReader reader, bool withoutNotify = false)
         {
             if (isTurn && !gameplay.gameEntity.isEvaluating && boosterScore >= booster.requiredScore)
             {
-                await gameplay.UseBooster(booster, withoutNotify);
+                if (reader == null)
+                {
+                    reader = new GameplayReader();
+                    var res = await booster.WriteReader(gameplay, reader);
+                    if (!res) return;
+                }
+
+                await gameplay.UseBooster(booster, reader, withoutNotify);
                 boosterScore = 0;
                 gameplay.Changed();
             }
         }
 
-        public async Task UsePerk(int index, bool withoutNotify = false)
+        public async Task UsePerk(int index, GameplayReader reader, bool withoutNotify = false)
         {
             if (isTurn && !gameplay.gameEntity.isEvaluating && !usedPerks[index])
             {
-                var task = gameplay.UsePerk(index, perks[index], withoutNotify);
+                if (reader == null)
+                {
+                    reader = new GameplayReader();
+                    var res = await perks[index].WriteReader(gameplay, reader);
+                    if (!res) return;
+                }
+
+                var task = gameplay.UsePerk(index, perks[index], reader, withoutNotify);
                 usedPerks[index] = true;
                 gameplay.Changed();
                 await task;

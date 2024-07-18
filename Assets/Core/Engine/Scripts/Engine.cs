@@ -51,8 +51,12 @@ namespace MMC.EngineCore
         }
         public Entity CreateEntity(EntityView prefab, Id id)
         {
+            return CreateEntity(prefab, id, entities.Count);
+        }
+        public Entity CreateEntity(EntityView prefab, Id id, int index)
+        {
             var entity = prefab.CreateEntity();
-            entities.Add(entity);
+            entities.Insert(index, entity);
             entityById.Add(id, entity);
             entity._Setup(this, prefab, id);
             onEntityCreated.Invoke(entity);
@@ -71,6 +75,10 @@ namespace MMC.EngineCore
             evaluator.Evaluate(entities.ToArray());
         }
 
+        public Entity GetEntity(Id id)
+        {
+            return entities.Find(e => e.id == id);
+        }
         public T GetEntity<T>(Id id) where T : Entity
         {
             return entities.Find(e => e.id == id) as T;

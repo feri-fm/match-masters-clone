@@ -11,6 +11,7 @@ namespace MMC.Game
 
         public List<Booster> boosters = new();
         public List<Perk> perks = new();
+        public List<Chapter> chapters = new();
 
         public Booster GetBooster(string key)
         {
@@ -24,6 +25,7 @@ namespace MMC.Game
                 if (boosters[i].key == key) return true;
             return false;
         }
+
         public Perk GetPerk(string key)
         {
             for (int i = 0; i < perks.Count; i++)
@@ -35,6 +37,13 @@ namespace MMC.Game
             for (int i = 0; i < perks.Count; i++)
                 if (perks[i].key == key) return true;
             return false;
+        }
+
+        public Chapter GetChapter(string key)
+        {
+            for (int i = 0; i < chapters.Count; i++)
+                if (chapters[i].key == key) return chapters[i];
+            return null;
         }
     }
 }

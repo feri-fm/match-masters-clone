@@ -106,6 +106,10 @@ namespace MMC.Match3
             isEvaluating = true;
             var changed = false;
             bool loop;
+
+            while (hittings > 0)
+                await Wait(0);
+
             do
             {
                 loop = false;
@@ -126,9 +130,7 @@ namespace MMC.Match3
                 }
 
                 while (hittings > 0)
-                {
                     await Wait(0);
-                }
 
                 if (loop) await Wait(0.2f);
 
@@ -204,8 +206,6 @@ namespace MMC.Match3
                 await Wait(0.3f);
                 _ = tileA.Hit();
                 _ = tileB.Hit();
-                while (hittings > 0)
-                    await Wait(0);
                 await Evaluate();
             }
             else
@@ -544,8 +544,6 @@ namespace MMC.Match3
         {
             isEvaluating = true;
             await command.Instantiate().Run(this);
-            while (hittings > 0)
-                await Wait(0);
             await Evaluate();
         }
 
@@ -598,8 +596,9 @@ namespace MMC.Match3
                         if (newPrefab != tile.prefab)
                         {
                             var tileData = tile.Save();
+                            var index = engine.entities.IndexOf(tile);
                             engine.RemoveEntity(tile);
-                            var newTile = engine.CreateEntity(newPrefab, tile.id) as Tile;
+                            var newTile = engine.CreateEntity(newPrefab, tile.id, index) as Tile;
                             newTile.Load(tileData);
                             newTile.PostLoad(tileData);
                             tile = newTile;

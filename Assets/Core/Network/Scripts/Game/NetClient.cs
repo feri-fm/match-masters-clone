@@ -69,11 +69,11 @@ namespace MMC.Network.GameMiddleware
             => ServerAction(hash, () => player.TrySwap(a, b));
 
         [Command]
-        public void CmdUseBooster(string hash)
-            => ServerAction(hash, () => player.UseBooster());
+        public void CmdUseBooster(string hash, string reader)
+            => ServerAction(hash, () => player.UseBooster(reader));
 
         [Command]
-        public void CmdUsePerk(string hash, int index)
-            => ServerAction(hash, () => player.UsePerk(index));
+        public void CmdUsePerk(string hash, string reader, int index)
+            => ServerAction(hash, () => player.UsePerk(index, reader));
     }
 }

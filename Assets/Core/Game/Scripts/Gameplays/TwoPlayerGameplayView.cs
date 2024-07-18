@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using MMC.EngineCore;
 using MMC.Match3;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,8 @@ namespace MMC.Game
         public int totalRounds = 5;
         public int totalMoves = 2;
         public float messageTime = 1;
-        public float handTime = 0.4f;
+        public float handTime = 0.3f;
+        public float turnTime = 10;
         public Color myColor;
         public Color opponentColor;
         public Color naturalColor;
@@ -36,8 +38,9 @@ namespace MMC.Game
         private Id handTileId;
         private float messageAlpha;
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             messageAlpha = messageColor.value.color.a;
         }
 
@@ -64,6 +67,12 @@ namespace MMC.Game
         protected override void LateUpdate()
         {
             base.LateUpdate();
+
+            if (gameplay.gameEntity.isEvaluating)
+            {
+                gameplay.timerEndAt += Time.deltaTime;
+            }
+
             myTurn.SetActive(gameplay.IsMyTurn());
             opponentTurn.SetActive(!gameplay.IsMyTurn());
 
@@ -133,6 +142,8 @@ namespace MMC.Game
         public int turn;
         public bool earnedExtraMove;
 
+        public double timerEndAt;
+
         public TwoPlayerGameplayPlayer myPlayer;
         public TwoPlayerGameplayPlayer opponentPlayer;
 
@@ -150,11 +161,13 @@ namespace MMC.Game
             moves = prefab.totalMoves;
             turn = 0;
 
+            timerEndAt = NetworkTime.time + prefab.turnTime;
+
             myPlayer = new TwoPlayerGameplayPlayer();
             opponentPlayer = new TwoPlayerGameplayPlayer();
 
-            myPlayer.index = 0;
-            opponentPlayer.index = 1;
+            myPlayer.Setup(0);
+            opponentPlayer.Setup(1);
 
             onSwapSucceed += (a, b) =>
             {
@@ -200,21 +213,19 @@ namespace MMC.Game
         protected override void SetupEngine()
         {
             base.SetupEngine();
-            SetIsOpponent(isOpponent);
             if (isOpponent)
-                gameEntity.game.ApplyColorMap();
+                SetIsOpponent();
         }
 
-        public void SetIsOpponent(bool value)
+        public void SetIsOpponent()
         {
-            isOpponent = value;
-            if (isOpponent)
-                gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
-            else
-                gameEntity.game.colorMap = e => e;
+            isOpponent = true;
+            gameEntity.game.colorMap = e => e == TileColor.blue ? TileColor.red : (e == TileColor.red ? TileColor.blue : e);
 
-            if (myPlayer != null) myPlayer.index = MyIndex();
-            if (opponentPlayer != null) opponentPlayer.index = OpponentIndex();
+            myPlayer.Setup(MyIndex());
+            opponentPlayer.Setup(OpponentIndex());
+
+            gameEntity.game.ApplyColorMap();
         }
 
         public TwoPlayerGameplayPlayer GetCurrentPlayer()
@@ -264,6 +275,9 @@ namespace MMC.Game
             if (moves <= 0)
             {
                 turn += 1;
+
+                timerEndAt = NetworkTime.time + prefab.turnTime;
+
                 moves = prefab.totalMoves;
                 if (turn >= 2)
                 {
@@ -330,9 +344,14 @@ namespace MMC.Game
 
     public class TwoPlayerGameplayPlayer : GameplayPlayer
     {
-        public int index;
+        public int index { get; private set; }
 
         public new TwoPlayerGameplay gameplay => base.gameplay as TwoPlayerGameplay;
+
+        public void Setup(int index)
+        {
+            this.index = index;
+        }
 
         public override bool isMyPlayer => gameplay.IsMyTurn();
         public override bool isTurn => gameplay.IsTurn(index);

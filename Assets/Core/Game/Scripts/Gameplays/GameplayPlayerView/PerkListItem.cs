@@ -19,7 +19,7 @@ namespace MMC.Game.GameplayPlayerViews
         {
             if (data.player.isMyPlayer)
             {
-                await data.player.UsePerk(index);
+                await data.player.UsePerk(index, null);
             }
         }
     }

@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,9 +8,19 @@ namespace MMC.Game.GameplayPlayerViews
     {
         public Member<Slider> slider;
 
-        public override void Render()
+        private void Update()
         {
-            base.Render();
+            if (player != null)
+            {
+                var gameplay = player.gameplay as TwoPlayerGameplay;
+                var leftTime = gameplay.timerEndAt - NetworkTime.time;
+                var t = (float)leftTime / gameplay.prefab.turnTime;
+                slider.value.SetValueWithoutNotify(t);
+            }
+            else
+            {
+                slider.value.SetValueWithoutNotify(1);
+            }
         }
     }
 }

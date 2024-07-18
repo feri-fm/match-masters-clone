@@ -50,4 +50,4 @@ MonoBehaviour:
     searchCount: 50
     targetCount: 6
     timeDelay: 0.1
-    colorValue: 4
+    colorValue: 2

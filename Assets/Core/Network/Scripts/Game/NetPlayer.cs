@@ -88,27 +88,27 @@ namespace MMC.Network.GameMiddleware
                 });
             });
         }
-        public void UseBooster()
+        public void UseBooster(string reader)
         {
             TurnAction(game =>
             {
                 var hash = gameplay.GetHash();
-                _ = gameplayPlayer.UseBooster();
+                _ = gameplayPlayer.UseBooster(GameplayReader.From(reader));
                 OnOthers(conn =>
                 {
-                    game.TargetUseBooster(conn, hash);
+                    game.TargetUseBooster(conn, hash, reader);
                 });
             });
         }
-        public void UsePerk(int index)
+        public void UsePerk(int index, string reader)
         {
             TurnAction(game =>
             {
                 var hash = gameplay.GetHash();
-                _ = gameplayPlayer.UsePerk(index);
+                _ = gameplayPlayer.UsePerk(index, GameplayReader.From(reader));
                 OnOthers(conn =>
                 {
-                    game.TargetUsePerk(conn, hash, index);
+                    game.TargetUsePerk(conn, hash, reader, index);
                 });
             });
         }

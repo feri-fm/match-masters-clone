@@ -90,7 +90,8 @@ namespace MMC.Server.Models
         }
         public void ChangeCount(string key, int count)
         {
-            counts[key] += count;
+            if (counts.ContainsKey(key))
+                counts[key] += count;
         }
     }
 }

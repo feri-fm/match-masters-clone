@@ -1941,6 +1941,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Status
       objectReference: {fileID: 0}
+    - target: {fileID: 8942961369296720384, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8942961369296720385, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2031,7 +2035,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8942961369296720398, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
       propertyPath: m_fontSize
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8942961369296720398, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
       propertyPath: m_fontAsset
@@ -2043,7 +2047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8942961369296720398, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
       propertyPath: m_fontSizeBase
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8942961369296720398, guid: 97d6706dd410c86448a38e568d1857b9, type: 3}
       propertyPath: m_sharedMaterial

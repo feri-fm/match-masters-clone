@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using MMC.EngineCore;
+using MMC.Match3;
 
-namespace MMC.Match3
+namespace MMC.Game
 {
     [System.Serializable]
     public class DuckCommand : GameCommand

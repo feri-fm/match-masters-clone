@@ -212,10 +212,31 @@ namespace MMC.Game
             await perk.Apply(this, reader);
         }
 
-        public string GetHash()
+        public string GetChecksum()
         {
             var data = Save();
-            var hash = Hash128.Compute(data.ToJson());
+            var checksum = "";
+            checksum += $"[{data.engine.identifier.lastId}]";
+            checksum += $"[{data.data.ToJson()}]";
+            var gameData = data.engine.entities.FirstOrDefault(e => e.key == "game");
+            if (gameData != null)
+            {
+                checksum += $"[{gameData.data.ToJson()}]";
+            }
+            // foreach (var entity in data.engine.entities)
+            // {
+            //     // if (tile is ColoredTile coloredTile)
+            //     //     checksum += $"[{tile.id},{tile.key},{coloredTile.color.value}]";
+            //     // else
+            //     //     checksum += $"[{tile.id},{tile.key}]";
+            //     checksum += $"[{entity.id},{entity.key}]";
+            // }
+            return checksum;
+        }
+        public string GetHash()
+        {
+            var checksum = GetChecksum();
+            var hash = Hash128.Compute(checksum);
             return hash.ToString();
         }
 

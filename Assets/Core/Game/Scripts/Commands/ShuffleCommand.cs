@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using MMC.Match3;
 
-namespace MMC.Match3
+namespace MMC.Game
 {
     [System.Serializable]
     public class ShuffleCommand : GameCommand

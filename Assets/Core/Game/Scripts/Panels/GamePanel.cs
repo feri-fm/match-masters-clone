@@ -1,3 +1,5 @@
+using MMC.Network.GameMiddleware;
+
 namespace MMC.Game
 {
     public class GamePanel : BasePanel
@@ -7,26 +9,36 @@ namespace MMC.Game
         public override void Update()
         {
             base.Update();
-            // status.text = "";
-            // if (network.game.client.game != null)
-            // {
-            //     var netGame = network.game.server.games[0];
-            //     var serverStatus = netGame.gameplay.GetHash();
-            //     status.text += "\n === server";
-            //     status.text += $"\n{serverStatus}";
-            //     status.text += $"\n{netGame.gameplay.GetRealHash()}";
+            if (status.value.gameObject.activeSelf)
+            {
+                status.text = "";
+                if (network.game.client.game != null)
+                {
+                    NetGame netGame;
+                    var serverStatus = "";
+                    if (network.game.server.games.Count > 0)
+                    {
+                        netGame = network.game.server.games[0];
+                        serverStatus = netGame.gameplay.GetChecksum();
+                        status.text += "\n === server";
+                        status.text += $"\n{serverStatus}";
+                        status.text += $"\n{netGame.gameplay.GetHash()}";
+                    }
 
-
-            //     netGame = network.game.client.game;
-            //     var clientStatus = netGame.gameplay.GetHash();
-            //     status.text += "\n === client";
-            //     status.text += $"\n{Diff(clientStatus, serverStatus)}";
-            //     status.text += $"\n{netGame.gameplay.GetRealHash()}";
-            // }
-            // else
-            // {
-            //     status.text = "...";
-            // }
+                    netGame = network.game.client.game;
+                    var clientStatus = netGame.gameplay.GetChecksum();
+                    status.text += "\n === client";
+                    if (serverStatus == "")
+                        status.text += $"\n{clientStatus}";
+                    else
+                        status.text += $"\n{Diff(clientStatus, serverStatus)}";
+                    status.text += $"\n{netGame.gameplay.GetHash()}";
+                }
+                else
+                {
+                    status.text = "...";
+                }
+            }
         }
 
         public string Diff(string text, string original)

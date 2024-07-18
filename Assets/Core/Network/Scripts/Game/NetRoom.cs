@@ -48,6 +48,7 @@ namespace MMC.Network.GameMiddleware
         }
         public NetGame Launch()
         {
+            players = players.Shuffle();
             var game = UnityEngine.Object.Instantiate(config.gamePrefab);
             var gamePlayers = new List<NetPlayer>();
             game.id = id;

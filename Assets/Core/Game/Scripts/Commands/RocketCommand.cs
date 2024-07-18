@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
+using MMC.Match3;
 
-namespace MMC.Match3
+namespace MMC.Game
 {
-    public class RocketCommand : GameCommand
+    [System.Serializable]
+    public class RocketBoxCommand : GameCommand
     {
         [JsonDataInt] public int targetCount = 4;
         [JsonDataFloat] public float timeDelay = 0.2f;

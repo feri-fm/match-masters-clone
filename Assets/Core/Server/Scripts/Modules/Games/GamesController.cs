@@ -1,4 +1,4 @@
-using WebServer;
+using MMC.Server.Models;
 
 namespace MMC.Server
 {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ImUI;
+using MMC.Game;
 using MMC.Match3;
 
 namespace MMC.DebugRoom
@@ -74,7 +75,7 @@ namespace MMC.DebugRoom
                 cmd.searchCount = ui.Slider("Search", cmd.searchCount, 20, 60);
                 cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 40);
             }));
-            commands.Add("Rocket", new CommandInfo<RocketCommand>((cmd, ui) =>
+            commands.Add("Rocket", new CommandInfo<RocketBoxCommand>((cmd, ui) =>
             {
                 cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 20);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);

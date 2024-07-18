@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MMC.EngineCore;
+using MMC.Game;
 using MMC.Match3;
 using UnityEngine;
 
@@ -87,7 +88,7 @@ public class SampleEngineViewLoader : MonoBehaviour
     public async void Rocket()
     {
         if (!game.isEvaluating)
-            await game.game.RunCommand(new RocketCommand());
+            await game.game.RunCommand(new RocketBoxCommand());
     }
 
     [Member]

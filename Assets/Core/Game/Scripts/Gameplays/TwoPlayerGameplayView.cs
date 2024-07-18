@@ -53,7 +53,6 @@ namespace MMC.Game
             gameplay.onFinish += () =>
             {
                 finished.SetActive(true);
-                GameManager.instance.finishGamePanel.OpenPanel();
             };
         }
 
@@ -286,10 +285,8 @@ namespace MMC.Game
 
                     if (round >= prefab.totalRounds)
                     {
-                        //TODO: finish game here
                         isFinished = true;
                         onFinish.Invoke();
-                        // ShowMessage("Game finished", GameplayColor.Natural);
                         Changed();
                         return;
                     }

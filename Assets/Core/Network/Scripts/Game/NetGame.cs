@@ -7,6 +7,8 @@ using Mirror;
 using MMC.EngineCore;
 using MMC.Game;
 using MMC.Match3;
+using MMC.Server;
+using MMC.Server.Models;
 using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
@@ -38,9 +40,12 @@ namespace MMC.Network.GameMiddleware
         public string lastHash;
         public float lastEvaluateTime;
 
+        public bool isFinished;
+        public GameModel gameModel;
+
         private GameplayData startData;
 
-        public void Setup(NetRoom room, List<NetPlayer> players)
+        public async void Setup(NetRoom room, List<NetPlayer> players)
         {
             this.room = room;
             this.players = players;
@@ -67,6 +72,29 @@ namespace MMC.Network.GameMiddleware
             startData = gameplay.Save();
             gameplay.Evaluate();
             lastHash = gameplay.GetHash();
+
+            gameplay.onFinish += async () =>
+            {
+                isFinished = true;
+                await gameModel.FinishGame(this);
+            };
+
+            foreach (var player in players)
+            {
+                if (player.hasClient)
+                {
+                    var user = player.client.session.user;
+                    user.inventory.ChangeCount(player.booster.key, -1);
+                    user.inventory.ChangeCount(player.perks[0].key, -1);
+                    user.inventory.ChangeCount(player.perks[1].key, -1);
+                    await user.Update(e => e.Set(u => u.inventory.counts, user.inventory.counts));
+                    networkManager.ServerEmit(player.client.session, "update-user", user);
+                }
+            }
+
+            var games = networkManager.serverManager.app.Find<GamesService>();
+
+            gameModel = await games.CreateNewGame(this);
         }
 
         public override void OnStartClient()
@@ -116,6 +144,12 @@ namespace MMC.Network.GameMiddleware
             {
                 client.CmdEvaluatingFinished();
             };
+
+            gameplay.onFinish += () =>
+            {
+                //TODO: show game results, who wins, who loses
+                gameManager.finishGamePanel.OpenPanel();
+            };
         }
 
         public void Leave(NetworkConnectionToClient conn)
@@ -131,8 +165,13 @@ namespace MMC.Network.GameMiddleware
             }
         }
 
-        public void Destroy()
+        public async void Destroy()
         {
+            if (!isFinished)
+            {
+                await gameModel.CancelGame(this);
+            }
+
             foreach (var player in players)
             {
                 if (player.hasClient)
@@ -186,37 +225,37 @@ namespace MMC.Network.GameMiddleware
         }
 
         [TargetRpc]
-        public void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
+        public async void TargetTrySwap(NetworkConnectionToClient _, string hash, Int2 a, Int2 b)
         {
-            TargetAction(hash, async () =>
+            var tile = gameplay.gameEntity.game.GetTileAt(a);
+            if (tile != null)
             {
-                var tile = gameplay.gameEntity.game.GetTileAt(a);
-                if (tile != null)
+                gameplayView.SetHandAt(tile.id);
+                await new WaitForSeconds(clientDelay);
+                TargetAction(hash, async () =>
                 {
-                    gameplayView.SetHandAt(tile.id);
-                    await new WaitForSeconds(clientDelay);
-                }
-                gameplay.StartMove();
-                await gameplay.TrySwap(a, b);
-            });
+                    gameplay.StartMove();
+                    await gameplay.TrySwap(a, b);
+                });
+            }
         }
 
         [TargetRpc]
-        public void TargetUseBooster(NetworkConnectionToClient _, string hash, string reader)
+        public async void TargetUseBooster(NetworkConnectionToClient _, string hash, string reader)
         {
+            await new WaitForSeconds(clientDelay);
             TargetAction(hash, async () =>
             {
-                await new WaitForSeconds(clientDelay);
                 await gameplay.GetCurrentPlayer().UseBooster(GameplayReader.From(reader), true);
             });
         }
 
         [TargetRpc]
-        public void TargetUsePerk(NetworkConnectionToClient _, string hash, string reader, int index)
+        public async void TargetUsePerk(NetworkConnectionToClient _, string hash, string reader, int index)
         {
+            await new WaitForSeconds(clientDelay);
             TargetAction(hash, async () =>
             {
-                await new WaitForSeconds(clientDelay);
                 await gameplay.GetCurrentPlayer().UsePerk(index, GameplayReader.From(reader), true);
             });
         }

@@ -31,8 +31,7 @@ namespace MMC.Server
 
         private void Start()
         {
-            //TODO: start server shouldn't happen on game scene, just for testing
-            if (Application.isEditor)
+            if (Application.isEditor && gameService.autoStartServerInEditor)
                 StartServer();
 
 #if UNITY_SERVER

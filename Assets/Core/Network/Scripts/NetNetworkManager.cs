@@ -50,8 +50,7 @@ namespace MMC.Network
             var transport = GetComponent<TelepathyTransport>();
             transport.port = gameService.transportPort;
 
-            //TODO: start server shouldn't happen on game scene, just for testing
-            if (Application.isEditor)
+            if (Application.isEditor && gameService.autoStartServerInEditor)
                 StartServer();
 
 #if UNITY_SERVER

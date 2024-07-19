@@ -22,6 +22,7 @@ public class ServiceManagerObjectEditor : Editor
         if (selectedGroupIndex >= 0)
             serviceManager.selectedGroupNameBuild = serviceManager.groups[selectedGroupIndex].name;
 
+        EditorUtility.SetDirty(target);
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("groups"));
         serializedObject.ApplyModifiedProperties();

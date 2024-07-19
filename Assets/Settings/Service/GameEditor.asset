@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac7f9ba0101774478cf8c260487ff5e, type: 3}
   m_Name: GameEditor
   m_EditorClassIdentifier: 
+  autoStartServerInEditor: 1
   dataKey: data_editor
   botJoinTime: 1
   serverPort: 3019

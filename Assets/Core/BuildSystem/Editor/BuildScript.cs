@@ -8,11 +8,24 @@ namespace BuildSystem
 {
     public class BuildScript
     {
-        [MenuItem("Build System/Set Windows Local")]
-        public static void SetWindows()
+        [MenuItem("Build System/Set Windows Editor")]
+        public static void SetWindowsLocal()
         {
+            EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Player;
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
-            Builder.Begin().SetServiceGroupName("local");
+            Builder.Begin()
+                .SetServiceGroupName("local")
+                .SetServiceGroupNameEditor("editor");
+        }
+
+        [MenuItem("Build System/Set Windows Stage")]
+        public static void SetWindowsStage()
+        {
+            EditorUserBuildSettings.standaloneBuildSubtarget = StandaloneBuildSubtarget.Player;
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
+            Builder.Begin()
+                .SetServiceGroupName("stage")
+                .SetServiceGroupNameEditor("stage");
         }
 
         [MenuItem("Build System/Windows Local")]
@@ -89,6 +102,15 @@ namespace BuildSystem
         public Builder SetServiceGroupName(string name)
         {
             serviceManagerConfig.SetGroupName(name);
+            EditorUtility.SetDirty(serviceManagerConfig);
+            AssetDatabase.SaveAssets();
+            return this;
+        }
+        public Builder SetServiceGroupNameEditor(string name)
+        {
+            serviceManagerConfig.SetGroupNameEditor(name);
+            EditorUtility.SetDirty(serviceManagerConfig);
+            AssetDatabase.SaveAssets();
             return this;
         }
 

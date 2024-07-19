@@ -1523,7 +1523,7 @@ MonoBehaviour:
   engineConfig: {fileID: 11400000, guid: 65c76f369320de24a85071e18cbc8816, type: 2}
   engineView: {fileID: 4973689848020977753}
   cameraRig: {fileID: 6711894106924622989}
-  totalRounds: 1
+  totalRounds: 5
   totalMoves: 2
   messageTime: 1.5
   handTime: 0.7

@@ -7,6 +7,7 @@ using WebClient;
 [CreateAssetMenu(fileName = "Game", menuName = "Services/Game")]
 public class GameServiceDriver : ServiceDriver
 {
+    public bool autoStartServerInEditor;
     public string dataKey = "data";
     public float botJoinTime = 1;
     public ushort serverPort = 3000;

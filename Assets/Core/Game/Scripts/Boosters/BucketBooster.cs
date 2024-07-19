@@ -10,6 +10,7 @@ namespace MMC.Game
         protected override async Task Use(GameplayIns ins)
         {
             await base.Use(ins);
+            command.colorValue = 2 + ins.game.RandInt(ins.game.options.beads - 2);
             await ins.game.RunCommand(command);
         }
     }

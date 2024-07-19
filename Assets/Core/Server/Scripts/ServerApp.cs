@@ -10,13 +10,15 @@ namespace MMC.Server
     {
         public WebServerApp app;
         public Router router;
+        public Router apiRouter;
 
         public List<Module> modules = new();
 
         public ServerApp()
         {
             app = new WebServerApp();
-            router = new Router("/api");
+            router = new Router();
+            apiRouter = router.In("/api");
             app.Setup(router);
         }
 

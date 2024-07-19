@@ -46,3 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredScore: 6
   icon: {fileID: 21300000, guid: 5bbf8c45ad430854fb7cf9c1ebdded6e, type: 3}
+  command:
+    targetCount: 5
+    timeDelay: 0.2

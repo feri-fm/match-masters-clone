@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Search;
+using UnityEngine;
 
 namespace WebServer
 {
@@ -154,26 +156,37 @@ namespace WebServer
         public Pattern(string patternString)
         {
             patternString = patternString.Trim();
-            if (patternString[0] == '/')
-                patternString = patternString.Substring(1);
-            if (patternString[patternString.Length - 1] == '/')
-                patternString = patternString.Substring(0, patternString.Length - 1);
-            this.patternString = patternString.Trim();
-            segments = patternString.Split("/");
-            paramKeys = new string[segments.Length];
-            isParam = new bool[segments.Length];
-            for (int i = 0; i < segments.Length; i++)
+            if (patternString.Length > 0)
             {
-                if (segments[i].StartsWith(":"))
+                if (patternString[0] == '/')
+                    patternString = patternString.Substring(1);
+                if (patternString[patternString.Length - 1] == '/')
+                    patternString = patternString.Substring(0, patternString.Length - 1);
+                this.patternString = patternString.Trim();
+                segments = patternString.Split("/");
+                paramKeys = new string[segments.Length];
+                isParam = new bool[segments.Length];
+                for (int i = 0; i < segments.Length; i++)
                 {
-                    paramKeys[i] = segments[i].Substring(1);
-                    isParam[i] = true;
+                    if (segments[i].StartsWith(":"))
+                    {
+                        paramKeys[i] = segments[i].Substring(1);
+                        isParam[i] = true;
+                    }
+                    else
+                    {
+                        paramKeys[i] = "";
+                        isParam[i] = false;
+                    }
                 }
-                else
-                {
-                    paramKeys[i] = "";
-                    isParam[i] = false;
-                }
+            }
+            else
+            {
+                this.patternString = "";
+                segments = new string[] { };
+                paramKeys = new string[] { };
+                parameters = new();
+                isParam = new bool[] { };
             }
         }
 
@@ -181,9 +194,9 @@ namespace WebServer
         {
             parameters.Clear();
             url = url.Trim();
-            if (url[0] == '/')
+            if (url.Length > 0 && url[0] == '/')
                 url = url.Substring(1);
-            if (url[url.Length - 1] == '/')
+            if (url.Length > 0 && url[url.Length - 1] == '/')
                 url = url.Substring(0, url.Length - 1);
             var urlSegments = url.Split("/");
             if (exact && urlSegments.Length != segments.Length) return false;

@@ -24,6 +24,29 @@ public class ServiceManagerConfig : ScriptableObject
 #endif
     }
 
+    public void SetGroupName(string groupName)
+    {
+        if (groups.Find(e => e.name == groupName) != null)
+        {
+            selectedGroupNameBuild = groupName;
+        }
+        else
+        {
+            throw new System.Exception("Group name does not exists!");
+        }
+    }
+    public void SetGroupNameEditor(string groupName)
+    {
+        if (groups.Find(e => e.name == groupName) != null)
+        {
+            selectedGroupNameEditor = groupName;
+        }
+        else
+        {
+            throw new System.Exception("Group name does not exists!");
+        }
+    }
+
     public T GetService<T>() where T : ServiceDriver
     {
         return GetSelectGroup()?.services.Find(e => e as T != null) as T;

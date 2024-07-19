@@ -9,6 +9,7 @@ using MMC.Game;
 using MMC.Match3;
 using MMC.Server;
 using MMC.Server.Models;
+using MongoDB.Driver;
 using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
@@ -77,6 +78,16 @@ namespace MMC.Network.GameMiddleware
             {
                 isFinished = true;
                 await gameModel.FinishGame(this);
+                foreach (var player in players)
+                {
+                    if (player.hasClient && (gameModel.winnerIndex == -1 || player.index == gameModel.winnerIndex))
+                    {
+                        var user = player.client.session.user;
+                        user.inventory.ChangeCount(player.booster.key, 1);
+                        await user.Update(e => e.Inc(u => u.inventory.counts[player.booster.key], 1));
+                        networkManager.ServerEmit(player.client.session, "update-user", user);
+                    }
+                }
             };
 
             foreach (var player in players)
@@ -87,7 +98,15 @@ namespace MMC.Network.GameMiddleware
                     user.inventory.ChangeCount(player.booster.key, -1);
                     user.inventory.ChangeCount(player.perks[0].key, -1);
                     user.inventory.ChangeCount(player.perks[1].key, -1);
-                    await user.Update(e => e.Set(u => u.inventory.counts, user.inventory.counts));
+                    await user.Update(e =>
+                    {
+                        var res = e.Inc(u => u.inventory.counts[player.booster.key], -1);
+                        if (user.inventory.HasItem(player.perks[0].key))
+                            res = res.Inc(u => u.inventory.counts[player.perks[0].key], -1);
+                        if (user.inventory.HasItem(player.perks[1].key))
+                            res = res.Inc(u => u.inventory.counts[player.perks[1].key], -1);
+                        return res;
+                    });
                     networkManager.ServerEmit(player.client.session, "update-user", user);
                 }
             }

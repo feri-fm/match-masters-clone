@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 86b475f20f198bf4398e00feaef86eb4
+guid: ce5eab8b84c18be43a8c36ea396d2373
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - serviceManagerConfig: {fileID: 11400000, guid: 87ea76bf6fb084449a63a50254371e22, type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -10,7 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3813043319848773212}
   - component: {fileID: 7779539067253083532}
+  - component: {fileID: 846399266909374441}
   - component: {fileID: 4204725378771722149}
+  - component: {fileID: 7704201887647033006}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -36,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 3.0822, y: 5.6048}
-  m_SizeDelta: {x: 9.3005, y: 17.1239}
+  m_SizeDelta: {x: 11.9666, y: 17.1239}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &7779539067253083532
 MeshRenderer:
@@ -80,6 +82,35 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -9
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &846399266909374441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149506831696090105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dd4eca5804050f4f9bfb2336eeaf7cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreCustomText: 0
+  _text: 'match masters clone made to be cool or what ever that goes well with a
+    random back ground text with small words that nobody should read so why are you
+    still reading question match masters clone made to be cool or what ever that
+    goes well with a random back ground text with small words that nobody should
+    read so why are you still reading question match masters clone made to be cool
+    or what ever that goes well with a random back ground text with small words that
+    nobody should read so why are you still reading question match masters clone
+    made to be cool or what ever that goes well with a random back ground text with
+    small words that nobody should read so why are you still reading question match
+    masters clone made to be cool or what ever that goes well with a random back
+    ground text with small words that nobody should read so why are you still reading
+    question match masters clone made to be cool or what ever that goes well with
+    a random back ground text with small words that nobody should read so why are
+    you still reading question match masters clone made to be cool or what ever that
+    goes well with a random back ground text with small words that nobody should
+    read so why are you still reading question '
 --- !u!114 &4204725378771722149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,27 +133,20 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'match masters clone made to be cool or what ever that goes well with a
     random back ground text with small words that nobody should read so why are you
-    still reading question mark match masters clone made to be cool or what ever
-    that goes well with a random back ground text with small words that nobody should
-    read so why are you still reading question mark match masters clone made to be
-    cool or what ever that goes well with a random back ground text with small words
-    that nobody should read so why are you still reading question mark match masters
-    clone made to be cool or what ever that goes well with a random back ground text
-    with small words that nobody should read so why are you still reading question
-    mark match masters clone made to be cool or what ever that goes well with a random
-    back ground text with small words that nobody should read so why are you still
-    reading question mark match masters clone made to be cool or what ever that goes
-    well with a random back ground text with small words that nobody should read
-    so why are you still reading question mark match masters clone made to be cool
+    still reading question match masters clone made to be cool or what ever that
+    goes well with a random back ground text with small words that nobody should
+    read so why are you still reading question match masters clone made to be cool
     or what ever that goes well with a random back ground text with small words that
-    nobody should read so why are you still reading question mark match masters clone
+    nobody should read so why are you still reading question match masters clone
     made to be cool or what ever that goes well with a random back ground text with
-    small words that nobody should read so why are you still reading question mark
-    match masters clone made to be cool or what ever that goes well with a random
-    back ground text with small words that nobody should read so why are you still
-    reading question mark match masters clone made to be cool or what ever that goes
-    well with a random back ground text with small words that nobody should read
-    so why are you still reading question mark '
+    small words that nobody should read so why are you still reading question match
+    masters clone made to be cool or what ever that goes well with a random back
+    ground text with small words that nobody should read so why are you still reading
+    question match masters clone made to be cool or what ever that goes well with
+    a random back ground text with small words that nobody should read so why are
+    you still reading question match masters clone made to be cool or what ever that
+    goes well with a random back ground text with small words that nobody should
+    read so why are you still reading question '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d05a5c26373af2e4eab9fdb8172b3a5a, type: 2}
   m_sharedMaterial: {fileID: 7771715429596166153, guid: d05a5c26373af2e4eab9fdb8172b3a5a, type: 2}
@@ -159,9 +183,9 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_characterSpacing: 23.2
+  m_wordSpacing: -14.3
+  m_lineSpacing: 29.3
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -194,6 +218,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 7779539067253083532}
   m_maskType: 0
+--- !u!114 &7704201887647033006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149506831696090105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5eab8b84c18be43a8c36ea396d2373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 846399266909374441}
+  time: 0
+  rate: 2
 --- !u!1 &326658362511513367
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,7 +1523,7 @@ MonoBehaviour:
   engineConfig: {fileID: 11400000, guid: 65c76f369320de24a85071e18cbc8816, type: 2}
   engineView: {fileID: 4973689848020977753}
   cameraRig: {fileID: 6711894106924622989}
-  totalRounds: 5
+  totalRounds: 1
   totalMoves: 2
   messageTime: 1.5
   handTime: 0.7
@@ -3319,14 +3358,6 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 260451206161005330, guid: 99e57d7a09a26294a892e04b0b2d590a, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 44.490005
-      objectReference: {fileID: 0}
-    - target: {fileID: 260451206161005330, guid: 99e57d7a09a26294a892e04b0b2d590a, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 638050044715454353, guid: 99e57d7a09a26294a892e04b0b2d590a, type: 3}
       propertyPath: m_Color.b
       value: 0.17610055
@@ -3425,7 +3456,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2709880318872421658, guid: 99e57d7a09a26294a892e04b0b2d590a, type: 3}
       propertyPath: m_fontSize
-      value: 28.95
+      value: 47.75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99e57d7a09a26294a892e04b0b2d590a, type: 3}

@@ -27,7 +27,7 @@ namespace MMC.Server
         public override void Build()
         {
             base.Build();
-            router = app.router.In(routeName);
+            router = app.apiRouter.In(routeName);
             BuildRoutes();
         }
         private void BuildRoutes()

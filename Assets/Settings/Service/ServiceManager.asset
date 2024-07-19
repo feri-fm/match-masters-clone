@@ -22,5 +22,5 @@ MonoBehaviour:
   - name: stage
     services:
     - {fileID: 11400000, guid: e08695503d897ce46a0b6a14bd6a6570, type: 2}
-  selectedGroupNameEditor: stage
-  selectedGroupNameBuild: stage
+  selectedGroupNameEditor: editor
+  selectedGroupNameBuild: local

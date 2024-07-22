@@ -18,6 +18,7 @@ namespace MMC.Game
         public ConnectingPanel connectingPanel => panelGroup.GetPanel<ConnectingPanel>();
         public MenuPanel menuPanel => panelGroup.GetPanel<MenuPanel>();
         public AuthPanel authPanel => panelGroup.GetPanel<AuthPanel>();
+        public ProfilePanel profilePanel => panelGroup.GetPanel<ProfilePanel>();
         public JoiningPanel joiningPanel => panelGroup.GetPanel<JoiningPanel>();
         public GamePanel gamePanel => panelGroup.GetPanel<GamePanel>();
         public FinishGamePanel finishGamePanel => panelGroup.GetPanel<FinishGamePanel>();
@@ -140,6 +141,11 @@ namespace MMC.Game
             connectingPanel.ClosePanel();
         }
 
+        public Chapter GetCurrentChapter()
+        {
+            return config.GetChapter(user.trophies);
+        }
+
         public void Play()
         {
             boostersPanel.OpenPanel();
@@ -147,8 +153,8 @@ namespace MMC.Game
 
         public void Join()
         {
-            //TODO: net config shouldn't come like this
-            var config = networkManager.game.configs[0];
+            var chapter = GetCurrentChapter();
+            var config = networkManager.game.GetConfig(chapter.key);
             joiningPanel.Setup(config);
             joiningPanel.OpenPanel();
         }

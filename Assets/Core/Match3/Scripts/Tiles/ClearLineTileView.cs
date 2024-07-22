@@ -33,6 +33,7 @@ namespace MMC.Match3
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
             AddTrait<AnimatorTraitView>();
+            AddTrait<ScoreTraitView>();
             AddTrait<PowerUpTraitView>();
         }
 

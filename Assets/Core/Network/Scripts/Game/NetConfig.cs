@@ -5,14 +5,13 @@ using UnityEngine;
 
 namespace MMC.Network.GameMiddleware
 {
-    [CreateAssetMenu(fileName = "NetGameConfig", menuName = "NetGame/NetGameConfig")]
-    public class NetConfig : ScriptableObject
+    public class NetConfig : MonoBehaviour
     {
-        public string key;
+        public string key => name;
 
         public GameOptions gameOptions;
-
-        public List<Chapter> chapters;
+        public int minTrophies;
+        public List<GamePreset> presets;
 
         public NetGame gamePrefab;
         public NetPlayer playerPrefab;
@@ -22,6 +21,13 @@ namespace MMC.Network.GameMiddleware
         public NetRoom CreateRoom()
         {
             return new NetRoom();
+        }
+
+        [System.Serializable]
+        public class GamePreset
+        {
+            public TwoPlayerGameplayView gameplayViewPrefab;
+            public Chapter chapter;
         }
     }
 }

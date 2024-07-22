@@ -6,13 +6,9 @@ namespace MMC.Network.SessionMiddleware
     public class SessionNetworkMiddleware : NetNetworkMiddleware<SessionNetworkMiddlewareServer, SessionNetworkMiddlewareClient>
     {
         public override NetNetworkMiddlewareClient CreateClient()
-        {
-            return new SessionNetworkMiddlewareClient();
-        }
+            => new SessionNetworkMiddlewareClient();
 
         public override NetNetworkMiddlewareServer CreateServer()
-        {
-            return new SessionNetworkMiddlewareServer();
-        }
+            => new SessionNetworkMiddlewareServer();
     }
 }

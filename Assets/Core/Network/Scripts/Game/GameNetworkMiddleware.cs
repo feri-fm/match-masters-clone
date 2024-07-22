@@ -6,14 +6,15 @@ namespace MMC.Network.GameMiddleware
     {
         public List<NetConfig> configs;
 
-        public override NetNetworkMiddlewareClient CreateClient()
+        public NetConfig GetConfig(string key)
         {
-            return new GameNetworkMiddlewareClient();
+            return configs.Find(e => e.key == key);
         }
 
+        public override NetNetworkMiddlewareClient CreateClient()
+            => new GameNetworkMiddlewareClient();
+
         public override NetNetworkMiddlewareServer CreateServer()
-        {
-            return new GameNetworkMiddlewareServer();
-        }
+            => new GameNetworkMiddlewareServer();
     }
 }

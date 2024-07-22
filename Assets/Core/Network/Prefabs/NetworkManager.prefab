@@ -133,7 +133,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   configs:
-  - {fileID: 11400000, guid: 1b9e620c96760704f94518bc020b049b, type: 2}
+  - {fileID: 4240847520847060334, guid: bc14032b0f9d821448bd9d74375445f8, type: 3}
+  - {fileID: 4240847520847060334, guid: c98c3608e77bfd042aaa722c44e7835e, type: 3}
+  - {fileID: 4240847520847060334, guid: d4e52e9ce5d49c14aa8220f44e9e3c83, type: 3}
+  - {fileID: 4240847520847060334, guid: 93bd3c14c76a36b45975eefc0df5af29, type: 3}
 --- !u!1 &2412452968461134882
 GameObject:
   m_ObjectHideFlags: 0

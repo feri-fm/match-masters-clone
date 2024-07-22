@@ -12,6 +12,9 @@ namespace MMC.Server.Models
         public List<string> selectedItems = new();
         public InventoryModel inventory = new();
 
+        public int trophies => inventory.GetCount("trophies");
+        public int coins => inventory.GetCount("coins");
+
         public void BuildToken(JwtBuilder builder)
         {
             builder.AddClaim("id", id.ToString());
@@ -86,6 +89,7 @@ namespace MMC.Server.Models
         }
         public void SetCount(string key, int count)
         {
+            if (!HasItem(key)) AddItem(key);
             counts[key] = count;
         }
         public void ChangeCount(string key, int count)

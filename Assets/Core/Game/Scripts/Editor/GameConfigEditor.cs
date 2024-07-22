@@ -14,6 +14,7 @@ namespace MMC.Game
                 var config = target as GameConfig;
                 config.boosters.Clear();
                 config.perks.Clear();
+                config.chapters.Clear();
                 foreach (var guid in AssetDatabase.FindAssets("t:prefab"))
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
@@ -26,8 +27,13 @@ namespace MMC.Game
                         var perk = asset.GetComponent<Perk>();
                         if (perk != null)
                             config.perks.Add(perk);
+                        var chapter = asset.GetComponent<Chapter>();
+                        if (chapter != null)
+                            config.chapters.Add(chapter);
                     }
                 }
+                config.chapters.Sort((a, b) => a.trophy.CompareTo(b.trophy));
+                EditorUtility.SetDirty(target);
             }
         }
     }

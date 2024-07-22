@@ -28,6 +28,7 @@ namespace MMC.EngineCore
                             config.traits.Add(trait);
                     }
                 }
+                EditorUtility.SetDirty(target);
             }
         }
     }

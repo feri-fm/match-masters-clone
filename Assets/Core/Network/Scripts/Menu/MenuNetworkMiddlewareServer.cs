@@ -44,8 +44,15 @@ namespace MMC.Network.MenuMiddleware
                 if (user.inventory.HasItem(key))
                 {
                     user.inventory.SetCount(key, count);
-                    await user.Update(e => e.Set(u => u.inventory.counts, user.inventory.counts));
+                    await user.Update(e => e.Set(u => u.inventory, user.inventory));
                 }
+                Emit(session, "update-user", user);
+            });
+            On<int>("set-trophies", async (session, trophies) =>
+            {
+                var user = session.user;
+                user.inventory.SetCount("trophies", trophies);
+                await user.Update(e => e.Set(u => u.inventory, user.inventory));
                 Emit(session, "update-user", user);
             });
         }

@@ -17,6 +17,7 @@ namespace MMC.Match3
             AddTrait<GravityTraitView>();
             AddTrait<SwappableTileTraitView>();
             AddTrait<AnimatorTraitView>();
+            AddTrait<ScoreTraitView>();
         }
 
         protected override async Task OnHit()
@@ -27,7 +28,7 @@ namespace MMC.Match3
 
         public override string ToString()
         {
-            return "Bead " + color.ToString();
+            return base.ToString() + " | Bead " + color.ToString();
         }
     }
 }

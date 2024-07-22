@@ -137,6 +137,12 @@ namespace MMC.Network.GameMiddleware
                     return;
                 }
 
+                if (session.user.trophies < config.minTrophies)
+                {
+                    manager.Kick(conn, "Not enough trophies for selected game");
+                    return;
+                }
+
                 var joined = false;
                 NetRoom room = null;
                 var player = new RoomPlayer(msg.config, session);

@@ -28,3 +28,8 @@ MonoBehaviour:
   perks:
   - {fileID: -2485488522493187943, guid: 9208014d3500ac941bceaed018baa2d9, type: 3}
   - {fileID: 1525381223908887279, guid: e1f4d64184dec0b40b07b732c6a87a88, type: 3}
+  chapters:
+  - {fileID: 7178018670279892916, guid: 9d160d78850b9294da432ebc9d87757b, type: 3}
+  - {fileID: 1756434273358985625, guid: d4649ef8a1619a947b89b49f4f1241c3, type: 3}
+  - {fileID: 4438920829854684562, guid: 872135cf6c6d93246a4e8ce2cec37cf6, type: 3}
+  - {fileID: 4145107495130670773, guid: ac34d7519fb7d8a45afc031f6902b8a1, type: 3}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MMC.EngineCore;
+using Org.BouncyCastle.Asn1.Cmp;
 using UnityEngine;
 
 namespace MMC.Match3
@@ -33,6 +34,7 @@ namespace MMC.Match3
         public event Action<Tile, Tile> onSwapSucceed = delegate { };
         public event Action<Tile> onRewardMatch = delegate { };
         public event Action onEvaluatingFinished = delegate { };
+        public Func<TileView, TileView> generationMap = (c) => c; //TODO: this should be able to handle multiple listeners
 
         public Int2 swappedA;
         public Int2 swappedB;
@@ -251,6 +253,10 @@ namespace MMC.Match3
             }
         }
 
+        public int RandInt(int min, int max)
+        {
+            return min + RandInt(max - min);
+        }
         public int RandInt(int max)
         {
             return random.Next().value % max;
@@ -303,6 +309,7 @@ namespace MMC.Match3
             }
             return false;
         }
+
         private bool CheckMatch(Int2 offset, MatchPattern pattern, out Match match)
         {
             var color = TileColor.none;
@@ -434,14 +441,49 @@ namespace MMC.Match3
                 var point = new Int2(i, height - 1);
                 if (IsEmptyAt(point))
                 {
-                    var prefab = GenerateBead(point);
-                    var bead = CreateColoredTile(prefab);
-                    SetTileAt(point, bead);
-                    bead.WithTrait<AnimatorTrait>(t => t.SpawnAtTop());
+                    var prefab = GenerateTile(point);
+                    var tile = CreateTileFromView(prefab);
+                    SetTileAt(point, tile);
+                    tile.WithTrait<AnimatorTrait>(t => t.SpawnAtTop());
 
-                    colorsCount[MapColor(bead.color)] += 1;
+                    if (tile is ColoredTile coloredTile)
+                        colorsCount[MapColor(coloredTile.color)] += 1;
                 }
             }
+        }
+
+        public void ScanRandom(int count, Func<Tile, bool> check, Action<Tile> action)
+        {
+            var shuffledTiles = new Tile[width * height];
+            var index = 0;
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++)
+                    shuffledTiles[index++] = tiles[i, j];
+
+            var found = 0;
+            for (int i = 0; i < shuffledTiles.Length && found < count; i++)
+            {
+                var r = RandInt(i, shuffledTiles.Length);
+                var temp = shuffledTiles[i];
+                shuffledTiles[i] = shuffledTiles[r];
+                shuffledTiles[r] = temp;
+
+                var tile = shuffledTiles[i];
+                if (check.Invoke(tile))
+                {
+                    action.Invoke(tile);
+                    found++;
+                }
+            }
+        }
+
+        public int CountTiles(Func<Tile, bool> check)
+        {
+            var count = 0;
+            foreach (var tile in tiles)
+                if (check.Invoke(tile))
+                    count++;
+            return count;
         }
 
         public void OnTileHit(Tile tile)
@@ -469,7 +511,7 @@ namespace MMC.Match3
                 }
             }
         }
-        private BeadTileView GenerateBead(Int2 point)
+        private TileView GenerateTile(Int2 point)
         {
             var all = new List<BeadTileView>();
             var should = new List<BeadTileView>();
@@ -478,9 +520,9 @@ namespace MMC.Match3
             var safeCould = new List<BeadTileView>();
 
             var badColors = new List<TileColor>();
-            var down = ValidatePoint(point + Int2.down) ? GetTileAt(point + Int2.down) as BeadTile : null;
-            var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as BeadTile : null;
-            var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as BeadTile : null;
+            var down = ValidatePoint(point + Int2.down) ? GetTileAt(point + Int2.down) as ColoredTile : null;
+            var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as ColoredTile : null;
+            var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as ColoredTile : null;
             if (down != null) badColors.Add(MapColor(down.prefab.color));
             if (left != null) badColors.Add(MapColor(left.prefab.color));
             if (right != null) badColors.Add(MapColor(right.prefab.color));
@@ -504,11 +546,17 @@ namespace MMC.Match3
                 }
             }
 
-            if (safeShould.Count > 0) return MapColor(RandElement(safeShould));
-            if (safeCould.Count > 0) return MapColor(RandElement(safeCould));
-            if (should.Count > 0) return MapColor(RandElement(should));
-            if (could.Count > 0) return MapColor(RandElement(could));
-            return MapColor(RandElement(all));
+            TileView generatedBead;
+
+            if (safeShould.Count > 0) generatedBead = RandElement(safeShould);
+            else if (safeCould.Count > 0) generatedBead = RandElement(safeCould);
+            else if (should.Count > 0) generatedBead = RandElement(should);
+            else if (could.Count > 0) generatedBead = RandElement(could);
+            else generatedBead = RandElement(all);
+
+            generatedBead = MapColor(generatedBead);
+            generatedBead = generationMap.Invoke(generatedBead);
+            return generatedBead;
         }
 
         public T CreateColoredTile<T>(ColoredTileView<T> view) where T : ColoredTile => CreateTileFromView(view) as T;

@@ -19,14 +19,18 @@ namespace MMC.Network.GameMiddleware
     {
         [SyncVar] public Guid id;
         [SyncVar] public string configKey;
+        [SyncVar] public int presetIndex;
 
         public float clientDelay = 0.3f;
 
-        public TwoPlayerGameplayView gameplayViewPrefab;
         public EngineConfig engineConfig;
+        public NetConfig.GamePreset preset;
 
-        public TwoPlayerGameplayView gameplayView;
-        public TwoPlayerGameplay gameplay;
+        public TwoPlayerGameplayView gameplayViewPrefab => preset.gameplayViewPrefab;
+        public Chapter chapter => preset.chapter;
+
+        public TwoPlayerGameplayView gameplayView { get; private set; }
+        public TwoPlayerGameplay gameplay { get; private set; }
 
         public readonly SyncList<Guid> playersId = new SyncList<Guid>();
 
@@ -53,6 +57,9 @@ namespace MMC.Network.GameMiddleware
             config = room.config;
             configKey = config.key;
 
+            presetIndex = UnityEngine.Random.Range(0, config.presets.Count);
+            preset = config.presets[presetIndex];
+
             playersId.Clear();
             GetComponent<NetworkMatch>().matchId = id;
             foreach (var player in players)
@@ -70,8 +77,11 @@ namespace MMC.Network.GameMiddleware
             gameplay.Setup(gameplayViewPrefab, options);
             gameplay.myPlayer.Setup(gameplay, players[0].booster, players[0].perks);
             gameplay.opponentPlayer.Setup(gameplay, players[1].booster, players[1].perks);
+            chapter.Apply(gameplay);
             startData = gameplay.Save();
             gameplay.Evaluate();
+
+
             lastHash = gameplay.GetHash();
 
             gameplay.onFinish += async () =>
@@ -130,6 +140,7 @@ namespace MMC.Network.GameMiddleware
         public void StartGameClient()
         {
             config = networkManager.game.configs.Find(e => e.key == configKey);
+            preset = config.presets[presetIndex];
 
             gameplay = new TwoPlayerGameplay();
             gameplayView = Instantiate(gameplayViewPrefab, transform);

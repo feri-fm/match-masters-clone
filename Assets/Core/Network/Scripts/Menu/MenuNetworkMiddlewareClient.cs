@@ -33,5 +33,9 @@ namespace MMC.Network.MenuMiddleware
         {
             Emit("set-item-count", $"{key}:{count}");
         }
+        public void SetTrophies(int trophies) //TODO: this is wrong
+        {
+            Emit("set-trophies", trophies);
+        }
     }
 }

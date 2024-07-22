@@ -45,5 +45,17 @@ namespace MMC.Game
                 if (chapters[i].key == key) return chapters[i];
             return null;
         }
+
+        public Chapter GetChapter(int trophies)
+        {
+            for (int i = chapters.Count - 1; i >= 0; i--)
+            {
+                if (trophies >= chapters[i].trophy)
+                {
+                    return chapters[i];
+                }
+            }
+            return null;
+        }
     }
 }

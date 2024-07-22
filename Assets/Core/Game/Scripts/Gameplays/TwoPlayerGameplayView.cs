@@ -16,11 +16,11 @@ namespace MMC.Game
         public float messageTime = 1;
         public float handTime = 0.3f;
         public float turnTime = 10;
+
         public Color myColor;
         public Color opponentColor;
         public Color naturalColor;
         public AnimationCurve messageScale;
-
         public Member<Transform> messageBody;
         public TextMember messageText;
         public Member<Image> messageColor;
@@ -182,19 +182,22 @@ namespace MMC.Game
             };
             onTileHit += (tile) =>
             {
-                if (IsMyTurn())
+                tile.WithTrait<ScoreTrait>(score =>
                 {
-                    myPlayer.score += 1;
-                    if (tile is ColoredTile colored && colored.color == TileColor.blue)
-                        myPlayer.boosterScore = Mathf.Min(myPlayer.boosterScore + 1, myPlayer.booster.requiredScore);
-                }
-                else
-                {
-                    opponentPlayer.score += 1;
-                    if (tile is ColoredTile colored && colored.color == TileColor.red)
-                        opponentPlayer.boosterScore = Mathf.Min(opponentPlayer.boosterScore + 1, opponentPlayer.booster.requiredScore);
-                }
-                Changed();
+                    if (IsMyTurn())
+                    {
+                        myPlayer.score += score.value;
+                        if (tile is ColoredTile colored && colored.color == TileColor.blue)
+                            myPlayer.boosterScore = Mathf.Min(myPlayer.boosterScore + score.value, myPlayer.booster.requiredScore);
+                    }
+                    else
+                    {
+                        opponentPlayer.score += score.value;
+                        if (tile is ColoredTile colored && colored.color == TileColor.red)
+                            opponentPlayer.boosterScore = Mathf.Min(opponentPlayer.boosterScore + score.value, opponentPlayer.booster.requiredScore);
+                    }
+                    Changed();
+                });
             };
 
             Changed();

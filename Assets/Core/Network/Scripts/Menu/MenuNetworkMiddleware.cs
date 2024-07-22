@@ -6,13 +6,9 @@ namespace MMC.Network.MenuMiddleware
     public class MenuNetworkMiddleware : NetNetworkMiddleware<MenuNetworkMiddlewareServer, MenuNetworkMiddlewareClient>
     {
         public override NetNetworkMiddlewareClient CreateClient()
-        {
-            return new MenuNetworkMiddlewareClient();
-        }
+            => new MenuNetworkMiddlewareClient();
 
         public override NetNetworkMiddlewareServer CreateServer()
-        {
-            return new MenuNetworkMiddlewareServer();
-        }
+            => new MenuNetworkMiddlewareServer();
     }
 }

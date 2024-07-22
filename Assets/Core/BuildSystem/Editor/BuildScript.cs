@@ -90,7 +90,6 @@ namespace BuildSystem
             var guids = AssetDatabase.FindAssets("t:ServiceManagerConfig");
             var path = AssetDatabase.GUIDToAssetPath(guids[0]);
             serviceManagerConfig = AssetDatabase.LoadAssetAtPath<ServiceManagerConfig>(path);
-
         }
 
         public static Builder Begin()

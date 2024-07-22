@@ -60,10 +60,22 @@ namespace MMC.Game
             Startup();
         }
 
+        //TODO: these are not good
         public void Register()
         {
             ChangeState(() => isConnecting = true);
             webRequestManager.Register().R(r =>
+            {
+                Startup();
+            }).F(r =>
+            {
+                ChangeState(() => isConnecting = false);
+            }).Send();
+        }
+        public void Login(string username)
+        {
+            ChangeState(() => isConnecting = true);
+            webRequestManager.Login(username).R(r =>
             {
                 Startup();
             }).F(r =>

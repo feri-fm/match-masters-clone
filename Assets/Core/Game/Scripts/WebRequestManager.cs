@@ -48,12 +48,22 @@ namespace MMC.Game
                     }
                     game.ChangeState();
 
-                    Popup.ShowAlert(r.error ?? r.body);
+                    Popup.ShowAlert(r.error + "\n" + r.messageField);
                 });
             };
         }
 
         public Request Register() => requestBuilder.Post("/api/auth/register").R(r =>
+        {
+            token = r.GetResponseHeader("x-auth-token");
+            PlayerPrefs.SetString(tokenKey, token);
+            hasToken = true;
+            isLoggedIn = true;
+            game.user = r.GetBody<UserModel>();
+            game.ChangeState();
+        });
+
+        public Request Login(string username) => requestBuilder.Post("/api/auth/login", new { username }).R(r =>
         {
             token = r.GetResponseHeader("x-auth-token");
             PlayerPrefs.SetString(tokenKey, token);

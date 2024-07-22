@@ -90,6 +90,11 @@ namespace WebServer
             var text = await ReadString();
             return JObject.Parse(text).ToObject<T>();
         }
+        public async Task<JObject> ReadJson()
+        {
+            var text = await ReadString();
+            return JObject.Parse(text);
+        }
     }
 
     public class Response

@@ -34,14 +34,14 @@ public class InputFieldHelper : MonoBehaviour
     public void SetText(string text)
     {
         _text = text;
-        inputField.SetTextWithoutNotify(text);
+        inputField.text = text;
     }
 
     public TMP_InputField Load()
     {
         _isEditing = false;
         _inputField = GetComponent<TMP_InputField>();
-        SetText(_inputField.text);
+        SetTextWithoutNotify(_inputField.text);
         _inputField.onValueChanged.AddListener((value) =>
         {
             if (!_isEditing)
@@ -49,7 +49,7 @@ public class InputFieldHelper : MonoBehaviour
                 onStartEdit?.Invoke();
                 _isEditing = true;
             }
-            SetText(value);
+            SetTextWithoutNotify(value);
         });
         _inputField.onEndEdit.AddListener((value) =>
         {

@@ -17,6 +17,23 @@ namespace MMC.Server
             }
         );
 
+        [RoutePost("/login")]
+        public void Login() => BuildRoute(
+            async (req, res) =>
+            {
+                var json = await req.ReadJson();
+                var username = json["username"].ToString();
+                var user = await users.FindUser(username);
+                if (user == null)
+                {
+                    await res.SendError(404, "No user was found for given username");
+                    return;
+                }
+                var token = auth.EncodeToken(user.BuildToken);
+                await res.AddHeader("x-auth-token", token).Send(user);
+            }
+        );
+
         [RouteGet("/validate")]
         public void Validate() => BuildRoute(
             AuthUser(),

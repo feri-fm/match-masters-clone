@@ -11,5 +11,6 @@ namespace MMC.Server
 
         public async Task<UserModel> CreateNewUser() => await repository.CreateNewUser();
         public async Task<UserModel> GetUser(ObjectId id) => await repository.GetUser(id);
+        public async Task<UserModel> FindUser(string username) => await repository.FindUser(username);
     }
 }

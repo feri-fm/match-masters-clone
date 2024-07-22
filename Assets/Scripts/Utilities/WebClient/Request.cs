@@ -22,6 +22,8 @@ namespace WebClient
         public string error => request.error;
         public long status => request.responseCode;
 
+        public string messageField => GetField<string>("message");
+
         public float downloadProgress => request.downloadProgress;
 
         public long[] ignoreStatusCodes = new long[] { };

@@ -26,5 +26,14 @@ namespace MMC.Server
                 user._Setup(database);
             return user;
         }
+
+        public async Task<UserModel> FindUser(string username)
+        {
+            var cursor = await database.users.FindAsync(Builders<UserModel>.Filter.Eq("username", username));
+            var user = await cursor.FirstOrDefaultAsync();
+            if (user != null)
+                user._Setup(database);
+            return user;
+        }
     }
 }

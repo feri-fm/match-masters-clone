@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac7f9ba0101774478cf8c260487ff5e, type: 3}
   m_Name: GameLocal
   m_EditorClassIdentifier: 
+  autoStartServerInEditor: 0
   dataKey: data_local
   botJoinTime: 1
-  serverPort: 3019
-  transportPort: 7832
+  serverPort: 3023
+  transportPort: 7831
   webConfig:
-    baseUrl: http://localhost:3019
+    baseUrl: http://localhost:3023
   networkAddress: localhost

@@ -4,10 +4,12 @@ namespace MMC.Game
     {
         public ChapterEntityView entityPrefab;
 
+        protected ChapterEntity chapterEntity;
+
         protected override void Apply(GameplayIns ins)
         {
             base.Apply(ins);
-            ins.gameplay.engine.CreateEntity(entityPrefab);
+            chapterEntity = ins.gameplay.engine.CreateEntity(entityPrefab) as ChapterEntity;
         }
     }
 }

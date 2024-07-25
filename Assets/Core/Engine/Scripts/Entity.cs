@@ -39,6 +39,7 @@ namespace MMC.EngineCore
             }
             traits.Clear();
             evaluable.Clear();
+            engine.events.RemoveKey(this);
             __Remove();
         }
         public void Changed()
@@ -131,6 +132,7 @@ namespace MMC.EngineCore
         public EntityData Save()
         {
             var json = new JsonData();
+            json.Save(this);
             Save(json);
             return new EntityData()
             {
@@ -141,7 +143,9 @@ namespace MMC.EngineCore
         }
         public void Load(EntityData data)
         {
-            Load(new JsonData(data.data));
+            var json = new JsonData(data.data);
+            json.Load(this);
+            Load(json);
         }
         public void PostLoad(EntityData data)
         {

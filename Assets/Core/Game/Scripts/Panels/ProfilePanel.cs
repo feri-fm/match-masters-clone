@@ -2,6 +2,7 @@ namespace MMC.Game
 {
     public class ProfilePanel : BasePanel
     {
+        public Member<InputFieldHelper> usernameInput;
         public TextMember username;
         public TextMember trophies;
 
@@ -10,6 +11,12 @@ namespace MMC.Game
             base.OnRender();
             username.text = game.user.username;
             trophies.text = game.user.trophies.ToString();
+        }
+
+        public override void OnOpen()
+        {
+            base.OnOpen();
+            usernameInput.value.SetTextWithoutNotify(game.user.username);
         }
 
         [Member]
@@ -25,6 +32,12 @@ namespace MMC.Game
         public void Back()
         {
             ClosePanel();
+        }
+
+        [Member]
+        public void ChangeUsername()
+        {
+            game.networkManager.menu.client.ChangeUsername(usernameInput.value.text);
         }
 
         [Member]

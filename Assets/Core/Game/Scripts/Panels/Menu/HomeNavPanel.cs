@@ -1,11 +1,9 @@
+using SwipeableBottomNavigation;
+
 namespace MMC.Game
 {
-    public class MenuPanel : BasePanel
+    public class HomeNavPanel : NavigationPanel
     {
-        public TextMember username;
-        public TextMember trophies;
-        public TextMember coins;
-
         public ChapterViewLoader chapterViewLoader;
 
         public override void Setup()
@@ -23,9 +21,6 @@ namespace MMC.Game
         public override void OnRender()
         {
             base.OnRender();
-            username.text = game.user.username;
-            trophies.text = game.user.trophies.ToString();
-            coins.text = game.user.coins.ToString();
             chapterViewLoader.Setup(game.config.GetChapter(game.user.trophies));
         }
 
@@ -33,12 +28,6 @@ namespace MMC.Game
         public void Play()
         {
             game.Play();
-        }
-
-        [Member]
-        public void Profile()
-        {
-            game.profilePanel.OpenPanel();
         }
     }
 }

@@ -15,8 +15,8 @@ MonoBehaviour:
   autoStartServerInEditor: 1
   dataKey: data_editor
   botJoinTime: 1
-  serverPort: 3019
-  transportPort: 7832
+  serverPort: 3023
+  transportPort: 7831
   webConfig:
-    baseUrl: http://localhost:3019
+    baseUrl: http://localhost:3023
   networkAddress: localhost

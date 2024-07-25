@@ -98,6 +98,7 @@ namespace MMC.Match3
         }
 
         private bool _isInEvaluate;
+
         public async Task<bool> Evaluate()
         {
             if (_isInEvaluate)
@@ -109,8 +110,16 @@ namespace MMC.Match3
             var changed = false;
             bool loop;
 
-            while (hittings > 0)
-                await Wait(0);
+            if (engine.waiter == null && hittings > 0)
+            {
+                Debug.LogError("this shouldn't have happened " + hittings);
+                hittings = 0;
+            }
+            else
+            {
+                while (hittings > 0)
+                    await Wait(0);
+            }
 
             do
             {
@@ -469,7 +478,7 @@ namespace MMC.Match3
                 shuffledTiles[r] = temp;
 
                 var tile = shuffledTiles[i];
-                if (check.Invoke(tile))
+                if (tile != null && check.Invoke(tile))
                 {
                     action.Invoke(tile);
                     found++;

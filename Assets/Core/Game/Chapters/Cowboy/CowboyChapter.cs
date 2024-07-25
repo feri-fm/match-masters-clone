@@ -1,4 +1,4 @@
-namespace MMC.Game
+namespace MMC.Game.Chapters.Cowboy
 {
     public class CowboyChapter : EntityChapter
     {

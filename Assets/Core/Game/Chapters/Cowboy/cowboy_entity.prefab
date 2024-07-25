@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5781157851055218541}
-  - component: {fileID: 4438920829854684562}
+  - component: {fileID: 8094542352695956371}
   m_Layer: 0
-  m_Name: cowboy
+  m_Name: cowboy_entity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4438920829854684562
+--- !u!114 &8094542352695956371
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,10 +41,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4164971445340412041}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8466a89033748a3408ac08013fb07325, type: 3}
+  m_Script: {fileID: 11500000, guid: 610820dd8b101df4c9bde1e8bf61bc63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trophy: 300
-  chapterViewPrefab: {fileID: 7763230084714965071, guid: 6f921d91a4037634781831ae11d2377e, type: 3}
-  icon: {fileID: 21300000, guid: 522788384cb28c84d952f5c6b5dfea26, type: 3}
-  entityPrefab: {fileID: 8094542352695956371, guid: 741397d3518318847844cd01dd9cf6c1, type: 3}
+  key: cowboy_chapter
+  minCount: 4
+  tilePrefab: {fileID: 4743494164247654379, guid: f87b5026b91045747b461cb5fe4e264e, type: 3}

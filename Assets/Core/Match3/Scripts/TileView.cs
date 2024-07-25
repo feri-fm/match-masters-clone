@@ -28,6 +28,7 @@ namespace MMC.Match3
 
         public bool canHit { get; set; }
         public bool isHit { get; private set; }
+        public bool willHit { get; set; }
 
         public event Action onHit = delegate { };
 

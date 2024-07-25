@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: EngineConfig
   m_EditorClassIdentifier: 
   entities:
+  - {fileID: 8094542352695956371, guid: 741397d3518318847844cd01dd9cf6c1, type: 3}
+  - {fileID: 4743494164247654379, guid: f87b5026b91045747b461cb5fe4e264e, type: 3}
   - {fileID: 2044288751936510638, guid: ab9de1f8aaf7e1a4faf9d1cd074a7500, type: 3}
   - {fileID: 8009782117786345627, guid: 904e447f41576d045a74b752063d7789, type: 3}
   - {fileID: 1034135808035711609, guid: 23014f62068d9b949b2412eefb06500a, type: 3}

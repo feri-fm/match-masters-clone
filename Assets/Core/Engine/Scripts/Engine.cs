@@ -15,6 +15,8 @@ namespace MMC.EngineCore
         public readonly IdentifierGenerator identifierGenerator = new();
         public readonly Evaluator evaluator = new();
 
+        public EventManger events = new();
+
         public event Action<Entity> onEntityCreated = delegate { };
         public event Action<Entity> onEntityRemoved = delegate { };
 

@@ -19,6 +19,10 @@ namespace MMC.Network.MenuMiddleware
                     gameManager.user = user;
                 });
             });
+            On<string>("message", message =>
+            {
+                Popup.ShowAlert(message);
+            });
         }
 
         public void UpdateSelectedItems(string[] items)
@@ -36,6 +40,10 @@ namespace MMC.Network.MenuMiddleware
         public void SetTrophies(int trophies) //TODO: this is wrong
         {
             Emit("set-trophies", trophies);
+        }
+        public void ChangeUsername(string username) //TODO: this is wrong
+        {
+            Emit("change-username", username);
         }
     }
 }

@@ -148,6 +148,7 @@ namespace MMC.Game
 
         public event Action<GameplayMessage> onMessage = delegate { };
         public event Action onFinish = delegate { };
+        public event Action<int> onTurn = delegate { };
 
         public bool isFinished { get; private set; }
 
@@ -199,7 +200,6 @@ namespace MMC.Game
                     Changed();
                 });
             };
-
             Changed();
         }
 
@@ -277,6 +277,9 @@ namespace MMC.Game
             if (moves <= 0)
             {
                 turn += 1;
+
+                onTurn.Invoke(turn);
+                engine.events.Call("turn", gameEntity, turn);
 
                 timerEndAt = NetworkTime.time + prefab.turnTime;
 

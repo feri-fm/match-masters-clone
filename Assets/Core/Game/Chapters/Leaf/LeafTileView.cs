@@ -25,10 +25,5 @@ namespace MMC.Game.Chapters.Leaf
             await base.OnHit();
             engine.RemoveEntity(this);
         }
-
-        public override string ToString()
-        {
-            return "Leaf " + color.ToString();
-        }
     }
 }

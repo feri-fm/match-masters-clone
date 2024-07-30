@@ -42,7 +42,7 @@ namespace MMC.Game
         {
             game.ChangeState(() =>
             {
-                game.user.inventory.AddItem(data.key);
+                game.user.inventory.UnlockItem(data.key);
                 game.networkManager.menu.client.UnlockBooster(data);
             });
         }

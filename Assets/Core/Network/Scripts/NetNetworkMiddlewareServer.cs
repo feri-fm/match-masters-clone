@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using MMC.Network.SessionMiddleware;
 using MMC.Server;
+using MMC.Server.Models;
 
 namespace MMC.Network
 {
@@ -27,11 +28,17 @@ namespace MMC.Network
 
         public void Emit(Session session, string key, object data)
         {
-            manager.ServerEmit(session, key, data);
+            manager.ServerEmit(session, middleware.GetKey(key), data);
         }
         public void On<T>(string key, Action<Session, T> onData)
         {
-            manager.ServerOn<T>(key, onData);
+            manager.ServerOn(middleware.GetKey(key), onData);
+        }
+
+        public void EmitUpdateUser(Session session) => EmitUpdateUser(session, session.user);
+        public void EmitUpdateUser(Session session, UserModel user)
+        {
+            Emit(session, "update-user", user);
         }
 
         public void WithSession(NetworkConnectionToClient conn, Action<Session> action)

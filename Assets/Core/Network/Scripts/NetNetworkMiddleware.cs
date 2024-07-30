@@ -25,8 +25,11 @@ namespace MMC.Network
             server._Setup(this);
         }
 
+        public abstract string GetKey();
         public abstract NetNetworkMiddlewareClient CreateClient();
         public abstract NetNetworkMiddlewareServer CreateServer();
+
+        public string GetKey(string key) => $"{GetKey()}-{key}";
 
         private void Update()
         {

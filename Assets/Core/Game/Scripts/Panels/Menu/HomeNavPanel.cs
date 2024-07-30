@@ -1,4 +1,5 @@
 using SwipeableBottomNavigation;
+using UnityEngine;
 
 namespace MMC.Game
 {
@@ -22,6 +23,11 @@ namespace MMC.Game
         {
             base.OnRender();
             chapterViewLoader.Setup(game.config.GetChapter(game.user.trophies));
+        }
+
+        private void Update()
+        {
+            chapterViewLoader.offset = Vector2.left * (navigation.scroll - index);
         }
 
         [Member]

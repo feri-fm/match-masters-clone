@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ea95adcaf744ef4c83f5d0ab521cfc6, type: 3}
+  m_Name: deal_coin_60,duck_1
+  m_EditorClassIdentifier: 
+  prefix: deal
+  price:
+    item: {fileID: 11400000, guid: 2aa2ed8c07ab5654d8eba897d821b893, type: 2}
+    count: 60
+  rewards:
+  - item: {fileID: 11400000, guid: 4dfdb9d1391db9547bac753dfde058e3, type: 2}
+    count: 1

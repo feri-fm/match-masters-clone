@@ -12,17 +12,6 @@ namespace MMC.Network.MenuMiddleware
         public override void Setup()
         {
             base.Setup();
-            On<UserModel>("update-user", user =>
-            {
-                gameManager.ChangeState(() =>
-                {
-                    gameManager.user = user;
-                });
-            });
-            On<string>("message", message =>
-            {
-                Popup.ShowAlert(message);
-            });
         }
 
         public void UpdateSelectedItems(string[] items)
@@ -37,9 +26,9 @@ namespace MMC.Network.MenuMiddleware
         {
             Emit("set-item-count", $"{key}:{count}");
         }
-        public void SetTrophies(int trophies) //TODO: this is wrong
+        public void SetTrophy(int trophy) //TODO: this is wrong
         {
-            Emit("set-trophies", trophies);
+            Emit("set-trophy", trophy);
         }
         public void ChangeUsername(string username) //TODO: this is wrong
         {

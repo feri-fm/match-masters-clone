@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f016aecc9b9c24f41a58746d8033a7f5, type: 3}
+  m_Name: ShopConfig
+  m_EditorClassIdentifier: 
+  staticDeals:
+  - {fileID: 11400000, guid: 1b1eda7bde3d36f4d8a052cdfa8601ef, type: 2}
+  - {fileID: 11400000, guid: b9cce193d60a9b34489d34cc99028e98, type: 2}
+  - {fileID: 11400000, guid: 3b459a5e38b448f478ac024b2caadadf, type: 2}
+  timedDeals:
+  - time: 86400
+    deal: {fileID: 11400000, guid: 61aed42f48a57be48ab7cab4206e7b45, type: 2}
+  - time: 86400
+    deal: {fileID: 11400000, guid: 721ca9a321365ad45b30621ea5acd07c, type: 2}
+  dailyDeals:
+  - trophy: 0
+    pick: 3
+    deals:
+    - count: 1
+      deal: {fileID: 11400000, guid: 1b1eda7bde3d36f4d8a052cdfa8601ef, type: 2}
+    - count: 1
+      deal: {fileID: 11400000, guid: b9cce193d60a9b34489d34cc99028e98, type: 2}
+    - count: 1
+      deal: {fileID: 11400000, guid: 61aed42f48a57be48ab7cab4206e7b45, type: 2}
+    - count: 1
+      deal: {fileID: 11400000, guid: 721ca9a321365ad45b30621ea5acd07c, type: 2}
+    - count: 1
+      deal: {fileID: 11400000, guid: 3b459a5e38b448f478ac024b2caadadf, type: 2}

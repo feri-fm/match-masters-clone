@@ -22,7 +22,7 @@ namespace SwipeableBottomNavigation
         public List<NavigationPanel> panels { get; } = new();
 
         public int currentPanelIndex { get; set; }
-        public float scroll { get; set; }
+        public float scroll;
 
         private bool isDragging;
         private float dragScroll;
@@ -71,13 +71,15 @@ namespace SwipeableBottomNavigation
         {
             foreach (var panel in panels)
             {
-                panel.OnRender();
+                if (panel.isActive)
+                    panel.OnRender();
             }
         }
 
         public void SetPanel(int index)
         {
             currentPanelIndex = index;
+            panels[index].OnSelected();
         }
 
         public void Jump()
@@ -104,28 +106,47 @@ namespace SwipeableBottomNavigation
             }
             else
             {
-                scroll = Mathf.Lerp(scroll, currentPanelIndex, cursor.smooth * Time.deltaTime);
+                if (Mathf.Abs(scroll - currentPanelIndex) > 0.001f)
+                    scroll = Mathf.Lerp(scroll, currentPanelIndex, cursor.smooth * Time.deltaTime);
+                else
+                    scroll = currentPanelIndex;
             }
 
             scroll = Mathf.Clamp(scroll, 0, panels.Count - 1);
 
+            scroll += 1;
+
+            scroll -= 0.5f;
             var current = (int)scroll;
+            var progress = scroll - current;
             var previous = current - 1;
             var next = current + 1;
-            var progress = scroll - current;
+            scroll += 0.5f;
 
-            SetupPanel(panels[current], -progress);
+            SetupPanel(panels[current], -progress + 0.5f);
             if (previous >= 0)
-                SetupPanel(panels[previous], -progress - 1);
+                SetupPanel(panels[previous], -progress - 1 + 0.5f);
             if (next < panels.Count)
-                SetupPanel(panels[next], -progress + 1);
+                SetupPanel(panels[next], -progress + 1 + 0.5f);
 
             for (int i = 0; i < panels.Count; i++)
             {
                 var active = i == current || i == previous || i == next;
                 if (panels[i].isActive != active)
+                {
                     panels[i].SetActive(active);
+                    if (active)
+                    {
+                        panels[i].OnOpen();
+                        panels[i].OnRender();
+                    }
+                    else
+                    {
+                        panels[i].OnClose();
+                    }
+                }
             }
+            scroll -= 1;
         }
 
         private void SetupPanel(NavigationPanel panel, float offset)
@@ -154,15 +175,15 @@ namespace SwipeableBottomNavigation
     public class NavigationSegment : MonoBehaviour
     {
         public int index { get; private set; }
-        public NavigationManager manager { get; private set; }
+        public NavigationManager navigation { get; private set; }
 
-        public bool isSelected => manager.currentPanelIndex == index;
+        public bool isSelected => navigation.currentPanelIndex == index;
 
-        public float weight => isSelected ? manager.selectedWeight : 1;
+        public float weight => isSelected ? navigation.selectedWeight : 1;
 
         public void Setup(NavigationManager manager, int index)
         {
-            this.manager = manager;
+            this.navigation = manager;
             this.index = index;
             Setup();
         }

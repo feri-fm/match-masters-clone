@@ -14,9 +14,9 @@ namespace SwipeableBottomNavigation
 
         private void Update()
         {
-            layoutElement.flexibleWidth = Mathf.Lerp(layoutElement.flexibleWidth, weight, manager.smooth * Time.deltaTime);
-            icon.value.position = Vector3.Lerp(icon.value.position, isSelected ? b.value.position : a.value.position, manager.smooth * Time.deltaTime);
-            icon.value.localScale = Vector3.Lerp(icon.value.localScale, isSelected ? b.value.localScale : a.value.localScale, manager.smooth * Time.deltaTime);
+            layoutElement.flexibleWidth = Mathf.Lerp(layoutElement.flexibleWidth, weight, navigation.smooth * Time.deltaTime);
+            icon.value.position = Vector3.Lerp(icon.value.position, isSelected ? b.value.position : a.value.position, navigation.smooth * Time.deltaTime);
+            icon.value.localScale = Vector3.Lerp(icon.value.localScale, isSelected ? b.value.localScale : a.value.localScale, navigation.smooth * Time.deltaTime);
         }
 
         public void Jump()
@@ -29,7 +29,7 @@ namespace SwipeableBottomNavigation
         [Member]
         public void Select()
         {
-            manager.SetPanel(index);
+            navigation.SetPanel(index);
         }
     }
 }

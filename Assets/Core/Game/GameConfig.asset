@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec054e83d806774b8bc18a9a3367f93, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
+  shop: {fileID: 11400000, guid: 9acfcef335c5dc54b9975e1185003af1, type: 2}
   defaultBooster: {fileID: -2488320582839219072, guid: 0a99093487db281428a275129fa7b2fc, type: 3}
   defaultPerks:
   - {fileID: -2485488522493187943, guid: 9208014d3500ac941bceaed018baa2d9, type: 3}
@@ -33,3 +34,20 @@ MonoBehaviour:
   - {fileID: 1756434273358985625, guid: d4649ef8a1619a947b89b49f4f1241c3, type: 3}
   - {fileID: 4438920829854684562, guid: 872135cf6c6d93246a4e8ce2cec37cf6, type: 3}
   - {fileID: 4145107495130670773, guid: ac34d7519fb7d8a45afc031f6902b8a1, type: 3}
+  items:
+  - {fileID: 11400000, guid: 487b4be5d112d624797a9d5e82382444, type: 2}
+  - {fileID: 11400000, guid: f9399ba4d2130824fac14e37a54531d3, type: 2}
+  - {fileID: 11400000, guid: 4dfdb9d1391db9547bac753dfde058e3, type: 2}
+  - {fileID: 11400000, guid: 244261cd9cd183a44954b0c671c7f9b3, type: 2}
+  - {fileID: 11400000, guid: aff0323f62d06a840b1331465ac8d98d, type: 2}
+  - {fileID: 11400000, guid: 7c3e17ca662bfa14a988185206db7284, type: 2}
+  - {fileID: 11400000, guid: 81953404b7d7e894aa43f7513edc6a37, type: 2}
+  - {fileID: 11400000, guid: dff81d95106a5f14fa2adc4b1f210f0a, type: 2}
+  - {fileID: 11400000, guid: 2aa2ed8c07ab5654d8eba897d821b893, type: 2}
+  - {fileID: 11400000, guid: 2f078efbe23c00c44abb385303d9f3d7, type: 2}
+  deals:
+  - {fileID: 11400000, guid: 1b1eda7bde3d36f4d8a052cdfa8601ef, type: 2}
+  - {fileID: 11400000, guid: b9cce193d60a9b34489d34cc99028e98, type: 2}
+  - {fileID: 11400000, guid: 61aed42f48a57be48ab7cab4206e7b45, type: 2}
+  - {fileID: 11400000, guid: 721ca9a321365ad45b30621ea5acd07c, type: 2}
+  - {fileID: 11400000, guid: 3b459a5e38b448f478ac024b2caadadf, type: 2}

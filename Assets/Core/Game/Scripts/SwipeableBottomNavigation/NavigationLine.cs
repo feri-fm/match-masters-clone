@@ -11,7 +11,7 @@ namespace SwipeableBottomNavigation
 
         private void Update()
         {
-            layoutElement.flexibleWidth = Mathf.Lerp(layoutElement.flexibleWidth, weight, manager.smooth * Time.deltaTime);
+            layoutElement.flexibleWidth = Mathf.Lerp(layoutElement.flexibleWidth, weight, navigation.smooth * Time.deltaTime);
         }
 
         public void Jump()

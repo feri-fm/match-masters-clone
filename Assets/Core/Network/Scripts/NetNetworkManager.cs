@@ -5,6 +5,7 @@ using MMC.Game;
 using MMC.Network.GameMiddleware;
 using MMC.Network.MenuMiddleware;
 using MMC.Network.SessionMiddleware;
+using MMC.Network.ShopMiddleware;
 using MMC.Server;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json.Linq;
@@ -20,6 +21,7 @@ namespace MMC.Network
         public SessionNetworkMiddleware session { get; private set; }
         public GameNetworkMiddleware game { get; private set; }
         public MenuNetworkMiddleware menu { get; private set; }
+        public ShopNetworkMiddleware shop { get; private set; }
 
         public Dictionary<string, ServerListener> serverListeners = new();
         public Dictionary<string, ClientListener> clientListeners = new();
@@ -40,6 +42,7 @@ namespace MMC.Network
             session = middlewares.Find(e => e is SessionNetworkMiddleware) as SessionNetworkMiddleware;
             game = middlewares.Find(e => e is GameNetworkMiddleware) as GameNetworkMiddleware;
             menu = middlewares.Find(e => e is MenuNetworkMiddleware) as MenuNetworkMiddleware;
+            shop = middlewares.Find(e => e is ShopNetworkMiddleware) as ShopNetworkMiddleware;
         }
 
         public override void Start()

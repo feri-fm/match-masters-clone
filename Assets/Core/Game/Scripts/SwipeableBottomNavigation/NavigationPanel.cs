@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MMC.Game;
+using MMC.Network;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,9 +12,11 @@ namespace SwipeableBottomNavigation
         public RectTransform rect { get; private set; }
 
         public GameManager game => GameManager.instance;
+        public NetNetworkManager network => NetNetworkManager.instance;
 
-        public bool isActive;
+        public bool isActive { get; private set; }
 
+        public virtual void OnSelected() { }
         public virtual void OnOpen() { }
         public virtual void OnClose() { }
 

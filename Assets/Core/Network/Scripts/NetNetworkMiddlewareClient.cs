@@ -1,5 +1,6 @@
 using System;
 using MMC.Game;
+using MMC.Server.Models;
 
 namespace MMC.Network
 {
@@ -9,12 +10,6 @@ namespace MMC.Network
         public NetNetworkManager manager => middleware.manager;
         public GameManager gameManager => GameManager.instance;
 
-        public void _Setup(NetNetworkMiddleware middleware)
-        {
-            this.middleware = middleware;
-            Setup();
-        }
-
         public virtual void Setup() { }
         public virtual void Update() { }
         public virtual void LateUpdate() { }
@@ -23,13 +18,32 @@ namespace MMC.Network
         public virtual void OnConnect() { }
         public virtual void OnDisconnect() { }
 
+        public void _Setup(NetNetworkMiddleware middleware)
+        {
+            this.middleware = middleware;
+
+            On<UserModel>("update-user", user =>
+            {
+                gameManager.ChangeState(() =>
+                {
+                    gameManager.user = user;
+                });
+            });
+            On<string>("message", message =>
+            {
+                Popup.ShowAlert(message);
+            });
+
+            Setup();
+        }
+
         public void Emit(string key, object data)
         {
-            manager.ClientEmit(key, data);
+            manager.ClientEmit(middleware.GetKey(key), data);
         }
         public void On<T>(string key, Action<T> onData)
         {
-            manager.ClientOn<T>(key, onData);
+            manager.ClientOn(middleware.GetKey(key), onData);
         }
     }
 

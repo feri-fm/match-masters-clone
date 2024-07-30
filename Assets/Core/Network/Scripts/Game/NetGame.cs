@@ -94,7 +94,7 @@ namespace MMC.Network.GameMiddleware
                     {
                         var user = player.client.session.user;
                         user.inventory.ChangeCount(player.booster.key, 1);
-                        await user.Update(e => e.Inc(u => u.inventory.counts[player.booster.key], 1));
+                        await user.Update(e => e.Inc(u => u.inventory[player.booster.key], 1));
                         networkManager.ServerEmit(player.client.session, "update-user", user);
                     }
                 }
@@ -110,11 +110,11 @@ namespace MMC.Network.GameMiddleware
                     user.inventory.ChangeCount(player.perks[1].key, -1);
                     await user.Update(e =>
                     {
-                        var res = e.Inc(u => u.inventory.counts[player.booster.key], -1);
+                        var res = e.Inc(u => u.inventory[player.booster.key], -1);
                         if (user.inventory.HasItem(player.perks[0].key))
-                            res = res.Inc(u => u.inventory.counts[player.perks[0].key], -1);
+                            res = res.Inc(u => u.inventory[player.perks[0].key], -1);
                         if (user.inventory.HasItem(player.perks[1].key))
-                            res = res.Inc(u => u.inventory.counts[player.perks[1].key], -1);
+                            res = res.Inc(u => u.inventory[player.perks[1].key], -1);
                         return res;
                     });
                     networkManager.ServerEmit(player.client.session, "update-user", user);

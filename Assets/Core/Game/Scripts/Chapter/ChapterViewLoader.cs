@@ -4,6 +4,9 @@ namespace MMC.Game
 {
     public class ChapterViewLoader : MonoBehaviour
     {
+        public CameraRig cameraRig;
+        public Vector2 offset;
+
         private ChapterView currentView;
 
         public void Setup(Chapter chapter)
@@ -13,6 +16,15 @@ namespace MMC.Game
             currentView.transform.localPosition = Vector3.zero;
             currentView.transform.localRotation = Quaternion.identity;
             currentView.Setup(chapter, this);
+        }
+
+        private void LateUpdate()
+        {
+            if (currentView != null)
+            {
+                var rect = cameraRig.GetRect();
+                currentView.transform.localPosition = new Vector3(offset.x * rect.width, offset.y * rect.height);
+            }
         }
 
         public void Clear()

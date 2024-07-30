@@ -26,18 +26,18 @@ namespace MMC.Network.MenuMiddleware
                     user.selectedItems = selectedItems.ToList();
                     await user.Update(e => e.Set(u => u.selectedItems, user.selectedItems));
                 }
-                Emit(session, "update-user", user);
+                EmitUpdateUser(session, user);
             });
             On<string>("unlock-booster", async (session, key) =>
             {
                 var user = session.user;
                 if (!user.inventory.HasItem(key))
                 {
-                    user.inventory.AddItem(key);
+                    user.inventory.UnlockItem(key);
                     user.inventory.SetCount(key, 1);
                     await user.Update(e => e.Set(u => u.inventory, user.inventory));
                 }
-                Emit(session, "update-user", user);
+                EmitUpdateUser(session, user);
             });
             On<string>("set-item-count", async (session, row) => // row => key:count
             {
@@ -49,14 +49,14 @@ namespace MMC.Network.MenuMiddleware
                     user.inventory.SetCount(key, count);
                     await user.Update(e => e.Set(u => u.inventory, user.inventory));
                 }
-                Emit(session, "update-user", user);
+                EmitUpdateUser(session, user);
             });
-            On<int>("set-trophies", async (session, trophies) =>
+            On<int>("set-trophy", async (session, trophy) =>
             {
                 var user = session.user;
-                user.inventory.SetCount("trophies", trophies);
+                user.inventory.SetCount("trophy", trophy);
                 await user.Update(e => e.Set(u => u.inventory, user.inventory));
-                Emit(session, "update-user", user);
+                EmitUpdateUser(session, user);
             });
             On<string>("change-username", async (session, username) =>
             {
@@ -75,7 +75,7 @@ namespace MMC.Network.MenuMiddleware
                 var user = session.user;
                 user.username = username;
                 await user.Update(e => e.Set(u => u.username, user.username));
-                Emit(session, "update-user", user);
+                EmitUpdateUser(session, user);
             });
         }
     }

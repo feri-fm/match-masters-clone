@@ -11,6 +11,8 @@ namespace MMC.Network.GameMiddleware
             return configs.Find(e => e.key == key);
         }
 
+        public override string GetKey() => "game";
+
         public override NetNetworkMiddlewareClient CreateClient()
             => new GameNetworkMiddlewareClient();
 

@@ -43,12 +43,12 @@ namespace MMC.Game
         [Member]
         public void IncreaseTrophies()
         {
-            game.networkManager.menu.client.SetTrophies(game.user.trophies + 25);
+            game.networkManager.menu.client.SetTrophy(game.user.trophies + 25);
         }
         [Member]
         public void DecreaseTrophies()
         {
-            game.networkManager.menu.client.SetTrophies(game.user.trophies - 25);
+            game.networkManager.menu.client.SetTrophy(game.user.trophies - 25);
         }
     }
 }

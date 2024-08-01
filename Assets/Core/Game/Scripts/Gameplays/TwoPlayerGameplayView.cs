@@ -235,6 +235,11 @@ namespace MMC.Game
             if (turn == MyIndex()) return myPlayer;
             else return opponentPlayer;
         }
+        public TwoPlayerGameplayPlayer GetPlayer(int index)
+        {
+            if (index == 0) return isOpponent ? opponentPlayer : myPlayer;
+            else return isOpponent ? myPlayer : opponentPlayer;
+        }
         public int MyIndex()
         {
             return isOpponent ? 1 : 0;

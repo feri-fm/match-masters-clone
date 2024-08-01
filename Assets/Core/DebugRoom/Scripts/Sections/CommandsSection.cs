@@ -77,7 +77,7 @@ namespace MMC.DebugRoom
             }));
             commands.Add("Rocket", new CommandInfo<RocketBoxCommand>((cmd, ui) =>
             {
-                cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 20);
+                cmd.count = ui.Slider("Count", cmd.count, 0, 20);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);
             }));
             commands.Add("Duck", new CommandInfo<DuckCommand>((cmd, ui) =>
@@ -87,8 +87,7 @@ namespace MMC.DebugRoom
             }));
             commands.Add("Bucket", new CommandInfo<BucketCommand>((cmd, ui) =>
             {
-                cmd.searchCount = ui.Slider("Search", cmd.searchCount, 10, 40);
-                cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 30);
+                cmd.count = ui.Slider("Count", cmd.count, 0, 30);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);
                 ui.Row(() =>
                 {
@@ -112,8 +111,7 @@ namespace MMC.DebugRoom
             }));
             commands.Add("Hat", new CommandInfo<HatCommand>((cmd, ui) =>
             {
-                cmd.searchCount = ui.Slider("Search", cmd.searchCount, 10, 40);
-                cmd.targetCount = ui.Slider("Target", cmd.targetCount, 0, 30);
+                cmd.count = ui.Slider("Count", cmd.count, 0, 30);
                 cmd.timeDelay = ui.Slider("Delay", cmd.timeDelay, 0f, 0.4f);
             }));
             commands.Add("TwoColors", new CommandInfo<TwoColorsCommand>((cmd, ui) =>

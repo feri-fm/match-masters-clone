@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 297146948}
   - component: {fileID: 297146949}
   m_Layer: 0
-  m_Name: Circle
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,9 +25,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 297146947}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1419158310852878233}
   m_RootOrder: 0
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3633b0897f1fe6a4cbed8feb66aad0d3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 27f48a176469de54c936af07f3c3d01b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -318,6 +318,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7899317163164672914}
     - target: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+      propertyPath: disabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
       propertyPath: color.value
       value: 0
       objectReference: {fileID: 0}
@@ -332,6 +336,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6827769561689597512, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
   m_PrefabInstance: {fileID: 1460788212534291419}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7768966620619230539 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9193301326007592592, guid: c37c6059ab0450f4fb55342bbb670e1f, type: 3}
+  m_PrefabInstance: {fileID: 1460788212534291419}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3ef022c195c3249a8876b7aa98a81b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5300279727659076395
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -415,8 +430,8 @@ MonoBehaviour:
   color:
     value: -1
   count: 10
+  target: {fileID: 7768966620619230539}
   lineRenderer: {fileID: 1331526026407373886}
-  spriteRenderer: {fileID: 297146949}
 --- !u!4 &3394255802242096434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7391728599883060761, guid: 00764530b44c37b438663e1273d43db2, type: 3}

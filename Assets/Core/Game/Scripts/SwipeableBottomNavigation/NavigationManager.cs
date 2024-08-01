@@ -149,6 +149,18 @@ namespace SwipeableBottomNavigation
             scroll -= 1;
         }
 
+        private void OnDisable()
+        {
+            for (int i = 0; i < panels.Count; i++)
+            {
+                if (panels[i].isActive)
+                {
+                    panels[i].SetActive(false);
+                    panels[i].OnClose();
+                }
+            }
+        }
+
         private void SetupPanel(NavigationPanel panel, float offset)
         {
             panel.rect.offsetMin = offset * panelsWidth * Vector2.right;

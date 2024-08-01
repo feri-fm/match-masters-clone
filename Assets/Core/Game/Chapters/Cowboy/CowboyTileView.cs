@@ -36,6 +36,7 @@ namespace MMC.Game.Chapters.Cowboy
             AddTrait<SwappableTileTraitView>();
             AddTrait<AnimatorTraitView>();
             AddTrait<ScoreTraitView>();
+            AddTrait<MechanicTraitView>();
         }
 
         protected override async Task OnHit()

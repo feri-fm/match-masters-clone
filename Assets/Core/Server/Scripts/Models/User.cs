@@ -132,11 +132,11 @@ namespace MMC.Server.Models
     {
         public Dictionary<string, int> items = new();
 
-        public int this[string key]
-        {
-            get => items[key];
-            set => items[key] = value;
-        }
+        // public int this[string key]
+        // {
+        //     get => items[key];
+        //     set => items[key] = value;
+        // }
 
         public int GetCount(string key)
         {

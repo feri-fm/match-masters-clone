@@ -18,6 +18,7 @@ namespace MMC.Game.Chapters.Leaf
             AddTrait<SwappableTileTraitView>();
             AddTrait<AnimatorTraitView>();
             AddTrait<ScoreTraitView, ScoreTrait>().value = 3;
+            AddTrait<MechanicTraitView>();
         }
 
         protected override async Task OnHit()

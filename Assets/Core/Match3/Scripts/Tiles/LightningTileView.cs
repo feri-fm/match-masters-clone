@@ -8,16 +8,16 @@ namespace MMC.Match3
     public class LightningTileView : ColoredTileView<LightningTile>
     {
         public int count = 10;
+        public TileSpriteColor target;
         public LineRenderer lineRenderer;
-        public SpriteRenderer spriteRenderer;
 
         public override Entity CreateEntity() => new LightningTile();
 
         protected override void OnRender()
         {
             base.OnRender();
-            lineRenderer.startColor = spriteRenderer.color;
-            lineRenderer.endColor = spriteRenderer.color;
+            lineRenderer.startColor = target.GetColor();
+            lineRenderer.endColor = target.GetColor();
             lineRenderer.positionCount = entity.targets.Count * 2;
             for (int i = 0; i < entity.targets.Count; i++)
             {

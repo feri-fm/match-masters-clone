@@ -318,9 +318,19 @@ namespace MMC.Game
             usedPerks = new bool[perks.Length];
         }
 
+        public bool CanUserBooster()
+        {
+            return boosterScore >= booster.requiredScore;
+        }
+
+        public bool CanUsePerk(int index)
+        {
+            return !usedPerks[index];
+        }
+
         public async Task UseBooster(GameplayReader reader, bool withoutNotify = false)
         {
-            if (isTurn && !gameplay.gameEntity.isEvaluating && boosterScore >= booster.requiredScore)
+            if (isTurn && !gameplay.gameEntity.isEvaluating && CanUserBooster())
             {
                 if (reader == null)
                 {
@@ -337,7 +347,7 @@ namespace MMC.Game
 
         public async Task UsePerk(int index, GameplayReader reader, bool withoutNotify = false)
         {
-            if (isTurn && !gameplay.gameEntity.isEvaluating && !usedPerks[index])
+            if (isTurn && !gameplay.gameEntity.isEvaluating && CanUsePerk(index))
             {
                 if (reader == null)
                 {

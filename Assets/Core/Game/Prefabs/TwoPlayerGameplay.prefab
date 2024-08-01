@@ -809,7 +809,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c070c314fb87524ab82fa659d12994f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 8
+  size: 7.5
   anchor: {x: 0.5, y: 0}
   fitWidth: 1
 --- !u!1 &2790077040424973829

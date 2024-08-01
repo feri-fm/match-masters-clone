@@ -4,6 +4,7 @@ namespace MMC.Match3
 {
     public class TileSpriteColor : MonoBehaviour
     {
+        public bool disabled;
         public ColoredTileView tile;
         public SpriteRenderer spriteRenderer;
         public Color blue;
@@ -15,13 +16,19 @@ namespace MMC.Match3
 
         private void OnValidate()
         {
-            UpdateColor();
+            if (!disabled)
+                UpdateColor();
         }
 
         public void UpdateColor()
         {
             if (spriteRenderer == null) return;
-            var c = spriteRenderer.color;
+            spriteRenderer.color = GetColor();
+        }
+
+        public Color GetColor()
+        {
+            var c = Color.white;
             switch (tile.color.value)
             {
                 case (int)TileColorSamples.Blue: c = blue; break;
@@ -31,7 +38,7 @@ namespace MMC.Match3
                 case (int)TileColorSamples.Orange: c = orange; break;
                 case (int)TileColorSamples.Purple: c = purple; break;
             }
-            spriteRenderer.color = c;
+            return c;
         }
 
         private void Reset()

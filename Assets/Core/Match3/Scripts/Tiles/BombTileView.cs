@@ -6,7 +6,7 @@ namespace MMC.Match3
 {
     public class BombTileView : ColoredTileView<BombTile>
     {
-        public SpriteRenderer target;
+        public TileSpriteColor target;
         public GameObject clearEffect;
 
         public MatchPattern area;
@@ -17,7 +17,8 @@ namespace MMC.Match3
         {
             base.OnSetup();
             var r = clearEffect.GetComponent<SpriteRenderer>();
-            r.color = new Color(target.color.r, target.color.g, target.color.b, r.color.a);
+            var c = target.GetColor();
+            r.color = new Color(c.r, c.g, c.b, r.color.a);
             clearEffect.SetActive(false);
             tile.onHit += () =>
             {

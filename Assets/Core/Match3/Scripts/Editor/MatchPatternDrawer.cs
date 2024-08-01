@@ -8,7 +8,7 @@ using UnityEditor.Rendering;
 namespace MMC.Match3
 {
     [CustomPropertyDrawer(typeof(MatchPattern))]
-    public class GameConfigMatchItemDrawer : PropertyDrawer
+    public class MatchPatternDrawer : PropertyDrawer
     {
         private Cell[,] cells;
         private const int SPACE = 22;
@@ -122,6 +122,11 @@ namespace MMC.Match3
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return GetPropertyHeight(property);
+        }
+
+        public static float GetPropertyHeight(SerializedProperty property)
         {
             var target = property.GetValue<MatchPattern>();
             var height = target.height;

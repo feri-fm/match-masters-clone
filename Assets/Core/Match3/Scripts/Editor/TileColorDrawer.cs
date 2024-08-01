@@ -11,24 +11,38 @@ namespace MMC.Match3
         {
             EditorGUI.BeginProperty(p, label, property);
 
-            p = EditorGUI.PrefixLabel(p, GUIUtility.GetControlID(FocusType.Passive), label);
-
-            var value = property.FindPropertyRelative("value");
-
-            TileColorSamples sampleColor = Enum.IsDefined(typeof(TileColorSamples), value.intValue) ? (TileColorSamples)value.intValue : TileColorSamples.None;
-
-            var newColor = (TileColorSamples)EditorGUI.EnumPopup(new Rect(p.x, p.y, 100, p.height), sampleColor);
-
-            if (newColor != TileColorSamples.None)
+            if (Selection.objects.Length == 1)
             {
-                value.intValue = (int)newColor;
+                p = EditorGUI.PrefixLabel(p, GUIUtility.GetControlID(FocusType.Passive), label);
+
+                var value = property.FindPropertyRelative("value");
+
+                TileColorSamples sampleColor = Enum.IsDefined(typeof(TileColorSamples), value.intValue) ? (TileColorSamples)value.intValue : TileColorSamples.None;
+
+                var newColor = (TileColorSamples)EditorGUI.EnumPopup(new Rect(p.x, p.y, p.width - 50, p.height), sampleColor);
+
+                if (newColor != TileColorSamples.None)
+                {
+                    value.intValue = (int)newColor;
+                }
+                else
+                {
+                    value.intValue = -1;
+                }
+
+                var newValue = EditorGUI.IntField(new Rect(p.x + p.width - 50 + 2, p.y, 48, 20), value.intValue);
+                if (newValue != value.intValue)
+                {
+                    value.intValue = newValue;
+                }
+            }
+            else
+            {
+                p = EditorGUI.PrefixLabel(p, GUIUtility.GetControlID(FocusType.Passive), label);
+                EditorGUI.Popup(p, 0, new string[] { "multi selection not supported" });
             }
 
-            var newValue = EditorGUI.IntField(new Rect(p.x + 110, p.y, 50, 20), value.intValue);
-            if (newValue != value.intValue)
-            {
-                value.intValue = newValue;
-            }
+            EditorGUI.EndProperty();
         }
     }
 }

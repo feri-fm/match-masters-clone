@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MMC.EngineCore;
-using Org.BouncyCastle.Asn1.Cmp;
 using UnityEngine;
 
 namespace MMC.Match3
@@ -290,38 +289,74 @@ namespace MMC.Match3
 
         public bool AnyMatch()
         {
-            return ScanMatch(config.match.search, out _);
+            return ScanMatch(config.match.search.GetPatterns(), ScanDirection.Default, TileColor.none, _ => true, out _);
         }
         public bool AnyMove()
         {
-            return ScanMatch(config.match.moves, out _);
+            return ScanMatch(config.match.moves.GetPatterns(), ScanDirection.Default, TileColor.none, _ => true, out _);
         }
         private bool TryGetMatch(out Match match)
         {
-            return ScanMatch(config.match.patterns, out match);
-        }
-        public bool ScanMatch(MatchPattern[] patterns, out Match match)
-        {
-            match = null;
-            for (int p = 0; p < patterns.Length; p++)
-            {
-                var pattern = patterns[p];
-                for (int i = 0; i <= width - pattern.width; i++)
-                {
-                    for (int j = 0; j <= height - pattern.height; j++)
-                    {
-                        var point = new Int2(i, j);
-                        if (CheckMatch(point, pattern, out match))
-                            return true;
-                    }
-                }
-            }
-            return false;
+            return ScanMatch(config.match.patterns.GetPatterns(), ScanDirection.Default, TileColor.none, _ => true, out match);
         }
 
-        private bool CheckMatch(Int2 offset, MatchPattern pattern, out Match match)
+        public bool ScanMatch(MatchPattern[] patterns, ScanDirection direction, TileColor color, Func<Match, bool> check, out Match match)
         {
-            var color = TileColor.none;
+            Match foundedMatch = null;
+            var founded = ScanPattern(patterns, direction, (offset, pattern) =>
+            {
+                if (CheckMatch(offset, pattern, color, out var myMatch) && check(myMatch))
+                {
+                    foundedMatch = myMatch;
+                    return true;
+                }
+                return false;
+            });
+            match = foundedMatch;
+            if (match != null) return true;
+            return false;
+
+            // match = null;
+            // for (int p = 0; p < patterns.Length; p++)
+            // {
+            //     var pattern = patterns[p];
+            //     var w = width - pattern.width;
+            //     var h = height - pattern.height;
+
+            //     switch (direction)
+            //     {
+            //         case ScanDirection.Default:
+            //         case ScanDirection.UpRight:
+            //             for (int i = 0; i <= w; i++)
+            //                 for (int j = 0; j <= h; j++)
+            //                     if (CheckMatch(new Int2(i, j), pattern, color, out match) && check(match))
+            //                         return true;
+            //             break;
+            //         case ScanDirection.DownRight:
+            //             for (int i = 0; i <= w; i++)
+            //                 for (int j = h; j >= 0; j--)
+            //                     if (CheckMatch(new Int2(i, j), pattern, color, out match) && check(match))
+            //                         return true;
+            //             break;
+            //         case ScanDirection.UpLeft:
+            //             for (int i = w; i >= 0; i--)
+            //                 for (int j = 0; j <= h; j++)
+            //                     if (CheckMatch(new Int2(i, j), pattern, color, out match) && check(match))
+            //                         return true;
+            //             break;
+            //         case ScanDirection.DownLeft:
+            //             for (int i = w; i >= 0; i--)
+            //                 for (int j = h; j >= 0; j--)
+            //                     if (CheckMatch(new Int2(i, j), pattern, color, out match) && check(match))
+            //                         return true;
+            //             break;
+            //     }
+            // }
+            // return false;
+        }
+
+        private bool CheckMatch(Int2 offset, MatchPattern pattern, TileColor color, out Match match)
+        {
             match = new Match(pattern, offset);
             for (int i = 0; i < pattern.points.Length; i++)
             {
@@ -330,7 +365,7 @@ namespace MMC.Match3
                 if (tile != null && tile.canHit && tile is ColoredTile coloredTile)
                 {
                     match.SetTileAt(i, coloredTile);
-                    if (i == 0) color = coloredTile.color;
+                    if (color == TileColor.none) color = coloredTile.color;
                     else if (coloredTile.color != color)
                         return false;
                 }
@@ -340,6 +375,58 @@ namespace MMC.Match3
                 }
             }
             return true;
+        }
+
+        public List<Match> ScanAll(MatchPattern[] patterns, ScanDirection direction, TileColor color, Func<Match, bool> check)
+        {
+            var res = new List<Match>();
+            ScanPattern(patterns, direction, (offset, pattern) =>
+            {
+                if (CheckMatch(offset, pattern, color, out var myMatch) && check(myMatch))
+                    res.Add(myMatch);
+                return false;
+            });
+            return res;
+        }
+
+        public MatchPattern ScanPattern(MatchPattern[] patterns, ScanDirection direction, Func<Int2, MatchPattern, bool> check)
+        {
+            for (int p = 0; p < patterns.Length; p++)
+            {
+                var pattern = patterns[p];
+                var w = width - pattern.width;
+                var h = height - pattern.height;
+
+                switch (direction)
+                {
+                    case ScanDirection.Default:
+                    case ScanDirection.DownRight:
+                        for (int i = 0; i <= w; i++)
+                            for (int j = h; j >= 0; j--)
+                                if (check(new Int2(i, j), pattern))
+                                    return pattern;
+                        break;
+                    case ScanDirection.UpRight:
+                        for (int i = 0; i <= w; i++)
+                            for (int j = 0; j <= h; j++)
+                                if (check(new Int2(i, j), pattern))
+                                    return pattern;
+                        break;
+                    case ScanDirection.UpLeft:
+                        for (int i = w; i >= 0; i--)
+                            for (int j = 0; j <= h; j++)
+                                if (check(new Int2(i, j), pattern))
+                                    return pattern;
+                        break;
+                    case ScanDirection.DownLeft:
+                        for (int i = w; i >= 0; i--)
+                            for (int j = h; j >= 0; j--)
+                                if (check(new Int2(i, j), pattern))
+                                    return pattern;
+                        break;
+                }
+            }
+            return null;
         }
 
         private async Task ApplyMatch(Match match)
@@ -461,7 +548,8 @@ namespace MMC.Match3
             }
         }
 
-        public void ScanRandom(int count, Func<Tile, bool> check, Action<Tile> action)
+        public void ScanRandom(int count, Func<Tile, bool> check, Action<Tile> action) => _ = ScanRandom(count, check, (t) => { action(t); return Task.CompletedTask; });
+        public async Task ScanRandom(int count, Func<Tile, bool> check, Func<Tile, Task> action)
         {
             var shuffledTiles = new Tile[width * height];
             var index = 0;
@@ -480,7 +568,7 @@ namespace MMC.Match3
                 var tile = shuffledTiles[i];
                 if (tile != null && check.Invoke(tile))
                 {
-                    action.Invoke(tile);
+                    await action.Invoke(tile);
                     found++;
                 }
             }
@@ -702,6 +790,11 @@ namespace MMC.Match3
         public int minBeads = 6;
         public int maxBeads = 10;
         public int beads = 6;
+    }
+
+    public enum ScanDirection
+    {
+        Default, DownRight, UpRight, DownLeft, UpLeft
     }
 
     public class GameData

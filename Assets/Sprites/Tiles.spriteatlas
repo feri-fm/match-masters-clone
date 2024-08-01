@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Tiles
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 4cd468de1101ae0438cdbdb5c6915591, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: c5f5bb809eaa97444add03a2139243a3, type: 3}
+  - {fileID: 21300000, guid: 5759c5112f31313439840290096f4a09, type: 3}
+  - {fileID: 21300000, guid: cea2a871954084b408e4df921c7013dd, type: 3}
+  - {fileID: 21300000, guid: 2aee9091f78226f49b60cce570ad1031, type: 3}
+  - {fileID: 21300000, guid: e4840fa1ca15a054ab227fd18979c0b0, type: 3}
+  - {fileID: 21300000, guid: 7ea00322b8d9e9b42aa03713ccb0247e, type: 3}
+  - {fileID: 21300000, guid: 431c0322a5d44914b86abf495312c855, type: 3}
+  - {fileID: 21300000, guid: 8707036201108d545b26f167862c83ae, type: 3}
+  - {fileID: 21300000, guid: 0cbf4ee2fabca594a8414361ae4f2e7c, type: 3}
+  - {fileID: 21300000, guid: bdc45ed3a8ec9c54f9d852248873d9fe, type: 3}
+  - {fileID: 21300000, guid: d9723d44d9e998c4f98fae725e027462, type: 3}
+  - {fileID: 21300000, guid: d0311b744e165df4198a816bd96af5ad, type: 3}
+  - {fileID: 21300000, guid: 3c4e27a476d55e844b73610e931e6984, type: 3}
+  - {fileID: 21300000, guid: 8c02ace4cc2287d499127591f2a279a4, type: 3}
+  - {fileID: 21300000, guid: b3b2b4f4d3e396e4aa587a3573cddbfe, type: 3}
+  - {fileID: 21300000, guid: fd771d3584d86e84897f08b63d3a9574, type: 3}
+  - {fileID: 21300000, guid: 21d944f5904f1e944a731ab906e232c4, type: 3}
+  - {fileID: 21300000, guid: ba71000753737254ca756453d7ce34aa, type: 3}
+  - {fileID: 21300000, guid: 0a502207cdf1ecc45a09cd90a86716fa, type: 3}
+  - {fileID: 21300000, guid: 27f48a176469de54c936af07f3c3d01b, type: 3}
+  - {fileID: 21300000, guid: 9fc1cbf86fad4b84fa7749bce69a249d, type: 3}
+  - {fileID: 21300000, guid: db8dae19ce01eb640800e673b07aec90, type: 3}
+  - {fileID: 21300000, guid: 09ea3729140bb7846b8c7404bcaa4648, type: 3}
+  - {fileID: 21300000, guid: 65c2da99e30e46245ad6dbc49101cc14, type: 3}
+  - {fileID: 21300000, guid: 9fbb78b9a2e1983499c094a2c39aae52, type: 3}
+  - {fileID: 21300000, guid: 12d4d6ba2ba2e104189aeb3a2c0f12b2, type: 3}
+  - {fileID: 21300000, guid: 5cd5d42b04ad24c4e96fd0c46524b6b4, type: 3}
+  - {fileID: 21300000, guid: 94440f4b1face1648a5684f7c50681b5, type: 3}
+  - {fileID: 21300000, guid: 4105d1ab761b701429b48f258eb4523f, type: 3}
+  - {fileID: 21300000, guid: 13c87dfb611b23e43a728eaa58cd8227, type: 3}
+  - {fileID: 21300000, guid: af0ce54c4ebab3b44a088415da52754d, type: 3}
+  - {fileID: 21300000, guid: 85dc185c968592a499e988ff5b2c25fa, type: 3}
+  - {fileID: 21300000, guid: cff0b06cede78c0489bab9bb1e1f8a5f, type: 3}
+  - {fileID: 21300000, guid: 0783657d5f458b243979373effffb806, type: 3}
+  - {fileID: 21300000, guid: ff49880eaa504384894c48af706226a8, type: 3}
+  - {fileID: 21300000, guid: 044c05af8d4f06a43a162ea8bc37ef42, type: 3}
+  - {fileID: 21300000, guid: d576e8afa5fb37f45b4ebdc2dd8835c3, type: 3}
+  - {fileID: 21300000, guid: 5a938baf5d57b10419b6c95c6a69fb42, type: 3}
+  - {fileID: 21300000, guid: aa4fe4cf27ea2104990319604eb0513e, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - gem_row_yellow
+  - gem_hat_back_wanted
+  - gem_row_green
+  - gem_rhombus
+  - gem_jungle_leaf
+  - green_piece
+  - purple_piece
+  - gem_column_yellow
+  - orange_piece
+  - gem_diamond_wanted
+  - gem_bomb_yellow
+  - gem_lightning_yellow
+  - gem_bomb_red
+  - gem_row_purple
+  - gem_column_white
+  - gem_lightning_red
+  - gem_bomb_blue
+  - gem_row_blue
+  - gem_bomb_purple
+  - gem_lightning_white
+  - gem_column_green
+  - gem_bomb_orange
+  - gem_lightning_blue
+  - gem_column_purple
+  - gem_lightning_orange
+  - yellow_piece
+  - gem_star
+  - gem_column_orange
+  - gem_lightning_purple
+  - gem_row_orange
+  - gem_hat_front_wanted
+  - gem_bomb_green
+  - gem_bomb_white
+  - gem_lightning_green
+  - gem_mustache_wanted
+  - gem_column_red
+  - gem_column_blue
+  - gem_row_red
+  - gem_row_white
+  m_RenderDataMap: {}
+  m_Tag: Tiles
+  m_IsVariant: 0

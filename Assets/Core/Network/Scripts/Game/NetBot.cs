@@ -9,7 +9,7 @@ namespace MMC.Network.GameMiddleware
     public class NetBot : MonoBehaviour
     {
         public float waitTime = 1.5f;
-        public MatchPattern[] goodMoves;
+        public Bot bot;
 
         public NetPlayer player { get; private set; }
         public NetGame netGame => player.game;
@@ -50,13 +50,37 @@ namespace MMC.Network.GameMiddleware
             // var b = start + dir;
             // player.TrySwap(a, b);
 
-            if (game.ScanMatch(goodMoves, out var match)
-                || game.ScanMatch(game.config.match.moves, out match))
+            // if (game.ScanMatch(goodMoves.GetPatterns(), out var match)
+            //     || game.ScanMatch(game.config.match.moves.GetPatterns(), out match))
+            // {
+            //     var offset = match.offset;
+            //     var a = offset + match.pattern.rewardPoints[0];
+            //     var b = offset + match.pattern.rewardPoints[1];
+            //     player.TrySwap(a, b);
+            // }
+
+            var action = bot.Play(gameplay, gameplay.isOpponent, gameplay.GetPlayer(player.index));
+            if (action is SwapAction swap)
             {
-                var offset = match.offset;
-                var a = offset + match.pattern.rewardPoints[0];
-                var b = offset + match.pattern.rewardPoints[1];
-                player.TrySwap(a, b);
+                player.TrySwap(swap.a, swap.b);
+            }
+            else if (action is UseBoosterAction useBooster)
+            {
+                player.UseBooster(useBooster.reader.Save());
+            }
+            else if (action is UsePerkAction usePerk)
+            {
+                player.UsePerk(usePerk.index, usePerk.reader.Save());
+            }
+            else
+            {
+                if (game.ScanMatch(game.config.match.moves.GetPatterns(), ScanDirection.Default, TileColor.none, _ => true, out var match))
+                {
+                    var offset = match.offset;
+                    var a = offset + match.pattern.rewardPoints[0];
+                    var b = offset + match.pattern.rewardPoints[1];
+                    player.TrySwap(a, b);
+                }
             }
         }
     }

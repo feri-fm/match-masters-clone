@@ -618,11 +618,11 @@ namespace MMC.Match3
 
             var badColors = new List<TileColor>();
             var down = ValidatePoint(point + Int2.down) ? GetTileAt(point + Int2.down) as ColoredTile : null;
-            var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as ColoredTile : null;
-            var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as ColoredTile : null;
+            // var left = ValidatePoint(point + Int2.left) ? GetTileAt(point + Int2.left) as ColoredTile : null;
+            // var right = ValidatePoint(point + Int2.right) ? GetTileAt(point + Int2.right) as ColoredTile : null;
             if (down != null) badColors.Add(MapColor(down.prefab.color));
-            if (left != null) badColors.Add(MapColor(left.prefab.color));
-            if (right != null) badColors.Add(MapColor(right.prefab.color));
+            // if (left != null) badColors.Add(MapColor(left.prefab.color));
+            // if (right != null) badColors.Add(MapColor(right.prefab.color));
 
             for (int i = 0; i < options.beads; i++)
             {

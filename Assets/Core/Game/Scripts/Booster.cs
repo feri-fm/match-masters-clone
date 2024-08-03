@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using MMC.Match3;
 using UnityEngine;
 
 namespace MMC.Game
@@ -25,6 +26,24 @@ namespace MMC.Game
                 gameplay = gameplay,
                 reader = reader
             });
+        }
+
+        protected async Task<bool> ReadTile(GameplayIns ins)
+        {
+            var tile = await ins.gameplay.PromptTile();
+            if (tile != null)
+            {
+                ins.reader.W("id", tile.id);
+                return true;
+            }
+            return false;
+        }
+
+        protected Tile UseTile(GameplayIns ins)
+        {
+            var id = ins.reader.R<Id>("id");
+            var tile = ins.engine.GetEntity<Tile>(id);
+            return tile;
         }
 
         protected virtual Task<bool> Read(GameplayIns ins) { return Task.FromResult(true); }
